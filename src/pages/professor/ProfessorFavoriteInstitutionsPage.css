@@ -1,0 +1,191 @@
+.professor-favorite-institutions-page {
+  display: grid;
+  gap: 22px;
+}
+
+.professor-favorite-institutions-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.professor-favorite-institutions-page__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.professor-favorite-institutions-page__card-wrapper {
+  cursor: pointer;
+}
+
+.professor-favorite-institutions-page__card {
+  padding: 22px;
+  display: grid;
+  gap: 16px;
+  height: 100%;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.professor-favorite-institutions-page__card:hover {
+  transform: translateY(-2px);
+}
+
+.professor-favorite-institutions-page__card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.professor-favorite-institutions-page__title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.professor-favorite-institutions-page__icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: rgba(1, 118, 211, 0.1);
+  border: 1px solid rgba(1, 118, 211, 0.16);
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.professor-favorite-institutions-page__title-block {
+  min-width: 0;
+}
+
+.professor-favorite-institutions-page__title-block h3 {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 900;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.professor-favorite-institutions-page__title-block p {
+  margin: 6px 0 0;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.professor-favorite-institutions-page__favorite-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  background: rgba(250, 204, 21, 0.14);
+  color: #ca8a04;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: 0.2s ease;
+}
+
+.professor-favorite-institutions-page__favorite-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(250, 204, 21, 0.2);
+  border-color: rgba(250, 204, 21, 0.45);
+}
+
+.professor-favorite-institutions-page__favorite-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.professor-favorite-institutions-page__meta {
+  display: grid;
+  gap: 10px;
+}
+
+.professor-favorite-institutions-page__meta span {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  word-break: break-word;
+}
+
+.professor-favorite-institutions-page__meta svg {
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.professor-favorite-institutions-page__description {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.7;
+  word-break: break-word;
+}
+
+.professor-favorite-institutions-page__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .professor-favorite-institutions-page__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .professor-favorite-institutions-page {
+    gap: 18px;
+  }
+
+  .professor-favorite-institutions-page__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .professor-favorite-institutions-page__card {
+    padding: 18px;
+    gap: 14px;
+  }
+
+  .professor-favorite-institutions-page__card-top {
+    gap: 12px;
+  }
+
+  .professor-favorite-institutions-page__title-row {
+    gap: 10px;
+  }
+
+  .professor-favorite-institutions-page__icon-box,
+  .professor-favorite-institutions-page__favorite-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .professor-favorite-institutions-page__title-block h3 {
+    font-size: 1rem;
+  }
+
+  .professor-favorite-institutions-page__title-block p,
+  .professor-favorite-institutions-page__meta span,
+  .professor-favorite-institutions-page__description {
+    font-size: 0.9rem;
+  }
+}

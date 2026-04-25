@@ -1,0 +1,95 @@
+.register-page {
+  display: grid;
+  place-items: center;
+}
+
+.register-page__card {
+  width: min(100%, 760px);
+  padding: 34px;
+}
+
+.register-page__back-row {
+  margin-bottom: 18px;
+}
+
+.register-page__back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 0.86rem;
+}
+
+.register-page__header {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.register-page__icon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.register-page__icon--institution {
+  background: linear-gradient(135deg, #0f172a, #1d4ed8);
+}
+
+.register-page__icon--professor {
+  background: linear-gradient(135deg, #2563eb, #60a5fa);
+}
+
+.register-page__header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  font-style: italic;
+}
+
+.register-page__header p {
+  margin: 6px 0 0;
+  color: var(--text-soft);
+}
+
+.register-page__form {
+  display: grid;
+  gap: 16px;
+}
+
+.register-page__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.register-page__section-title {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary);
+}
+
+@media (max-width: 700px) {
+  .register-page__card {
+    padding: 24px;
+  }
+
+  .register-page__header {
+    align-items: flex-start;
+  }
+
+  .register-page__grid {
+    grid-template-columns: 1fr;
+  }
+}

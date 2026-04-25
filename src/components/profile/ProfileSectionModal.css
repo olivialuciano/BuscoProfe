@@ -1,0 +1,72 @@
+.profile-section-modal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 350;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.profile-section-modal__dialog {
+  width: min(100%, 760px);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.22);
+  position: relative;
+}
+
+.profile-section-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border: none;
+  background: transparent;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: var(--text-soft);
+}
+
+.profile-section-modal__header {
+  padding: 28px 28px 0;
+}
+
+.profile-section-modal__header h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.profile-section-modal__header p {
+  margin: 8px 0 0;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.profile-section-modal__content {
+  padding: 24px 28px 28px;
+}
+
+@media (max-width: 768px) {
+  .profile-section-modal__dialog {
+    width: 100%;
+    max-height: calc(100vh - 24px);
+    border-radius: 24px;
+  }
+
+  .profile-section-modal__header {
+    padding: 24px 20px 0;
+  }
+
+  .profile-section-modal__content {
+    padding: 20px 20px 24px;
+  }
+}

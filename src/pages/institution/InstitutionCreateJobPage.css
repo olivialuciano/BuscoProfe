@@ -1,0 +1,25 @@
+.institution-create-job {
+  display: grid;
+  gap: 22px;
+}
+
+.institution-create-job__card {
+  padding: 28px;
+}
+
+.institution-create-job__form {
+  display: grid;
+  gap: 16px;
+}
+
+.institution-create-job__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 700px) {
+  .institution-create-job__grid {
+    grid-template-columns: 1fr;
+  }
+}

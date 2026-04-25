@@ -1,0 +1,425 @@
+.institution-dashboard {
+  display: grid;
+  gap: 22px;
+}
+
+.institution-dashboard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.institution-dashboard__hero-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.institution-dashboard__panel {
+  padding: 22px;
+  display: grid;
+  gap: 20px;
+}
+
+.institution-dashboard__panel--chart {
+  overflow: hidden;
+}
+
+.institution-dashboard__panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.institution-dashboard__panel-header--chart {
+  align-items: center;
+}
+
+.institution-dashboard__panel-header h2 {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 900;
+}
+
+.institution-dashboard__panel-header p {
+  margin: 6px 0 0;
+  color: var(--text-soft);
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.institution-dashboard__metric {
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-height: 126px;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+}
+
+.institution-dashboard__metric-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.institution-dashboard__metric-body {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.institution-dashboard__metric-title {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.institution-dashboard__metric-value {
+  margin: 0;
+  font-size: clamp(1.7rem, 2vw, 2.2rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.institution-dashboard__metric-subtitle {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.institution-dashboard__metric--primary .institution-dashboard__metric-icon {
+  background: rgba(1, 118, 211, 0.12);
+  color: #0176d3;
+}
+
+.institution-dashboard__metric--success .institution-dashboard__metric-icon {
+  background: rgba(22, 163, 74, 0.12);
+  color: #16a34a;
+}
+
+.institution-dashboard__metric--warning .institution-dashboard__metric-icon {
+  background: rgba(245, 158, 11, 0.14);
+  color: #d97706;
+}
+
+.institution-dashboard__metric--pink .institution-dashboard__metric-icon {
+  background: rgba(236, 72, 153, 0.12);
+  color: #db2777;
+}
+
+.institution-dashboard__status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.institution-dashboard__status-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 88px;
+  background: var(--surface, #fff);
+}
+
+.institution-dashboard__status-card--deleted {
+  border: 1px solid #ef4444;
+  box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.08);
+}
+
+.institution-dashboard__status-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.institution-dashboard__status-icon--active {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+}
+
+.institution-dashboard__status-icon--inactive {
+  background: rgba(245, 158, 11, 0.14);
+  color: #d97706;
+}
+
+.institution-dashboard__status-icon--closed {
+  background: rgba(99, 102, 241, 0.14);
+  color: #4f46e5;
+}
+
+.institution-dashboard__status-icon--deleted {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+}
+
+.institution-dashboard__status-card p {
+  margin: 0 0 4px;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.institution-dashboard__status-card strong {
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.institution-dashboard__chart-navigation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.institution-dashboard__chart-nav-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: white;
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.institution-dashboard__chart-nav-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--primary);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.institution-dashboard__chart-nav-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.institution-dashboard__chart-period {
+  min-width: 240px;
+  display: grid;
+  gap: 4px;
+  text-align: center;
+}
+
+.institution-dashboard__chart-period span {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.institution-dashboard__chart-period small {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+}
+
+.institution-dashboard__chart-area {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.institution-dashboard__chart-y-axis {
+  height: 290px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 6px 0 22px;
+}
+
+.institution-dashboard__chart-y-axis span {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+
+.institution-dashboard__chart-plot {
+  position: relative;
+  height: 290px;
+  border-radius: 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(248, 250, 252, 0.95) 0%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  border: 1px solid var(--border);
+  padding: 12px 18px 18px;
+  overflow: hidden;
+}
+
+.institution-dashboard__chart-grid-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed rgba(148, 163, 184, 0.45);
+  pointer-events: none;
+}
+
+.institution-dashboard__chart-average-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 2px solid #ec4899;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.institution-dashboard__chart-bars {
+  position: absolute;
+  inset: 12px 18px 18px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  align-items: end;
+  z-index: 3;
+}
+
+.institution-dashboard__chart-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  gap: 10px;
+  min-width: 0;
+  height: 100%;
+}
+
+.institution-dashboard__chart-value {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--text-soft);
+}
+
+.institution-dashboard__chart-bar-wrap {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+
+.institution-dashboard__chart-bar {
+  width: min(52px, 100%);
+  min-height: 6px;
+  border-radius: 16px 16px 10px 10px;
+  background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%);
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+  transition:
+    transform 0.2s ease,
+    height 0.2s ease;
+}
+
+.institution-dashboard__chart-bar:hover {
+  transform: translateY(-3px);
+}
+
+.institution-dashboard__chart-label {
+  font-size: 0.83rem;
+  color: var(--text-soft);
+  font-weight: 700;
+  text-align: center;
+}
+
+.institution-dashboard__chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.institution-dashboard__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-soft);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.institution-dashboard__legend-color {
+  width: 18px;
+  height: 4px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.institution-dashboard__legend-color--bars {
+  background: linear-gradient(90deg, #60a5fa 0%, #2563eb 100%);
+}
+
+.institution-dashboard__legend-color--average {
+  background: #ec4899;
+}
+
+@media (max-width: 1200px) {
+  .institution-dashboard__chart-navigation {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .institution-dashboard__hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .institution-dashboard__status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .institution-dashboard__panel,
+  .institution-dashboard__metric {
+    padding: 18px;
+  }
+
+  .institution-dashboard__panel-header--chart {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .institution-dashboard__chart-navigation {
+    justify-content: space-between;
+  }
+
+  .institution-dashboard__chart-period {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .institution-dashboard__chart-area {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .institution-dashboard__chart-plot {
+    padding: 12px 12px 18px;
+  }
+
+  .institution-dashboard__chart-bars {
+    inset: 12px 12px 18px;
+    gap: 10px;
+  }
+
+  .institution-dashboard__chart-bar {
+    width: min(40px, 100%);
+  }
+}

@@ -1,0 +1,76 @@
+.institution-job-postings-page {
+  display: grid;
+  gap: 22px;
+}
+
+.institution-job-postings-page__topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.institution-job-postings-page__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.institution-job-postings-page__card-wrapper {
+  cursor: pointer;
+}
+
+.institution-job-postings-page__card {
+  padding: 22px;
+  display: grid;
+  gap: 14px;
+  height: 100%;
+  transition: 0.2s ease;
+}
+
+.institution-job-postings-page__card:hover {
+  transform: translateY(-2px);
+}
+
+.institution-job-postings-page__card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.institution-job-postings-page__card p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.institution-job-postings-page__meta {
+  display: grid;
+  gap: 10px;
+}
+
+.institution-job-postings-page__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+}
+
+.institution-job-postings-page__meta svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .institution-job-postings-page__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .institution-job-postings-page__topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

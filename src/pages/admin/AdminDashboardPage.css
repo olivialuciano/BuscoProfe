@@ -1,0 +1,244 @@
+.admin-dashboard {
+  display: grid;
+  gap: 22px;
+}
+
+.admin-dashboard__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.admin-dashboard__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.admin-dashboard__panel {
+  padding: 22px;
+  display: grid;
+  gap: 16px;
+}
+
+.admin-dashboard__panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-dashboard__panel-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.admin-dashboard__panel-header svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.admin-dashboard__mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.admin-dashboard__mini-grid div {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  background: #fbfdff;
+  display: grid;
+  gap: 4px;
+}
+
+.admin-dashboard__mini-grid strong {
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.admin-dashboard__mini-grid span {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
+.admin-dashboard__breakdown {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-dashboard__breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: #fbfdff;
+}
+
+.admin-dashboard__breakdown-row span {
+  color: var(--text-soft);
+}
+
+.admin-dashboard__breakdown-row strong {
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.admin-dashboard__breakdown-row--danger {
+  border-color: rgba(239, 68, 68, 0.24);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.admin-dashboard__chart {
+  min-height: 240px;
+  overflow-x: auto;
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  padding: 12px 4px 4px;
+}
+
+.admin-dashboard__bar-item {
+  min-width: 72px;
+  height: 220px;
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  justify-items: center;
+  gap: 8px;
+}
+
+.admin-dashboard__bar-track {
+  width: 38px;
+  height: 160px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.08);
+  display: flex;
+  align-items: end;
+  overflow: hidden;
+}
+
+.admin-dashboard__bar-fill {
+  width: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+.admin-dashboard__bar-item strong {
+  font-weight: 900;
+}
+
+.admin-dashboard__bar-item span {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+}
+
+.admin-dashboard__alerts {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-dashboard__alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(245, 158, 11, 0.24);
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: rgba(245, 158, 11, 0.07);
+}
+
+.admin-dashboard__alert span {
+  color: var(--text-soft);
+}
+
+.admin-dashboard__alert strong {
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.admin-dashboard__empty-text {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+@media (max-width: 1000px) {
+  .admin-dashboard__stats,
+  .admin-dashboard__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-dashboard {
+    gap: 18px;
+  }
+
+  .admin-dashboard__panel {
+    padding: 18px;
+  }
+
+  .admin-dashboard__mini-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard__panel-header {
+    align-items: flex-start;
+  }
+
+  .admin-dashboard__chart {
+    min-height: 220px;
+  }
+}
+
+.admin-dashboard__users-summary {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-dashboard__user-types {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.admin-dashboard__user-type {
+  min-height: 58px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fbfdff;
+  padding: 9px 10px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-dashboard__user-type svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.admin-dashboard__user-type span {
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.admin-dashboard__user-type strong {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--text);
+}
+
+@media (max-width: 700px) {
+  .admin-dashboard__user-types {
+    grid-template-columns: 1fr;
+  }
+}

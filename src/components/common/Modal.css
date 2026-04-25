@@ -1,0 +1,121 @@
+.app-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.app-modal {
+  width: min(100%, 420px);
+  background: white;
+  border-radius: 28px;
+  padding: 28px;
+  position: relative;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25);
+  border: 1px solid var(--border);
+}
+
+.app-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-soft);
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+}
+
+.app-modal__icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+}
+
+.app-modal__icon--default {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.app-modal__icon--danger {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.app-modal__icon--warning {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.app-modal h3 {
+  margin: 0 0 10px;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.app-modal p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.app-modal__actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.app-modal__actions > * {
+  flex: 1;
+}
+
+.app-modal__button {
+  border: none;
+  border-radius: 16px;
+  padding: 12px 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.app-modal__button--secondary {
+  background: #f1f5f9;
+  color: var(--text);
+}
+
+.app-modal__button--danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.app-modal__button--primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .app-modal {
+    border-radius: 24px;
+    padding: 24px;
+  }
+
+  .app-modal__actions {
+    flex-direction: column-reverse;
+  }
+
+  .app-modal__actions > * {
+    width: 100%;
+  }
+}

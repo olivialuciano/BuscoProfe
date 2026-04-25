@@ -1,0 +1,245 @@
+.institution-professors-page {
+  display: grid;
+  gap: 22px;
+  position: relative;
+}
+
+.institution-professors-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.institution-professors-page__header-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.institution-professors-page__search-card {
+  padding: 20px;
+}
+
+.institution-professors-page__search-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+}
+
+.institution-professors-page__search-wrap {
+  display: grid;
+  gap: 10px;
+}
+
+.institution-professors-page__search-wrap svg {
+  color: var(--primary);
+}
+
+.institution-professors-page__filter-button {
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+}
+
+.institution-professors-page__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.institution-professors-page__card-wrapper {
+  cursor: pointer;
+}
+
+.institution-professors-page__card {
+  padding: 22px;
+  display: grid;
+  gap: 16px;
+  height: 100%;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.institution-professors-page__card:hover {
+  transform: translateY(-2px);
+}
+
+.institution-professors-page__card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.institution-professors-page__title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.institution-professors-page__person-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary) 10%, white);
+  border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.institution-professors-page__title-block {
+  min-width: 0;
+}
+
+.institution-professors-page__title-block h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.institution-professors-page__title-block p {
+  margin: 6px 0 0;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.institution-professors-page__meta {
+  display: grid;
+  gap: 10px;
+}
+
+.institution-professors-page__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+}
+
+.institution-professors-page__meta svg,
+.institution-professors-page__hint svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.institution-professors-page__description {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.institution-professors-page__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.institution-professors-page__filters-panel {
+  position: fixed;
+  top: 0;
+  right: -380px;
+  width: min(360px, 100%);
+  height: 100vh;
+  background: white;
+  border-left: 1px solid var(--border);
+  box-shadow: -18px 0 40px rgba(15, 23, 42, 0.12);
+  z-index: 120;
+  transition: right 0.28s ease;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.institution-professors-page__filters-panel--open {
+  right: 0;
+}
+
+.institution-professors-page__filters-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 18px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.institution-professors-page__filters-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.institution-professors-page__filters-close {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: white;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.institution-professors-page__filters-content {
+  padding: 18px;
+  display: grid;
+  align-content: start;
+  gap: 24px;
+}
+
+.institution-professors-page__filters-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.24);
+  z-index: 110;
+  border: none;
+}
+
+@media (max-width: 900px) {
+  .institution-professors-page__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .institution-professors-page__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .institution-professors-page__header-actions {
+    flex-direction: column;
+  }
+
+  .institution-professors-page__header-actions > * {
+    width: 100%;
+  }
+
+  .institution-professors-page__search-row {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
+
+  .institution-professors-page__filter-button {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+  }
+
+  .institution-professors-page__filters-panel {
+    width: min(100%, 340px);
+  }
+}

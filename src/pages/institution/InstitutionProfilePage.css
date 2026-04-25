@@ -1,0 +1,322 @@
+.institution-profile {
+  display: grid;
+  gap: 22px;
+}
+
+.institution-profile__top-card {
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  background: white;
+  padding: 28px;
+}
+
+.institution-profile__top-card-content {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.institution-profile__top-card-content h1 {
+  margin: 0;
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  font-style: italic;
+  overflow-wrap: anywhere;
+}
+
+.institution-profile__top-card-content h2 {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 1rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.institution-profile__section {
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.institution-profile__section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.institution-profile__section-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.institution-profile__section-title-wrap h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.institution-profile__section-title-wrap svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.institution-profile__icon-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.institution-profile__icon-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  transition: 0.2s ease;
+}
+
+.institution-profile__icon-button:hover {
+  transform: translateY(-1px);
+  color: var(--primary);
+  border-color: rgba(37, 99, 235, 0.28);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.institution-profile__summary-block {
+  display: grid;
+  gap: 10px;
+}
+
+.institution-profile__summary-long {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.institution-profile__hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.institution-profile__whatsapp-button {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  border: 1px solid rgba(37, 99, 235, 0.22);
+  background: transparent;
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  transition: 0.2s ease;
+}
+
+.institution-profile__whatsapp-button:hover {
+  transform: translateY(-1px);
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.institution-profile__details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.institution-profile__detail-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #fbfdff;
+  min-width: 0;
+}
+
+.institution-profile__detail-card svg,
+.institution-profile__contact-row svg {
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.institution-profile__detail-card strong {
+  display: block;
+  margin-bottom: 4px;
+  overflow-wrap: anywhere;
+}
+
+.institution-profile__detail-card span {
+  color: var(--text-soft);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.institution-profile__contact-modal {
+  display: grid;
+  gap: 14px;
+}
+
+.institution-profile__contact-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f8fbff;
+  border: 1px solid var(--border);
+  min-width: 0;
+}
+
+.institution-profile__contact-row span {
+  overflow-wrap: anywhere;
+}
+
+.institution-profile__modal-form {
+  display: grid;
+  gap: 16px;
+}
+
+.institution-profile__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.institution-profile__modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .institution-profile__details-grid,
+  .institution-profile__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .institution-profile {
+    gap: 18px;
+  }
+
+  .institution-profile__top-card,
+  .institution-profile__section {
+    padding: 20px;
+  }
+
+  .institution-profile__top-card-content h1 {
+    font-size: clamp(1.6rem, 7vw, 2rem);
+    line-height: 1.05;
+  }
+
+  .institution-profile__top-card-content h2 {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .institution-profile__section-header {
+    align-items: flex-start;
+  }
+
+  .institution-profile__section-title-wrap {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .institution-profile__section-title-wrap h3 {
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  .institution-profile__hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .institution-profile__details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .institution-profile__detail-card {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .institution-profile__modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .institution-profile__modal-actions > * {
+    width: 100%;
+  }
+
+  .institution-profile__contact-row {
+    padding: 12px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .institution-profile__top-card,
+  .institution-profile__section {
+    padding: 16px;
+  }
+
+  .institution-profile__icon-button {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+  }
+
+  .institution-profile__detail-card {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .institution-profile__summary-long {
+    line-height: 1.7;
+  }
+}
+
+.institution-profile__cover-wrap {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.institution-profile__cover-image,
+.institution-profile__cover-placeholder {
+  width: 100%;
+  max-width: 520px;
+  height: 220px;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+}
+
+.institution-profile__cover-image {
+  object-fit: cover;
+  display: block;
+}
+
+.institution-profile__cover-placeholder {
+  display: grid;
+  place-items: center;
+  background: var(--surface-2, #f4f7fb);
+  color: var(--text-soft);
+  font-weight: 700;
+}

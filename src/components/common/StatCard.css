@@ -1,0 +1,33 @@
+.stat-card {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stat-card__icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: var(--primary);
+}
+
+.stat-card__label {
+  display: block;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-soft);
+  font-weight: 800;
+}
+
+.stat-card__value {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.6rem;
+  font-weight: 900;
+  font-style: italic;
+}

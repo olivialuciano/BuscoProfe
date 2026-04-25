@@ -1,0 +1,94 @@
+.saved-job-postings-page {
+  display: grid;
+  gap: 22px;
+}
+
+.saved-job-postings-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+}
+
+.saved-job-postings-page__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.saved-job-postings-page__card-wrapper {
+  cursor: pointer;
+}
+
+.saved-job-postings-page__card {
+  padding: 22px;
+  display: grid;
+  gap: 14px;
+  height: 100%;
+  transition: 0.2s ease;
+}
+
+.saved-job-postings-page__card:hover {
+  transform: translateY(-2px);
+}
+
+.saved-job-postings-page__card-top {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.saved-job-postings-page__bookmark-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(250, 204, 21, 0.14);
+  color: #ca8a04;
+  border: 1px solid rgba(250, 204, 21, 0.28);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.saved-job-postings-page__card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.saved-job-postings-page__card p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.saved-job-postings-page__meta {
+  display: grid;
+  gap: 10px;
+}
+
+.saved-job-postings-page__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+}
+
+.saved-job-postings-page__meta svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .saved-job-postings-page__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .saved-job-postings-page__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

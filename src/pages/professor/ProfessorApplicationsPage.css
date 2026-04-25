@@ -1,0 +1,127 @@
+.professor-applications {
+  display: grid;
+  gap: 22px;
+}
+
+.professor-applications__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+}
+
+.professor-applications__list {
+  display: grid;
+  gap: 16px;
+}
+
+.professor-applications__item-wrapper {
+  cursor: pointer;
+}
+
+.professor-applications__item {
+  padding: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  transition: 0.2s ease;
+}
+
+.professor-applications__item:hover {
+  transform: translateY(-2px);
+}
+
+.professor-applications__item-main {
+  flex: 1;
+  display: grid;
+  gap: 14px;
+}
+
+.professor-applications__item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.professor-applications__item-top h3 {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 900;
+}
+
+.professor-applications__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.professor-applications__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+}
+
+.professor-applications__meta svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.application-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.application-badge--pending {
+  background: rgba(59, 130, 246, 0.08);
+  color: #1d4ed8;
+}
+
+.application-badge--review {
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+}
+
+.application-badge--accepted {
+  background: rgba(34, 197, 94, 0.1);
+  color: #15803d;
+}
+
+.application-badge--rejected {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+.application-badge--withdrawn {
+  background: rgba(107, 114, 128, 0.1);
+  color: #374151;
+}
+
+.application-badge--neutral {
+  background: rgba(148, 163, 184, 0.12);
+  color: #475569;
+}
+
+@media (max-width: 768px) {
+  .professor-applications__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .professor-applications__item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .professor-applications__item-top {
+    flex-direction: column;
+  }
+}

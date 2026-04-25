@@ -1,0 +1,489 @@
+.job-detail-page {
+  display: grid;
+  gap: 22px;
+}
+
+.job-detail-page__topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.job-detail-page__topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.job-detail-page__institution-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.job-detail-page__institution-actions-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.job-detail-page__institution-actions-row .job-status-button {
+  background: white;
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  box-shadow: none;
+}
+
+.job-detail-page__institution-actions-row
+  .job-status-button:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #1e40af;
+  transform: translateY(-1px);
+}
+
+.job-detail-page__institution-actions-row .job-status-button--closed {
+  background: white;
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.28);
+}
+
+.job-detail-page__institution-actions-row
+  .job-status-button--closed:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #1e40af;
+}
+
+.job-detail-page__institution-actions-row .job-status-button--disabled,
+.job-detail-page__institution-actions-row .job-status-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.job-detail-page__delete-button,
+.job-detail-page__save-button {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: white;
+  flex-shrink: 0;
+}
+
+.job-detail-page__delete-button {
+  border: 1px solid rgba(239, 68, 68, 0.18);
+  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.job-detail-page__delete-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.job-detail-page__save-button {
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.job-detail-page__hero {
+  padding: 28px;
+  display: grid;
+  gap: 18px;
+}
+
+.job-detail-page__hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.job-detail-page__hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+.job-detail-page__hero p {
+  margin: 8px 0 0;
+  color: var(--text-soft);
+  line-height: 1.8;
+}
+
+.job-detail-page__hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 2px;
+}
+
+.job-detail-page__applied-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+}
+
+.job-detail-page__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.job-detail-page__badge--open {
+  background: rgba(59, 130, 246, 0.08);
+  color: #1d4ed8;
+}
+
+.job-detail-page__badge--inactive {
+  background: rgba(239, 68, 68, 0.08);
+  color: #b91c1c;
+}
+
+.job-detail-page__badge--closed {
+  background: rgba(107, 114, 128, 0.08);
+  color: #374151;
+}
+
+.job-detail-page__badge--neutral {
+  background: rgba(148, 163, 184, 0.12);
+  color: #475569;
+}
+
+.job-detail-page__meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.job-detail-page__meta-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #fbfdff;
+}
+
+.job-detail-page__meta-card svg {
+  color: var(--primary);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.job-detail-page__meta-card strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.job-detail-page__meta-card span {
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.job-detail-page__section {
+  padding: 24px;
+  display: grid;
+  gap: 10px;
+}
+
+.job-detail-page__section h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.job-detail-page__section p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.8;
+}
+
+.job-detail-page__delete-modal,
+.job-detail-page__apply-modal {
+  display: grid;
+  gap: 18px;
+}
+
+.job-detail-page__delete-warning,
+.job-detail-page__apply-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 16px;
+}
+
+.job-detail-page__delete-warning {
+  background: rgba(239, 68, 68, 0.08);
+  color: #991b1b;
+  border: 1px solid rgba(239, 68, 68, 0.14);
+}
+
+.job-detail-page__apply-info {
+  background: rgba(59, 130, 246, 0.08);
+  color: #1e40af;
+  border: 1px solid rgba(59, 130, 246, 0.14);
+}
+
+.job-detail-page__delete-warning svg,
+.job-detail-page__apply-info svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.job-detail-page__delete-actions,
+.job-detail-page__apply-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.job-detail-page__delete-confirm {
+  background: rgba(239, 68, 68, 0.08);
+  color: #b91c1c;
+  border: 1px solid rgba(239, 68, 68, 0.18);
+}
+
+.job-detail-page__apply-confirm {
+  background: rgba(59, 130, 246, 0.08);
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.18);
+}
+
+.job-detail-page__textarea-wrap {
+  display: grid;
+  gap: 8px;
+}
+
+.job-detail-page__textarea-wrap label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.job-detail-page__textarea-wrap textarea {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  font: inherit;
+  color: var(--text);
+  background: white;
+  outline: none;
+}
+
+.job-detail-page__textarea-wrap textarea:focus {
+  border-color: rgba(59, 130, 246, 0.45);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+}
+
+.job-detail-page__save-button {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: transparent;
+  color: #64748b;
+  display: grid;
+  place-items: center;
+  transition: 0.2s ease;
+}
+
+.job-detail-page__save-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(245, 158, 11, 0.28);
+  color: #d97706;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.job-detail-page__save-button--active {
+  color: #eab308;
+  background: rgba(250, 204, 21, 0.14);
+  border-color: rgba(250, 204, 21, 0.35);
+}
+
+.job-detail-page__save-button--active:hover {
+  color: #ca8a04;
+  background: rgba(250, 204, 21, 0.2);
+  border-color: rgba(250, 204, 21, 0.42);
+}
+
+.job-detail-page__save-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.job-detail-page__applications-button {
+  background: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.22);
+  transition: 0.2s ease;
+}
+
+.job-detail-page__applications-button:hover {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: rgba(59, 130, 246, 0.32);
+  color: #1e40af;
+  transform: translateY(-1px);
+}
+
+.job-detail-page__applications-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .job-detail-page__topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .job-detail-page__topbar-actions {
+    justify-content: center;
+  }
+
+  .job-detail-page__institution-actions {
+    justify-items: center;
+  }
+  .job-detail-page__applications-button {
+    margin: 0 auto;
+  }
+
+  .job-detail-page__institution-actions-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+  }
+  .job-detail-page__institution-actions-row > * {
+    width: auto;
+  }
+
+  .job-detail-page__institution-actions-row .job-status-button {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .job-detail-page__hero-top {
+    flex-direction: column;
+  }
+
+  .job-detail-page__meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .job-detail-page__hero,
+  .job-detail-page__section {
+    padding: 20px;
+  }
+
+  .job-detail-page__delete-actions,
+  .job-detail-page__apply-actions {
+    flex-direction: column-reverse;
+  }
+
+  .job-detail-page__delete-actions > *,
+  .job-detail-page__apply-actions > * {
+    width: 100%;
+  }
+  .job-detail-page__title-row {
+    align-items: flex-start;
+  }
+
+  .job-detail-page__title-row .job-detail-page__save-button {
+    margin-top: 2px;
+  }
+}
+
+.job-detail-page__outline-action {
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 14px;
+  background: transparent;
+  background-color: transparent;
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.job-detail-page__outline-action:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.06);
+  border-color: rgba(59, 130, 246, 0.45);
+  color: #1e40af;
+}
+
+.job-detail-page__outline-action:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.job-detail-page__title-content {
+  min-width: 0;
+  width: 100%;
+}
+
+.job-detail-page__title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+}
+
+.job-detail-page__title-row h1 {
+  min-width: 0;
+  flex: 1;
+}
+
+.job-detail-page__title-row .job-detail-page__save-button {
+  flex-shrink: 0;
+}
+
+.job-detail-page__institution-link {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  font: inherit;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.job-detail-page__institution-link:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.job-detail-page__institution-link:disabled {
+  color: var(--text-soft);
+  cursor: not-allowed;
+  text-decoration: none;
+}

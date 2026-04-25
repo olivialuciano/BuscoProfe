@@ -1,0 +1,69 @@
+.bp-button {
+  border: none;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: 0.2s ease;
+}
+
+.bp-button:hover {
+  transform: translateY(-1px);
+}
+
+.bp-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.bp-button--full {
+  width: 100%;
+}
+
+.bp-button--sm {
+  padding: 10px 16px;
+  font-size: 0.74rem;
+}
+
+.bp-button--md {
+  padding: 14px 20px;
+  font-size: 0.78rem;
+}
+
+.bp-button--lg {
+  padding: 16px 24px;
+  font-size: 0.84rem;
+}
+
+.bp-button--primary {
+  color: white;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  box-shadow: 0 16px 30px rgba(37, 99, 235, 0.24);
+}
+
+.bp-button--secondary {
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.bp-button--success {
+  color: white;
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 16px 30px rgba(16, 185, 129, 0.24);
+}
+
+.bp-button--danger {
+  color: white;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.bp-button__icon {
+  display: inline-flex;
+  align-items: center;
+}

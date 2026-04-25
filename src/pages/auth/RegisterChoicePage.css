@@ -1,0 +1,127 @@
+.register-choice-page {
+  display: grid;
+  place-items: center;
+}
+
+.register-choice-page__card {
+  width: min(100%, 920px);
+  padding: 34px;
+}
+
+.register-choice-page__header {
+  margin-bottom: 28px;
+}
+
+.register-choice-page__header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  font-style: italic;
+}
+
+.register-choice-page__header p {
+  margin: 8px 0 0;
+  color: var(--text-soft);
+}
+
+.register-choice-page__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.register-choice-card {
+  border-radius: 30px;
+  padding: 28px;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  min-height: 220px;
+  transition: 0.22s ease;
+  border: 1px solid var(--border);
+}
+
+.register-choice-card:hover {
+  transform: translateY(-3px);
+}
+
+.register-choice-card--institution {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: white;
+  box-shadow: 0 18px 40px rgba(29, 78, 216, 0.22);
+}
+
+.register-choice-card--professor {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  color: #0f172a;
+  box-shadow: 0 18px 40px rgba(37, 99, 235, 0.12);
+}
+
+.register-choice-card__icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.register-choice-card--institution .register-choice-card__icon {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.register-choice-card--professor .register-choice-card__icon {
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+}
+
+.register-choice-card__content {
+  flex: 1;
+}
+
+.register-choice-card__eyebrow {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.9;
+}
+
+.register-choice-card__content h2 {
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  font-style: italic;
+}
+
+.register-choice-card__content p {
+  margin: 0;
+  line-height: 1.55;
+  font-size: 0.96rem;
+  opacity: 0.92;
+}
+
+.register-choice-card__arrow {
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .register-choice-page__card {
+    padding: 24px;
+  }
+
+  .register-choice-page__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .register-choice-card {
+    min-height: auto;
+    align-items: flex-start;
+  }
+}

@@ -1,0 +1,35 @@
+.home-page {
+  display: grid;
+  gap: 28px;
+}
+
+.home-page__features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.home-page__feature-card {
+  padding: 28px;
+}
+
+.home-page__feature-card svg {
+  color: var(--primary);
+}
+
+.home-page__feature-card h3 {
+  margin: 18px 0 10px;
+  font-size: 1.15rem;
+}
+
+.home-page__feature-card p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+@media (max-width: 900px) {
+  .home-page__features {
+    grid-template-columns: 1fr;
+  }
+}

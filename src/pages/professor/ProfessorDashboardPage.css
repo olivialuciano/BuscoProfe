@@ -1,0 +1,16 @@
+.professor-dashboard {
+  display: grid;
+  gap: 22px;
+}
+
+.professor-dashboard__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+@media (max-width: 900px) {
+  .professor-dashboard__stats {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,196 @@
+.professor-notifications-page {
+  display: grid;
+  gap: 22px;
+}
+
+.professor-notifications-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+}
+
+.professor-notifications-page__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.professor-notifications-page__summary {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.professor-notifications-page__summary-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  background: #fbfdff;
+}
+
+.professor-notifications-page__summary-item svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.professor-notifications-page__summary-item strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.professor-notifications-page__summary-item span {
+  color: var(--text-soft);
+}
+
+.professor-notifications-page__list {
+  display: grid;
+  gap: 16px;
+}
+
+.professor-notifications-page__card {
+  padding: 22px;
+  display: grid;
+  gap: 14px;
+  border-left: 4px solid transparent;
+}
+
+.professor-notifications-page__card--unread {
+  border-left-color: var(--primary);
+  background: #fcfdff;
+}
+
+.professor-notifications-page__card--read {
+  opacity: 0.92;
+}
+
+.professor-notifications-page__card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.professor-notifications-page__card-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.professor-notifications-page__card-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.professor-notifications-page__unread-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--primary);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.professor-notifications-page__message {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.75;
+}
+
+.professor-notifications-page__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.professor-notifications-page__date {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
+.professor-notifications-page__read-label {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.notification-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.notification-chip--purple {
+  background: rgba(168, 85, 247, 0.12);
+  color: #7e22ce;
+}
+
+.notification-chip--blue {
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
+}
+
+.notification-chip--green {
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+}
+
+.notification-chip--yellow {
+  background: rgba(250, 204, 21, 0.18);
+  color: #a16207;
+}
+
+.notification-chip--orange {
+  background: rgba(249, 115, 22, 0.14);
+  color: #c2410c;
+}
+
+.notification-chip--red {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+}
+
+.notification-chip--neutral {
+  background: rgba(148, 163, 184, 0.12);
+  color: #475569;
+}
+
+@media (max-width: 768px) {
+  .professor-notifications-page__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .professor-notifications-page__actions {
+    flex-direction: column;
+  }
+
+  .professor-notifications-page__actions > * {
+    width: 100%;
+  }
+
+  .professor-notifications-page__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .professor-notifications-page__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .professor-notifications-page__footer > * {
+    width: 100%;
+  }
+}
