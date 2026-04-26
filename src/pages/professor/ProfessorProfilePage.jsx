@@ -12,6 +12,7 @@ import {
   Pencil,
   Trash2,
   MessageCircle,
+  Star,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
@@ -92,6 +93,27 @@ function buildUserUpdatePayload(base) {
   };
 }
 
+function getProfileFormValues(data) {
+  return {
+    firstName: data.firstName || "",
+    lastName: data.lastName || "",
+    title: data.title || "",
+    aboutMe: data.aboutMe || "",
+    languages: data.languages || "",
+    city: data.city || "",
+    province: data.province || "",
+    country: data.country || "",
+    address: data.address || "",
+    preferredZone: data.preferredZone || "",
+    availability: data.availability ?? "",
+    workModePreference: data.workModePreference ?? "",
+    contractPreference: data.contractPreference ?? "",
+    whatsApp1: data.whatsApp1 || "",
+    whatsApp2: data.whatsApp2 || "",
+    whatsApp3: data.whatsApp3 || "",
+  };
+}
+
 const availabilityOptionsWithEmpty = [
   { value: "", label: "No especificado" },
   ...availabilityOptions,
@@ -116,8 +138,7 @@ function ProfessorProfilePage() {
   const [sectionError, setSectionError] = useState("");
   const [openModal, setOpenModal] = useState(null);
 
-  const [savingBasicInfo, setSavingBasicInfo] = useState(false);
-  const [savingContactInfo, setSavingContactInfo] = useState(false);
+  const [savingProfileSection, setSavingProfileSection] = useState("");
   const [savingLanguages, setSavingLanguages] = useState(false);
 
   const [addingExperience, setAddingExperience] = useState(false);
@@ -237,15 +258,59 @@ function ProfessorProfilePage() {
     );
   }, [profile.whatsApp1, profile.whatsApp2, profile.whatsApp3]);
 
-  const whatsappLine = useMemo(() => {
-    return whatsappNumbers.join(" | ");
-  }, [whatsappNumbers]);
-
   const primaryWhatsapp = useMemo(() => {
     return sanitizeWhatsAppNumber(
       profile.whatsApp1 || profile.whatsApp2 || profile.whatsApp3 || "",
     );
   }, [profile.whatsApp1, profile.whatsApp2, profile.whatsApp3]);
+
+  const availabilityLabel = useMemo(() => {
+    if (
+      profile.availability === "" ||
+      profile.availability === null ||
+      profile.availability === undefined
+    ) {
+      return "No especificado";
+    }
+
+    return (
+      availabilityOptions.find(
+        (x) => Number(x.value) === Number(profile.availability),
+      )?.label || "No especificado"
+    );
+  }, [profile.availability]);
+
+  const workModeLabel = useMemo(() => {
+    if (
+      profile.workModePreference === "" ||
+      profile.workModePreference === null ||
+      profile.workModePreference === undefined
+    ) {
+      return "No especificado";
+    }
+
+    return (
+      workModeOptions.find(
+        (x) => Number(x.value) === Number(profile.workModePreference),
+      )?.label || "No especificado"
+    );
+  }, [profile.workModePreference]);
+
+  const contractPreferenceLabel = useMemo(() => {
+    if (
+      profile.contractPreference === "" ||
+      profile.contractPreference === null ||
+      profile.contractPreference === undefined
+    ) {
+      return "No especificado";
+    }
+
+    return (
+      contractTypeOptions.find(
+        (x) => Number(x.value) === Number(profile.contractPreference),
+      )?.label || "No especificado"
+    );
+  }, [profile.contractPreference]);
 
   const resetExperienceForm = () => {
     setExperienceForm({
@@ -283,24 +348,7 @@ function ProfessorProfilePage() {
   };
 
   const syncFormsFromProfile = (data) => {
-    const normalized = {
-      firstName: data.firstName || "",
-      lastName: data.lastName || "",
-      title: data.title || "",
-      aboutMe: data.aboutMe || "",
-      languages: data.languages || "",
-      city: data.city || "",
-      province: data.province || "",
-      country: data.country || "",
-      address: data.address || "",
-      preferredZone: data.preferredZone || "",
-      availability: data.availability ?? "",
-      workModePreference: data.workModePreference ?? "",
-      contractPreference: data.contractPreference ?? "",
-      whatsApp1: data.whatsApp1 || "",
-      whatsApp2: data.whatsApp2 || "",
-      whatsApp3: data.whatsApp3 || "",
-    };
+    const normalized = getProfileFormValues(data);
 
     setProfile(normalized);
 
@@ -327,6 +375,33 @@ function ProfessorProfilePage() {
 
     setLanguagesForm({
       languages: normalized.languages,
+    });
+  };
+
+  const syncEditableFormsFromCurrentProfile = () => {
+    setBasicInfoForm({
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      title: profile.title,
+      aboutMe: profile.aboutMe,
+      city: profile.city,
+      province: profile.province,
+      country: profile.country,
+      address: profile.address,
+      preferredZone: profile.preferredZone,
+      availability: profile.availability,
+      workModePreference: profile.workModePreference,
+      contractPreference: profile.contractPreference,
+    });
+
+    setContactForm({
+      whatsApp1: profile.whatsApp1,
+      whatsApp2: profile.whatsApp2,
+      whatsApp3: profile.whatsApp3,
+    });
+
+    setLanguagesForm({
+      languages: profile.languages,
     });
   };
 
@@ -364,6 +439,20 @@ function ProfessorProfilePage() {
 
   const openSectionModal = (modalName) => {
     setSectionError("");
+
+    if (
+      [
+        "nameInfo",
+        "aboutInfo",
+        "contactInfo",
+        "preferencesInfo",
+        "languages",
+        "contactInfoView",
+      ].includes(modalName)
+    ) {
+      syncEditableFormsFromCurrentProfile();
+    }
+
     setOpenModal(modalName);
   };
 
@@ -394,79 +483,48 @@ function ProfessorProfilePage() {
     });
   };
 
-  const saveBasicInfo = async (event) => {
-    event.preventDefault();
-    if (savingBasicInfo) return;
+  const getSectionSuccessMessage = (sectionName) => {
+    const messages = {
+      nameInfo: "Nombre y título actualizados.",
+      aboutInfo: "Presentación actualizada.",
+      contactInfo: "Información de contacto actualizada.",
+      preferencesInfo: "Preferencias laborales actualizadas.",
+    };
 
-    setSectionError("");
-    setSavingBasicInfo(true);
-
-    try {
-      const payload = buildUserUpdatePayload({
-        ...profile,
-        ...basicInfoForm,
-        ...contactForm,
-      });
-
-      await updateUser(user.id, payload);
-
-      const nextProfile = {
-        ...profile,
-        ...basicInfoForm,
-        ...contactForm,
-      };
-
-      setProfile(nextProfile);
-      showToast("Datos personales actualizados.", "success");
-      closeSectionModal();
-    } catch (err) {
-      console.error("PUT basic info error:", err.response?.data || err);
-      setSectionError(
-        getApiErrorMessage(
-          err,
-          "No se pudieron actualizar los datos personales.",
-        ),
-      );
-    } finally {
-      setSavingBasicInfo(false);
-    }
+    return messages[sectionName] || "Perfil actualizado.";
   };
 
-  const saveContactInfo = async (event) => {
+  const saveProfileSection = async (event, sectionName) => {
     event.preventDefault();
-    if (savingContactInfo) return;
+    if (savingProfileSection) return;
 
     setSectionError("");
-    setSavingContactInfo(true);
+    setSavingProfileSection(sectionName);
 
     try {
-      const payload = buildUserUpdatePayload({
-        ...profile,
-        ...basicInfoForm,
-        ...contactForm,
-      });
-
-      await updateUser(user.id, payload);
-
       const nextProfile = {
         ...profile,
         ...basicInfoForm,
         ...contactForm,
       };
 
+      const payload = buildUserUpdatePayload(nextProfile);
+
+      await updateUser(user.id, payload);
+
       setProfile(nextProfile);
-      showToast("Información de contacto actualizada.", "success");
+      showToast(getSectionSuccessMessage(sectionName), "success");
       closeSectionModal();
     } catch (err) {
-      console.error("PUT contact error:", err.response?.data || err);
+      console.error(
+        "PUT professor profile section error:",
+        err.response?.data || err,
+      );
       setSectionError(
-        getApiErrorMessage(
-          err,
-          "No se pudo actualizar la información de contacto.",
-        ),
+        getApiErrorMessage(err, "No se pudo actualizar esta sección."),
       );
     } finally {
-      setSavingContactInfo(false);
+      setSavingProfileSection("");
     }
   };
 
@@ -738,8 +796,22 @@ function ProfessorProfilePage() {
 
       <Card className="linkedin-profile__top-card">
         <div className="linkedin-profile__top-card-content">
-          <h1>{fullName}</h1>
-          <h2>{shortDescription}</h2>
+          <div className="linkedin-profile__name-row">
+            <div>
+              <h1>{fullName}</h1>
+              <h2>{shortDescription}</h2>
+            </div>
+
+            <button
+              type="button"
+              className="linkedin-profile__icon-button"
+              onClick={() => openSectionModal("nameInfo")}
+              aria-label="Editar nombre y título"
+              title="Editar nombre y título"
+            >
+              <Pencil size={18} />
+            </button>
+          </div>
         </div>
       </Card>
 
@@ -753,7 +825,9 @@ function ProfessorProfilePage() {
             <button
               type="button"
               className="linkedin-profile__icon-button"
-              onClick={() => openSectionModal("basicInfo")}
+              onClick={() => openSectionModal("aboutInfo")}
+              aria-label="Editar presentación"
+              title="Editar presentación"
             >
               <Pencil size={18} />
             </button>
@@ -783,6 +857,57 @@ function ProfessorProfilePage() {
           >
             <MessageCircle size={18} />
           </button>
+        </div>
+      </Card>
+
+      <Card className="linkedin-profile__section">
+        <div className="linkedin-profile__section-header">
+          <div className="linkedin-profile__section-title-wrap">
+            <Star size={20} />
+            <h3>Preferencias</h3>
+          </div>
+
+          <div className="linkedin-profile__icon-actions">
+            <button
+              type="button"
+              className="linkedin-profile__icon-button"
+              onClick={() => openSectionModal("preferencesInfo")}
+              aria-label="Editar preferencias"
+              title="Editar preferencias"
+            >
+              <Pencil size={18} />
+            </button>
+          </div>
+        </div>
+
+        <div className="linkedin-profile__details-grid">
+          <div className="linkedin-profile__detail-card">
+            <div>
+              <strong>Zona preferida</strong>
+              <span>{profile.preferredZone || "No informada"}</span>
+            </div>
+          </div>
+
+          <div className="linkedin-profile__detail-card">
+            <div>
+              <strong>Disponibilidad</strong>
+              <span>{availabilityLabel}</span>
+            </div>
+          </div>
+
+          <div className="linkedin-profile__detail-card">
+            <div>
+              <strong>Modalidad</strong>
+              <span>{workModeLabel}</span>
+            </div>
+          </div>
+
+          <div className="linkedin-profile__detail-card">
+            <div>
+              <strong>Tipo de contrato</strong>
+              <span>{contractPreferenceLabel}</span>
+            </div>
+          </div>
         </div>
       </Card>
 
@@ -1022,7 +1147,9 @@ function ProfessorProfilePage() {
               <button
                 type="button"
                 className="linkedin-profile__icon-button"
-                onClick={() => openSectionModal("basicInfo")}
+                onClick={() => openSectionModal("contactInfo")}
+                aria-label="Editar contacto"
+                title="Editar contacto"
               >
                 <Pencil size={18} />
               </button>
@@ -1059,6 +1186,7 @@ function ProfessorProfilePage() {
                 </div>
               </div>
             ) : null}
+
             <div className="linkedin-profile__detail-card">
               <MapPin size={16} />
               <div>
@@ -1078,76 +1206,20 @@ function ProfessorProfilePage() {
                 <span>{profile.address || "No informada"}</span>
               </div>
             </div>
-
-            <div className="linkedin-profile__detail-card">
-              <Briefcase size={16} />
-              <div>
-                <strong>Zona preferida</strong>
-                <span>{profile.preferredZone || "No informada"}</span>
-              </div>
-            </div>
-
-            <div className="linkedin-profile__detail-card">
-              <Briefcase size={16} />
-              <div>
-                <strong>Disponibilidad</strong>
-                <span>
-                  {profile.availability === "" ||
-                  profile.availability === null ||
-                  profile.availability === undefined
-                    ? "No especificado"
-                    : availabilityOptions.find(
-                        (x) => Number(x.value) === Number(profile.availability),
-                      )?.label || "No especificado"}
-                </span>
-              </div>
-            </div>
-
-            <div className="linkedin-profile__detail-card">
-              <Briefcase size={16} />
-              <div>
-                <strong>Modalidad</strong>
-                <span>
-                  {profile.workModePreference === "" ||
-                  profile.workModePreference === null ||
-                  profile.workModePreference === undefined
-                    ? "No especificado"
-                    : workModeOptions.find(
-                        (x) =>
-                          Number(x.value) ===
-                          Number(profile.workModePreference),
-                      )?.label || "No especificado"}
-                </span>
-              </div>
-            </div>
-
-            <div className="linkedin-profile__detail-card">
-              <Briefcase size={16} />
-              <div>
-                <strong>Tipo de contrato</strong>
-                <span>
-                  {profile.contractPreference === "" ||
-                  profile.contractPreference === null ||
-                  profile.contractPreference === undefined
-                    ? "No especificado"
-                    : contractTypeOptions.find(
-                        (x) =>
-                          Number(x.value) ===
-                          Number(profile.contractPreference),
-                      )?.label || "No especificado"}
-                </span>
-              </div>
-            </div>
           </div>
         </Card>
       </ProfileSectionModal>
 
       <ProfileSectionModal
-        open={openModal === "basicInfo"}
+        open={openModal === "nameInfo"}
         onClose={closeSectionModal}
-        title="Editar datos personales"
+        title="Editar nombre y título"
+        subtitle="Actualizá cómo se muestra tu nombre y tu descripción corta."
       >
-        <form className="linkedin-profile__modal-form" onSubmit={saveBasicInfo}>
+        <form
+          className="linkedin-profile__modal-form"
+          onSubmit={(event) => saveProfileSection(event, "nameInfo")}
+        >
           <div className="linkedin-profile__grid">
             <InputField
               label="Nombre"
@@ -1164,19 +1236,82 @@ function ProfessorProfilePage() {
           </div>
 
           <InputField
-            label="Descripción corta"
+            label="Título o descripción corta"
             name="title"
             value={basicInfoForm.title}
             onChange={handleBasicInfoChange}
+            placeholder="Ej: Profesor/a de educación física"
           />
 
+          <div className="linkedin-profile__modal-actions">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={closeSectionModal}
+              disabled={savingProfileSection === "nameInfo"}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              disabled={savingProfileSection === "nameInfo"}
+            >
+              {savingProfileSection === "nameInfo" ? "Guardando..." : "Guardar"}
+            </Button>
+          </div>
+        </form>
+      </ProfileSectionModal>
+
+      <ProfileSectionModal
+        open={openModal === "aboutInfo"}
+        onClose={closeSectionModal}
+        title="Editar presentación"
+        subtitle="Contá quién sos, tu experiencia y tu propuesta profesional."
+      >
+        <form
+          className="linkedin-profile__modal-form"
+          onSubmit={(event) => saveProfileSection(event, "aboutInfo")}
+        >
           <InputField
-            label="Descripción larga"
+            label="Sobre mí"
             name="aboutMe"
             textarea
             value={basicInfoForm.aboutMe}
             onChange={handleBasicInfoChange}
+            placeholder="Ej: Soy profesor/a con experiencia en entrenamiento funcional, grupos deportivos y preparación física..."
           />
+
+          <div className="linkedin-profile__modal-actions">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={closeSectionModal}
+              disabled={savingProfileSection === "aboutInfo"}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              disabled={savingProfileSection === "aboutInfo"}
+            >
+              {savingProfileSection === "aboutInfo"
+                ? "Guardando..."
+                : "Guardar"}
+            </Button>
+          </div>
+        </form>
+      </ProfileSectionModal>
+
+      <ProfileSectionModal
+        open={openModal === "contactInfo"}
+        onClose={closeSectionModal}
+        title="Editar contacto"
+        subtitle="Actualizá tus números de WhatsApp y tu ubicación."
+      >
+        <form
+          className="linkedin-profile__modal-form"
+          onSubmit={(event) => saveProfileSection(event, "contactInfo")}
+        >
           <div className="linkedin-profile__grid">
             <InputField
               label="WhatsApp 1"
@@ -1229,13 +1364,45 @@ function ProfessorProfilePage() {
             />
           </div>
 
+          <div className="linkedin-profile__modal-actions">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={closeSectionModal}
+              disabled={savingProfileSection === "contactInfo"}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              disabled={savingProfileSection === "contactInfo"}
+            >
+              {savingProfileSection === "contactInfo"
+                ? "Guardando..."
+                : "Guardar"}
+            </Button>
+          </div>
+        </form>
+      </ProfileSectionModal>
+
+      <ProfileSectionModal
+        open={openModal === "preferencesInfo"}
+        onClose={closeSectionModal}
+        title="Editar preferencias"
+      >
+        <form
+          className="linkedin-profile__modal-form"
+          onSubmit={(event) => saveProfileSection(event, "preferencesInfo")}
+        >
+          <InputField
+            label="Zona preferida"
+            name="preferredZone"
+            value={basicInfoForm.preferredZone}
+            onChange={handleBasicInfoChange}
+            placeholder="Ej: Rosario centro, zona norte, modalidad online..."
+          />
+
           <div className="linkedin-profile__grid">
-            <InputField
-              label="Zona preferida"
-              name="preferredZone"
-              value={basicInfoForm.preferredZone}
-              onChange={handleBasicInfoChange}
-            />
             <SelectField
               label="Disponibilidad"
               name="availability"
@@ -1243,9 +1410,6 @@ function ProfessorProfilePage() {
               onChange={handleBasicInfoChange}
               options={availabilityOptionsWithEmpty}
             />
-          </div>
-
-          <div className="linkedin-profile__grid">
             <SelectField
               label="Modalidad"
               name="workModePreference"
@@ -1253,61 +1417,14 @@ function ProfessorProfilePage() {
               onChange={handleBasicInfoChange}
               options={workModeOptionsWithEmpty}
             />
-            <SelectField
-              label="Tipo de contrato"
-              name="contractPreference"
-              value={basicInfoForm.contractPreference}
-              onChange={handleBasicInfoChange}
-              options={contractTypeOptionsWithEmpty}
-            />
           </div>
 
-          <div className="linkedin-profile__modal-actions">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={closeSectionModal}
-              disabled={savingBasicInfo}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={savingBasicInfo}>
-              {savingBasicInfo ? "Guardando..." : "Guardar"}
-            </Button>
-          </div>
-        </form>
-      </ProfileSectionModal>
-
-      <ProfileSectionModal
-        open={openModal === "contactInfo"}
-        onClose={closeSectionModal}
-        title="Editar contacto"
-        subtitle="Actualizá tus números de WhatsApp."
-      >
-        <form
-          className="linkedin-profile__modal-form"
-          onSubmit={saveContactInfo}
-        >
-          <div className="linkedin-profile__grid">
-            <InputField
-              label="WhatsApp 1"
-              name="whatsApp1"
-              value={contactForm.whatsApp1}
-              onChange={handleContactChange}
-            />
-            <InputField
-              label="WhatsApp 2"
-              name="whatsApp2"
-              value={contactForm.whatsApp2}
-              onChange={handleContactChange}
-            />
-          </div>
-
-          <InputField
-            label="WhatsApp 3"
-            name="whatsApp3"
-            value={contactForm.whatsApp3}
-            onChange={handleContactChange}
+          <SelectField
+            label="Tipo de contrato"
+            name="contractPreference"
+            value={basicInfoForm.contractPreference}
+            onChange={handleBasicInfoChange}
+            options={contractTypeOptionsWithEmpty}
           />
 
           <div className="linkedin-profile__modal-actions">
@@ -1315,12 +1432,17 @@ function ProfessorProfilePage() {
               type="button"
               variant="secondary"
               onClick={closeSectionModal}
-              disabled={savingContactInfo}
+              disabled={savingProfileSection === "preferencesInfo"}
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={savingContactInfo}>
-              {savingContactInfo ? "Guardando..." : "Guardar"}
+            <Button
+              type="submit"
+              disabled={savingProfileSection === "preferencesInfo"}
+            >
+              {savingProfileSection === "preferencesInfo"
+                ? "Guardando..."
+                : "Guardar"}
             </Button>
           </div>
         </form>

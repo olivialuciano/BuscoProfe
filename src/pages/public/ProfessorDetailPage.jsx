@@ -3,9 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   Briefcase,
   Sparkles,
-  Clock3,
   FileText,
-  Globe,
   Languages,
   GraduationCap,
   MapPin,
@@ -13,6 +11,7 @@ import {
   Mail,
   MessageCircle,
   Phone,
+  Star,
 } from "lucide-react";
 import { getProfessorPublicProfile } from "../../api/usersService";
 import { useToast } from "../../contexts/ToastContext";
@@ -47,15 +46,21 @@ function getEnumLabel(options, value) {
 
 function formatDate(value) {
   if (!value) return "No especificada";
+
   const date = new Date(value);
+
   if (Number.isNaN(date.getTime())) return "No especificada";
+
   return date.toLocaleDateString();
 }
 
 function formatRange(startDate, endDate, isCurrent = false) {
   const start = startDate ? formatDate(startDate) : "Inicio no especificado";
+
   if (isCurrent) return `${start} - Actualidad`;
+
   const end = endDate ? formatDate(endDate) : "Actualidad";
+
   return `${start} - ${end}`;
 }
 
@@ -99,6 +104,7 @@ function ProfessorDetailPage() {
 
   const fullName = useMemo(() => {
     if (!professor) return "Profesor";
+
     return (
       `${professor.firstName || ""} ${professor.lastName || ""}`.trim() ||
       "Profesor"
@@ -146,6 +152,7 @@ function ProfessorDetailPage() {
 
   const languages = useMemo(() => {
     if (!professor?.languages) return [];
+
     return professor.languages
       .split(",")
       .map((item) => item.trim())
@@ -173,6 +180,18 @@ function ProfessorDetailPage() {
     [professor],
   );
 
+  const availabilityLabel = useMemo(() => {
+    return getEnumLabel(availabilityOptions, professor?.availability);
+  }, [professor]);
+
+  const workModeLabel = useMemo(() => {
+    return getEnumLabel(workModeOptions, professor?.workModePreference);
+  }, [professor]);
+
+  const contractPreferenceLabel = useMemo(() => {
+    return getEnumLabel(contractTypeOptions, professor?.contractPreference);
+  }, [professor]);
+
   const openWhatsAppChat = () => {
     if (!primaryWhatsapp) {
       showToast("No hay un número de WhatsApp cargado.", "error");
@@ -196,6 +215,7 @@ function ProfessorDetailPage() {
         <ApiMessage type="error">
           {error || "No se encontró el perfil del profesor."}
         </ApiMessage>
+
         <Button variant="secondary" onClick={() => navigate(-1)}>
           Volver
         </Button>
@@ -219,7 +239,7 @@ function ProfessorDetailPage() {
 
         <p className="professor-detail__summary-long">{aboutText}</p>
 
-        <div className="linkedin-profile__hero-actions">
+        <div className="professor-detail__hero-actions">
           <Button
             type="button"
             variant="secondary"
@@ -231,13 +251,50 @@ function ProfessorDetailPage() {
 
           <button
             type="button"
-            className="linkedin-profile__whatsapp-button"
+            className="professor-detail__whatsapp-button"
             onClick={openWhatsAppChat}
             aria-label="Abrir WhatsApp"
             title="Abrir WhatsApp"
           >
             <MessageCircle size={18} />
           </button>
+        </div>
+      </Card>
+
+      <Card className="professor-detail__section">
+        <div className="professor-detail__section-title-wrap">
+          <Star size={20} />
+          <h3>Preferencias</h3>
+        </div>
+
+        <div className="professor-detail__details-grid">
+          <div className="professor-detail__detail-card">
+            <div>
+              <strong>Zona preferida</strong>
+              <span>{professor.preferredZone || "No informada"}</span>
+            </div>
+          </div>
+
+          <div className="professor-detail__detail-card">
+            <div>
+              <strong>Disponibilidad</strong>
+              <span>{availabilityLabel}</span>
+            </div>
+          </div>
+
+          <div className="professor-detail__detail-card">
+            <div>
+              <strong>Modalidad</strong>
+              <span>{workModeLabel}</span>
+            </div>
+          </div>
+
+          <div className="professor-detail__detail-card">
+            <div>
+              <strong>Tipo de contrato</strong>
+              <span>{contractPreferenceLabel}</span>
+            </div>
+          </div>
         </div>
       </Card>
 
@@ -252,9 +309,13 @@ function ProfessorDetailPage() {
             {experiences.map((experience) => (
               <div key={experience.id} className="professor-detail__item-card">
                 <h4>{experience.position || "Puesto no especificado"}</h4>
+
                 <p className="professor-detail__item-subtitle">
-                  {experience.companyName || "Empresa no especificada"}
+                  {experience.institutionName ||
+                    experience.companyName ||
+                    "Institución no especificada"}
                 </p>
+
                 <span className="professor-detail__item-range">
                   {formatRange(
                     experience.startDate,
@@ -262,6 +323,7 @@ function ProfessorDetailPage() {
                     experience.isCurrent,
                   )}
                 </span>
+
                 <p className="professor-detail__item-description">
                   {experience.description || "Sin descripción."}
                 </p>
@@ -287,12 +349,15 @@ function ProfessorDetailPage() {
             {educations.map((education) => (
               <div key={education.id} className="professor-detail__item-card">
                 <h4>{education.title || "Título no especificado"}</h4>
+
                 <p className="professor-detail__item-subtitle">
                   {education.institutionName || "Institución no especificada"}
                 </p>
+
                 <span className="professor-detail__item-range">
                   {formatRange(education.startDate, education.endDate)}
                 </span>
+
                 <p className="professor-detail__item-description">
                   {education.description ||
                     education.status ||
@@ -323,15 +388,33 @@ function ProfessorDetailPage() {
                 className="professor-detail__item-card"
               >
                 <h4>{certification.name || "Certificación"}</h4>
+
                 <p className="professor-detail__item-subtitle">
                   {certification.issuer || "Emisor no especificado"}
                 </p>
+
                 <span className="professor-detail__item-range">
                   {formatDate(certification.issueDate)}
                 </span>
-                <p className="professor-detail__item-description">
-                  {certification.credentialUrl || "Sin enlace de credencial."}
-                </p>
+
+                {certification.credentialUrl ? (
+                  <a
+                    href={
+                      certification.credentialUrl.startsWith("http")
+                        ? certification.credentialUrl
+                        : `https://${certification.credentialUrl}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="professor-detail__item-link"
+                  >
+                    Ver credencial
+                  </a>
+                ) : (
+                  <p className="professor-detail__item-description">
+                    Sin enlace de credencial.
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -391,97 +474,53 @@ function ProfessorDetailPage() {
         open={openModal === "contactInfoView"}
         onClose={closeSectionModal}
         title="Información de contacto"
-        subtitle="Datos de contacto visibles del profesor."
       >
-        <div className="linkedin-profile__contact-modal">
-          {[professor.whatsApp1, professor.whatsApp2, professor.whatsApp3]
-            .map((whatsapp, index) => ({
-              value: whatsapp,
-              label: `WhatsApp ${index + 1}`,
-            }))
-            .filter((item) => item.value)
-            .map((item) => (
-              <div key={item.label} className="professor-detail__detail-card">
-                <Phone size={16} />
-                <div>
-                  <strong>{item.label}</strong>
-                  <span>{item.value}</span>
-                </div>
-              </div>
-            ))}
+        <div className="professor-detail__contact-modal">
+          {whatsappNumbers.length
+            ? [professor.whatsApp1, professor.whatsApp2, professor.whatsApp3]
+                .map((whatsapp, index) => ({
+                  value: whatsapp,
+                  label: `WhatsApp ${index + 1}`,
+                }))
+                .filter((item) => item.value)
+                .map((item) => (
+                  <div
+                    key={item.label}
+                    className="professor-detail__detail-card"
+                  >
+                    <Phone size={16} />
+                    <div>
+                      <strong>{item.label}</strong>
+                      <span>{item.value}</span>
+                    </div>
+                  </div>
+                ))
+            : null}
 
           <div className="professor-detail__detail-card">
             <MapPin size={16} />
             <div>
               <strong>Ubicación</strong>
-
               <span>{locationText}</span>
             </div>
           </div>
 
-          {professor.address ? (
-            <div className="professor-detail__detail-card">
-              <MapPin size={16} />
-              <div>
-                <strong>Dirección</strong>
-                <span>{professor.address}</span>
-              </div>
+          <div className="professor-detail__detail-card">
+            <MapPin size={16} />
+            <div>
+              <strong>Dirección</strong>
+              <span>{professor.address || "No informada"}</span>
             </div>
-          ) : null}
-
-          {professor.preferredZone ? (
-            <div className="professor-detail__detail-card">
-              <Briefcase size={16} />
-              <div>
-                <strong>Zona preferida</strong>
-
-                <span>{professor.preferredZone}</span>
-              </div>
-            </div>
-          ) : null}
+          </div>
 
           {!whatsappNumbers.length &&
           locationText === "No informada" &&
-          !professor.address &&
-          !professor.preferredZone ? (
+          !professor.address ? (
             <EmptyState
               title="Sin contacto cargado"
               description="Todavía no hay datos de contacto visibles."
             />
           ) : null}
-
-          <div className="professor-detail__detail-card">
-            <Clock3 size={16} />
-            <div>
-              <strong>Disponibilidad</strong>
-              <span>
-                {getEnumLabel(availabilityOptions, professor.availability)}
-              </span>
-            </div>
-          </div>
-
-          <div className="professor-detail__detail-card">
-            <Briefcase size={16} />
-            <div>
-              <strong>Modalidad</strong>
-              <span>
-                {getEnumLabel(workModeOptions, professor.workModePreference)}
-              </span>
-            </div>
-          </div>
-
-          <div className="professor-detail__detail-card">
-            <FileText size={16} />
-            <div>
-              <strong>Tipo de contrato</strong>
-              <span>
-                {getEnumLabel(
-                  contractTypeOptions,
-                  professor.contractPreference,
-                )}
-              </span>
-            </div>
-          </div>
         </div>
       </ProfileSectionModal>
     </div>

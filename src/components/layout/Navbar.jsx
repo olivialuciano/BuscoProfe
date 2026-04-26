@@ -13,6 +13,8 @@ import {
   Bell,
   Bookmark,
   Star,
+  Menu,
+  X,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
@@ -23,20 +25,28 @@ import "./Navbar.css";
 function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
+
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const handleLogoutClick = () => {
+    setShowMobileMenu(false);
     setShowLogoutModal(true);
   };
 
   const confirmLogout = () => {
     logout();
     setShowLogoutModal(false);
+    setShowMobileMenu(false);
     navigate("/");
   };
 
   const cancelLogout = () => {
     setShowLogoutModal(false);
+  };
+
+  const closeMobileMenu = () => {
+    setShowMobileMenu(false);
   };
 
   const links = !isAuthenticated
@@ -45,19 +55,16 @@ function Navbar() {
           to: "/",
           label: "Inicio",
           icon: <House size={20} />,
-          mobileClassName: "",
         },
         {
           to: "/jobs",
           label: "Vacantes",
           icon: <Briefcase size={20} />,
-          mobileClassName: "",
         },
         {
           to: "/register",
           label: "Registro",
           icon: <UserPlus size={20} />,
-          mobileClassName: "mobile-bottom-nav__item--register",
         },
       ]
     : isAdmin(user)
@@ -66,13 +73,11 @@ function Navbar() {
             to: "/admin",
             label: "Dashboard",
             icon: <House size={20} />,
-            mobileClassName: "",
           },
           {
             to: "/admin/users",
             label: "Usuarios",
             icon: <Users size={20} />,
-            mobileClassName: "",
           },
         ]
       : isInstitution(user)
@@ -81,38 +86,31 @@ function Navbar() {
               to: "/institution",
               label: "Dashboard",
               icon: <LayoutDashboard size={20} />,
-              mobileClassName: "",
             },
             {
               to: "/jobs",
               label: "Vacantes",
               icon: <Briefcase size={20} />,
-              mobileClassName: "",
             },
             {
               to: "/institution/jobs",
               label: "Mis vacantes",
               icon: <Bookmark size={20} />,
-              mobileClassName: "",
             },
             {
               to: "/institution/professors",
               label: "Profesores",
               icon: <Users size={20} />,
-              mobileClassName: "",
             },
-
             {
               to: "/institution/notifications",
               label: "Notificaciones",
               icon: <Bell size={20} />,
-              mobileClassName: "",
             },
             {
               to: "/institution/profile",
               label: "Perfil",
               icon: <UserCircle size={20} />,
-              mobileClassName: "",
             },
           ]
         : [
@@ -120,44 +118,36 @@ function Navbar() {
               to: "/jobs",
               label: "Vacantes",
               icon: <Briefcase size={20} />,
-              mobileClassName: "",
             },
             {
               to: "/professor/institutions",
               label: "Instituciones",
               icon: <Building2 size={20} />,
-              mobileClassName: "",
             },
-
             {
               to: "/professor/profile",
               label: "Perfil",
               icon: <UserCircle size={20} />,
-              mobileClassName: "",
             },
             {
               to: "/professor/applications",
               label: "Postulaciones",
               icon: <LayoutDashboard size={20} />,
-              mobileClassName: "",
             },
             {
               to: "/professor/saved-jobs",
               label: "Guardados",
               icon: <Bookmark size={20} />,
-              mobileClassName: "",
             },
             {
               to: "/professor/favorite-institutions",
               label: "Favoritas",
               icon: <Star size={20} />,
-              mobileClassName: "",
             },
             {
               to: "/professor/notifications",
               label: "Notificaciones",
               icon: <Bell size={20} />,
-              mobileClassName: "",
             },
           ];
 
@@ -169,6 +159,7 @@ function Navbar() {
             <div className="navbar__logo">
               <BriefcaseBusiness size={20} />
             </div>
+
             <div>
               <strong>Busco Profe</strong>
               <span>Portal laboral deportivo</span>
@@ -208,57 +199,88 @@ function Navbar() {
         </div>
       </header>
 
-      <header className="mobile-top-brand">
-        <Link to="/" className="mobile-top-brand__link">
-          <div className="mobile-top-brand__logo">
+      <header className="mobile-navbar">
+        <Link to="/" className="mobile-navbar__brand" onClick={closeMobileMenu}>
+          <div className="mobile-navbar__logo">
             <BriefcaseBusiness size={18} />
           </div>
-          <span>BUSCO PROFE</span>
+
+          <div className="mobile-navbar__brand-text">
+            <strong>Busco Profe</strong>
+            <span>Portal laboral deportivo</span>
+          </div>
         </Link>
+
+        <button
+          type="button"
+          className="mobile-navbar__menu-button"
+          onClick={() => setShowMobileMenu((current) => !current)}
+          aria-label={showMobileMenu ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={showMobileMenu}
+        >
+          {showMobileMenu ? <X size={22} /> : <Menu size={22} />}
+        </button>
       </header>
 
-      <nav
-        className={`mobile-bottom-nav ${!isAuthenticated ? "mobile-bottom-nav--guest" : ""}`}
-      >
-        {links.map((link) => (
-          <NavLink
-            key={link.to}
-            to={link.to}
-            className={({ isActive }) =>
-              `mobile-bottom-nav__item ${link.mobileClassName || ""} ${isActive ? "mobile-bottom-nav__item--active" : ""}`.trim()
-            }
-            aria-label={link.label}
-            title={link.label}
+      {showMobileMenu && (
+        <div className="mobile-menu-overlay" onClick={closeMobileMenu}>
+          <nav
+            className="mobile-menu"
+            onClick={(event) => event.stopPropagation()}
           >
-            <span className="mobile-bottom-nav__icon">{link.icon}</span>
-          </NavLink>
-        ))}
+            <div className="mobile-menu__header">
+              <button
+                type="button"
+                className="mobile-menu__close"
+                onClick={closeMobileMenu}
+                aria-label="Cerrar menú"
+              >
+                <X size={20} />
+              </button>
+            </div>
 
-        {isAuthenticated ? (
-          <button
-            type="button"
-            className="mobile-bottom-nav__item mobile-bottom-nav__item--logout"
-            onClick={handleLogoutClick}
-            aria-label="Cerrar sesión"
-            title="Cerrar sesión"
-          >
-            <span className="mobile-bottom-nav__icon">
-              <LogOut size={20} />
-            </span>
-          </button>
-        ) : (
-          <Link
-            to="/login"
-            className="mobile-bottom-nav__item mobile-bottom-nav__item--login"
-            aria-label="Iniciar sesión"
-            title="Iniciar sesión"
-          >
-            <span className="mobile-bottom-nav__icon">
-              <LogIn size={20} />
-            </span>
-          </Link>
-        )}
-      </nav>
+            <div className="mobile-menu__links">
+              {links.map((link) => (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  onClick={closeMobileMenu}
+                  className={({ isActive }) =>
+                    `mobile-menu__link ${
+                      isActive ? "mobile-menu__link--active" : ""
+                    }`
+                  }
+                >
+                  <span className="mobile-menu__icon">{link.icon}</span>
+                  <span>{link.label}</span>
+                </NavLink>
+              ))}
+            </div>
+
+            <div className="mobile-menu__footer">
+              {isAuthenticated ? (
+                <button
+                  type="button"
+                  className="mobile-menu__action mobile-menu__action--logout"
+                  onClick={handleLogoutClick}
+                >
+                  <LogOut size={18} />
+                  Cerrar sesión
+                </button>
+              ) : (
+                <Link
+                  to="/login"
+                  className="mobile-menu__action mobile-menu__action--login"
+                  onClick={closeMobileMenu}
+                >
+                  <LogIn size={18} />
+                  Ingresar
+                </Link>
+              )}
+            </div>
+          </nav>
+        </div>
+      )}
 
       <Modal
         open={showLogoutModal}
@@ -276,6 +298,7 @@ function Navbar() {
             >
               Cancelar
             </button>
+
             <button
               type="button"
               className="app-modal__button app-modal__button--danger"

@@ -362,28 +362,84 @@ function InstitutionDetailPage() {
           <div className="institution-profile__detail-card">
             <div>
               <strong>Sitio web</strong>
-              <span>{institution.website || "No especificado"}</span>
+
+              {institution.website ? (
+                <a
+                  href={
+                    institution.website.startsWith("http")
+                      ? institution.website
+                      : `https://${institution.website}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {institution.website}
+                </a>
+              ) : (
+                <span>No especificado</span>
+              )}
             </div>
           </div>
 
           <div className="institution-profile__detail-card">
             <div>
               <strong>Instagram</strong>
-              <span>{institution.instagramUrl || "No especificado"}</span>
+
+              {institution.instagramUrl ? (
+                <a
+                  href={`https://www.instagram.com/${institution.instagramUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  @{institution.instagramUrl}
+                </a>
+              ) : (
+                <span>No especificado</span>
+              )}
             </div>
           </div>
 
           <div className="institution-profile__detail-card">
             <div>
               <strong>Facebook</strong>
-              <span>{institution.facebookUrl || "No especificado"}</span>
+
+              {institution.facebookUrl ? (
+                <a
+                  href={
+                    institution.facebookUrl.startsWith("http")
+                      ? institution.facebookUrl
+                      : `https://${institution.facebookUrl}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Ver Facebook
+                </a>
+              ) : (
+                <span>No especificado</span>
+              )}
             </div>
           </div>
 
           <div className="institution-profile__detail-card">
             <div>
               <strong>LinkedIn</strong>
-              <span>{institution.linkedInUrl || "No especificado"}</span>
+
+              {institution.linkedInUrl ? (
+                <a
+                  href={
+                    institution.linkedInUrl.startsWith("http")
+                      ? institution.linkedInUrl
+                      : `https://${institution.linkedInUrl}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Ver LinkedIn
+                </a>
+              ) : (
+                <span>No especificado</span>
+              )}
             </div>
           </div>
         </div>

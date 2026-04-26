@@ -320,3 +320,51 @@
   color: var(--text-soft);
   font-weight: 700;
 }
+
+.institution-profile__name-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.institution-profile__name-row > div {
+  min-width: 0;
+}
+
+.institution-profile__contact-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 4px;
+}
+
+.institution-profile__contact-modal-header strong {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.institution-profile__icon-button--small {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+}
+
+.institution-profile__detail-card a {
+  color: var(--primary);
+  font-weight: 800;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.institution-profile__detail-card a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .institution-profile__name-row {
+    align-items: flex-start;
+  }
+}

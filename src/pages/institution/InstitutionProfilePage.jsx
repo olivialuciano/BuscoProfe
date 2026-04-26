@@ -28,6 +28,10 @@ function sanitizeWhatsAppNumber(value) {
   return (value || "").replace(/\D/g, "");
 }
 
+function sanitizeInstagramUsername(value) {
+  return (value || "").replace("@", "").trim();
+}
+
 function buildInstitutionUpdatePayload(base) {
   return {
     legalName: base.legalName || null,
@@ -41,7 +45,7 @@ function buildInstitutionUpdatePayload(base) {
     shortDescription: base.shortDescription || null,
     description: base.description || null,
     website: base.website || null,
-    instagramUrl: base.instagramUrl || null,
+    instagramUrl: sanitizeInstagramUsername(base.instagramUrl) || null,
     facebookUrl: base.facebookUrl || null,
     linkedInUrl: base.linkedInUrl || null,
     benefitsText: base.benefitsText || null,
@@ -58,6 +62,31 @@ function buildInstitutionUpdatePayload(base) {
   };
 }
 
+function getProfileFormValues(data) {
+  return {
+    legalName: data.legalName || "",
+    tradeName: data.tradeName || "",
+    institutionType: data.institutionType ?? "",
+    shortDescription: data.shortDescription || "",
+    description: data.description || "",
+    website: data.website || "",
+    instagramUrl: data.instagramUrl || "",
+    facebookUrl: data.facebookUrl || "",
+    linkedInUrl: data.linkedInUrl || "",
+    benefitsText: data.benefitsText || "",
+    valuesText: data.valuesText || "",
+    hiringInfoText: data.hiringInfoText || "",
+    whatsApp1: data.whatsApp1 || "",
+    whatsApp2: data.whatsApp2 || "",
+    whatsApp3: data.whatsApp3 || "",
+    city: data.city || "",
+    province: data.province || "",
+    country: data.country || "",
+    address: data.address || "",
+    coverImageUrl: data.coverImageUrl || "",
+  };
+}
+
 const institutionTypeOptionsWithEmpty = [
   { value: "", label: "Seleccionar tipo" },
   ...INSTITUTION_TYPE_OPTIONS,
@@ -71,8 +100,7 @@ function InstitutionProfilePage() {
   const [error, setError] = useState("");
   const [sectionError, setSectionError] = useState("");
   const [openModal, setOpenModal] = useState(null);
-
-  const [savingInstitutionInfo, setSavingInstitutionInfo] = useState(false);
+  const [savingSection, setSavingSection] = useState("");
 
   const [profile, setProfile] = useState({
     legalName: "",
@@ -142,10 +170,6 @@ function InstitutionProfilePage() {
     );
   }, [profile.whatsApp1, profile.whatsApp2, profile.whatsApp3]);
 
-  const whatsappLine = useMemo(() => {
-    return whatsappNumbers.join(" | ");
-  }, [whatsappNumbers]);
-
   const primaryWhatsapp = useMemo(() => {
     return sanitizeWhatsAppNumber(
       profile.whatsApp1 || profile.whatsApp2 || profile.whatsApp3 || "",
@@ -170,53 +194,12 @@ function InstitutionProfilePage() {
 
   const syncFormsFromProfile = (data) => {
     const normalized = {
-      legalName: data.legalName || "",
-      tradeName: data.tradeName || "",
-      institutionType: data.institutionType ?? "",
-      shortDescription: data.shortDescription || "",
-      description: data.description || "",
-      website: data.website || "",
-      instagramUrl: data.instagramUrl || "",
-      facebookUrl: data.facebookUrl || "",
-      linkedInUrl: data.linkedInUrl || "",
-      benefitsText: data.benefitsText || "",
-      valuesText: data.valuesText || "",
-      hiringInfoText: data.hiringInfoText || "",
-      whatsApp1: data.whatsApp1 || "",
-      whatsApp2: data.whatsApp2 || "",
-      whatsApp3: data.whatsApp3 || "",
-      city: data.city || "",
-      province: data.province || "",
-      country: data.country || "",
-      address: data.address || "",
-      coverImageUrl: data.coverImageUrl || "",
+      ...getProfileFormValues(data),
       validationStatus: data.validationStatus ?? null,
     };
 
     setProfile(normalized);
-
-    setInstitutionInfoForm({
-      legalName: normalized.legalName,
-      tradeName: normalized.tradeName,
-      institutionType: normalized.institutionType,
-      shortDescription: normalized.shortDescription,
-      description: normalized.description,
-      website: normalized.website,
-      instagramUrl: normalized.instagramUrl,
-      facebookUrl: normalized.facebookUrl,
-      linkedInUrl: normalized.linkedInUrl,
-      benefitsText: normalized.benefitsText,
-      valuesText: normalized.valuesText,
-      hiringInfoText: normalized.hiringInfoText,
-      whatsApp1: normalized.whatsApp1,
-      whatsApp2: normalized.whatsApp2,
-      whatsApp3: normalized.whatsApp3,
-      city: normalized.city,
-      province: normalized.province,
-      country: normalized.country,
-      address: normalized.address,
-      coverImageUrl: normalized.coverImageUrl,
-    });
+    setInstitutionInfoForm(getProfileFormValues(normalized));
   };
 
   const loadProfile = async () => {
@@ -245,6 +228,7 @@ function InstitutionProfilePage() {
 
   const openSectionModal = (modalName) => {
     setSectionError("");
+    setInstitutionInfoForm(getProfileFormValues(profile));
     setOpenModal(modalName);
   };
 
@@ -258,21 +242,35 @@ function InstitutionProfilePage() {
 
     setInstitutionInfoForm((current) => ({
       ...current,
-      [name]: type === "checkbox" ? checked : value,
+      [name]:
+        name === "instagramUrl"
+          ? sanitizeInstagramUsername(value)
+          : type === "checkbox"
+            ? checked
+            : value,
     }));
   };
 
-  const validateInstitutionInfoForm = () => {
-    const requiredFields = [
-      { key: "tradeName", label: "Nombre comercial" },
-      { key: "institutionType", label: "Tipo de institución" },
-      { key: "shortDescription", label: "Descripción corta" },
-      { key: "description", label: "Descripción larga" },
-      { key: "whatsApp1", label: "WhatsApp 1" },
-      { key: "country", label: "País" },
-      { key: "province", label: "Provincia" },
-      { key: "city", label: "Ciudad" },
-    ];
+  const validateSectionForm = (sectionName) => {
+    const requiredBySection = {
+      name: [
+        { key: "tradeName", label: "Nombre de la institución" },
+        { key: "shortDescription", label: "Descripción corta" },
+      ],
+      description: [{ key: "description", label: "Descripción" }],
+      institutionInfo: [
+        { key: "institutionType", label: "Tipo de institución" },
+      ],
+      contact: [
+        { key: "whatsApp1", label: "WhatsApp 1" },
+        { key: "country", label: "País" },
+        { key: "province", label: "Provincia" },
+        { key: "city", label: "Ciudad" },
+      ],
+      links: [],
+    };
+
+    const requiredFields = requiredBySection[sectionName] || [];
 
     for (const field of requiredFields) {
       const value = institutionInfoForm[field.key];
@@ -289,46 +287,67 @@ function InstitutionProfilePage() {
     return "";
   };
 
-  const saveInstitutionInfo = async (event) => {
+  const getSectionSuccessMessage = (sectionName) => {
+    const messages = {
+      name: "Nombre e imagen actualizados.",
+      description: "Descripción actualizada.",
+      institutionInfo: "Información institucional actualizada.",
+      contact: "Información de contacto actualizada.",
+      links: "Redes y enlaces actualizados.",
+    };
+
+    return messages[sectionName] || "Perfil actualizado.";
+  };
+
+  const saveProfileSection = async (event, sectionName) => {
     event.preventDefault();
-    if (savingInstitutionInfo) return;
+
+    if (savingSection) return;
 
     setSectionError("");
 
-    const validationMessage = validateInstitutionInfoForm();
+    const validationMessage = validateSectionForm(sectionName);
     if (validationMessage) {
       setSectionError(validationMessage);
       return;
     }
 
-    setSavingInstitutionInfo(true);
+    setSavingSection(sectionName);
 
     try {
-      const payload = buildInstitutionUpdatePayload({
-        ...profile,
+      const cleanedForm = {
         ...institutionInfoForm,
-      });
-
-      await updateUser(user.id, payload);
+        instagramUrl: sanitizeInstagramUsername(
+          institutionInfoForm.instagramUrl,
+        ),
+      };
 
       const nextProfile = {
         ...profile,
-        ...institutionInfoForm,
+        ...cleanedForm,
       };
 
+      const payload = buildInstitutionUpdatePayload(nextProfile);
+
+      await updateUser(user.id, payload);
+
       setProfile(nextProfile);
-      showToast("Datos institucionales actualizados.", "success");
+      setInstitutionInfoForm(getProfileFormValues(nextProfile));
+      showToast(getSectionSuccessMessage(sectionName), "success");
       closeSectionModal();
     } catch (err) {
-      console.error("PUT institution info error:", err.response?.data || err);
+      console.error(
+        "PUT institution profile section error:",
+        err.response?.data || err,
+      );
       setSectionError(
         getApiErrorMessage(
           err,
-          "No se pudieron actualizar los datos institucionales.",
+          "No se pudo actualizar esta sección del perfil.",
         ),
       );
     } finally {
-      setSavingInstitutionInfo(false);
+      setSavingSection("");
     }
   };
 
@@ -357,19 +376,29 @@ function InstitutionProfilePage() {
       <Card className="institution-profile__top-card">
         <div className="institution-profile__top-card-content">
           <div className="institution-profile__cover-wrap">
-            {profile.coverImageUrl ? (
-              <img
-                src={profile.coverImageUrl}
-                alt={`Imagen de ${institutionName}`}
-                className="institution-profile__cover-image"
-              />
-            ) : (
-              <img src={defaultimage} alt={`Imagen default`} />
-            )}
+            <img
+              src={profile.coverImageUrl || defaultimage}
+              alt={`Imagen de ${institutionName}`}
+              className="institution-profile__cover-image"
+            />
           </div>
 
-          <h1>{institutionName}</h1>
-          <h2>{shortDescription}</h2>
+          <div className="institution-profile__name-row">
+            <div>
+              <h1>{institutionName}</h1>
+              <h2>{shortDescription}</h2>
+            </div>
+
+            <button
+              type="button"
+              className="institution-profile__icon-button"
+              onClick={() => openSectionModal("name")}
+              aria-label="Editar nombre e imagen institucional"
+              title="Editar nombre e imagen institucional"
+            >
+              <Pencil size={18} />
+            </button>
+          </div>
         </div>
       </Card>
 
@@ -383,7 +412,9 @@ function InstitutionProfilePage() {
             <button
               type="button"
               className="institution-profile__icon-button"
-              onClick={() => openSectionModal("institutionInfo")}
+              onClick={() => openSectionModal("description")}
+              aria-label="Editar descripción"
+              title="Editar descripción"
             >
               <Pencil size={18} />
             </button>
@@ -428,6 +459,8 @@ function InstitutionProfilePage() {
               type="button"
               className="institution-profile__icon-button"
               onClick={() => openSectionModal("institutionInfo")}
+              aria-label="Editar información institucional"
+              title="Editar información institucional"
             >
               <Pencil size={18} />
             </button>
@@ -462,7 +495,9 @@ function InstitutionProfilePage() {
             <button
               type="button"
               className="institution-profile__icon-button"
-              onClick={() => openSectionModal("institutionInfo")}
+              onClick={() => openSectionModal("links")}
+              aria-label="Editar redes y enlaces"
+              title="Editar redes y enlaces"
             >
               <Pencil size={18} />
             </button>
@@ -473,28 +508,84 @@ function InstitutionProfilePage() {
           <div className="institution-profile__detail-card">
             <div>
               <strong>Sitio web</strong>
-              <span>{profile.website || "No especificado"}</span>
+
+              {profile.website ? (
+                <a
+                  href={
+                    profile.website.startsWith("http")
+                      ? profile.website
+                      : `https://${profile.website}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {profile.website}
+                </a>
+              ) : (
+                <span>No especificado</span>
+              )}
             </div>
           </div>
 
           <div className="institution-profile__detail-card">
             <div>
               <strong>Instagram</strong>
-              <span>{profile.instagramUrl || "No especificado"}</span>
+
+              {profile.instagramUrl ? (
+                <a
+                  href={`https://www.instagram.com/${profile.instagramUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  @{profile.instagramUrl}
+                </a>
+              ) : (
+                <span>No especificado</span>
+              )}
             </div>
           </div>
 
           <div className="institution-profile__detail-card">
             <div>
               <strong>Facebook</strong>
-              <span>{profile.facebookUrl || "No especificado"}</span>
+
+              {profile.facebookUrl ? (
+                <a
+                  href={
+                    profile.facebookUrl.startsWith("http")
+                      ? profile.facebookUrl
+                      : `https://${profile.facebookUrl}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Ver Facebook
+                </a>
+              ) : (
+                <span>No especificado</span>
+              )}
             </div>
           </div>
 
           <div className="institution-profile__detail-card">
             <div>
               <strong>LinkedIn</strong>
-              <span>{profile.linkedInUrl || "No especificado"}</span>
+
+              {profile.linkedInUrl ? (
+                <a
+                  href={
+                    profile.linkedInUrl.startsWith("http")
+                      ? profile.linkedInUrl
+                      : `https://${profile.linkedInUrl}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Ver LinkedIn
+                </a>
+              ) : (
+                <span>No especificado</span>
+              )}
             </div>
           </div>
         </div>
@@ -504,9 +595,22 @@ function InstitutionProfilePage() {
         open={openModal === "contactInfoView"}
         onClose={closeSectionModal}
         title="Información de contacto"
-        subtitle="Datos de contacto visibles de la institución."
       >
         <div className="institution-profile__contact-modal">
+          <div className="institution-profile__contact-modal-header">
+            <strong>Contacto visible</strong>
+
+            <button
+              type="button"
+              className="institution-profile__icon-button institution-profile__icon-button--small"
+              onClick={() => openSectionModal("contact")}
+              aria-label="Editar contacto"
+              title="Editar contacto"
+            >
+              <Pencil size={16} />
+            </button>
+          </div>
+
           {profile.whatsApp1 ? (
             <div className="institution-profile__contact-row">
               <Phone size={16} />
@@ -564,37 +668,20 @@ function InstitutionProfilePage() {
       </ProfileSectionModal>
 
       <ProfileSectionModal
-        open={openModal === "institutionInfo"}
+        open={openModal === "name"}
         onClose={closeSectionModal}
-        title="Editar datos institucionales"
-        subtitle="Actualizá la información principal, contacto, redes y datos institucionales."
+        title="Editar nombre de la institución"
+        subtitle="Actualizá el nombre visible, la descripción corta y la imagen principal."
       >
         <form
           className="institution-profile__modal-form"
-          onSubmit={saveInstitutionInfo}
+          onSubmit={(event) => saveProfileSection(event, "name")}
         >
-          <div className="institution-profile__grid">
-            <InputField
-              label="Razón social"
-              name="legalName"
-              value={institutionInfoForm.legalName}
-              onChange={handleInstitutionInfoChange}
-            />
-            <InputField
-              label="Nombre comercial"
-              name="tradeName"
-              value={institutionInfoForm.tradeName}
-              onChange={handleInstitutionInfoChange}
-              required
-            />
-          </div>
-
-          <SelectField
-            label="Tipo de institución"
-            name="institutionType"
-            value={institutionInfoForm.institutionType}
+          <InputField
+            label="Nombre de la institución"
+            name="tradeName"
+            value={institutionInfoForm.tradeName}
             onChange={handleInstitutionInfoChange}
-            options={institutionTypeOptionsWithEmpty}
             required
           />
 
@@ -607,7 +694,40 @@ function InstitutionProfilePage() {
           />
 
           <InputField
-            label="Descripción larga"
+            label="URL de imagen institucional"
+            name="coverImageUrl"
+            value={institutionInfoForm.coverImageUrl}
+            onChange={handleInstitutionInfoChange}
+          />
+
+          <div className="institution-profile__modal-actions">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={closeSectionModal}
+              disabled={savingSection === "name"}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={savingSection === "name"}>
+              {savingSection === "name" ? "Guardando..." : "Guardar"}
+            </Button>
+          </div>
+        </form>
+      </ProfileSectionModal>
+
+      <ProfileSectionModal
+        open={openModal === "description"}
+        onClose={closeSectionModal}
+        title="Editar descripción"
+        subtitle="Contá quiénes son, qué ofrecen y qué tipo de profesores buscan."
+      >
+        <form
+          className="institution-profile__modal-form"
+          onSubmit={(event) => saveProfileSection(event, "description")}
+        >
+          <InputField
+            label="Descripción"
             name="description"
             textarea
             value={institutionInfoForm.description}
@@ -615,6 +735,135 @@ function InstitutionProfilePage() {
             required
           />
 
+          <div className="institution-profile__modal-actions">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={closeSectionModal}
+              disabled={savingSection === "description"}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={savingSection === "description"}>
+              {savingSection === "description" ? "Guardando..." : "Guardar"}
+            </Button>
+          </div>
+        </form>
+      </ProfileSectionModal>
+
+      <ProfileSectionModal
+        open={openModal === "institutionInfo"}
+        onClose={closeSectionModal}
+        title="Editar información institucional"
+        subtitle="Modificá únicamente los datos institucionales principales."
+      >
+        <form
+          className="institution-profile__modal-form"
+          onSubmit={(event) => saveProfileSection(event, "institutionInfo")}
+        >
+          <InputField
+            label="Razón social"
+            name="legalName"
+            value={institutionInfoForm.legalName}
+            onChange={handleInstitutionInfoChange}
+          />
+
+          <SelectField
+            label="Tipo de institución"
+            name="institutionType"
+            value={institutionInfoForm.institutionType}
+            onChange={handleInstitutionInfoChange}
+            options={institutionTypeOptionsWithEmpty}
+            required
+          />
+
+          <div className="institution-profile__modal-actions">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={closeSectionModal}
+              disabled={savingSection === "institutionInfo"}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              disabled={savingSection === "institutionInfo"}
+            >
+              {savingSection === "institutionInfo" ? "Guardando..." : "Guardar"}
+            </Button>
+          </div>
+        </form>
+      </ProfileSectionModal>
+
+      <ProfileSectionModal
+        open={openModal === "links"}
+        onClose={closeSectionModal}
+        title="Editar redes y enlaces"
+        subtitle="Agregá el sitio web y las redes sociales visibles de la institución."
+      >
+        <form
+          className="institution-profile__modal-form"
+          onSubmit={(event) => saveProfileSection(event, "links")}
+        >
+          <InputField
+            label="Sitio web"
+            name="website"
+            value={institutionInfoForm.website}
+            onChange={handleInstitutionInfoChange}
+            placeholder="Ej: www.misitio.com"
+          />
+
+          <InputField
+            label="Instagram"
+            name="instagramUrl"
+            value={institutionInfoForm.instagramUrl}
+            onChange={handleInstitutionInfoChange}
+            placeholder="Ej: buscoprofe"
+          />
+
+          <InputField
+            label="URL de Facebook"
+            name="facebookUrl"
+            value={institutionInfoForm.facebookUrl}
+            onChange={handleInstitutionInfoChange}
+            placeholder="Ej: https://www.facebook.com/miinstitucion"
+          />
+
+          <InputField
+            label="URL de LinkedIn"
+            name="linkedInUrl"
+            value={institutionInfoForm.linkedInUrl}
+            onChange={handleInstitutionInfoChange}
+            placeholder="Ej: https://www.linkedin.com/company/miinstitucion"
+          />
+
+          <div className="institution-profile__modal-actions">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={closeSectionModal}
+              disabled={savingSection === "links"}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={savingSection === "links"}>
+              {savingSection === "links" ? "Guardando..." : "Guardar"}
+            </Button>
+          </div>
+        </form>
+      </ProfileSectionModal>
+
+      <ProfileSectionModal
+        open={openModal === "contact"}
+        onClose={closeSectionModal}
+        title="Editar contacto"
+        subtitle="Actualizá los teléfonos, la ubicación y la dirección visible."
+      >
+        <form
+          className="institution-profile__modal-form"
+          onSubmit={(event) => saveProfileSection(event, "contact")}
+        >
           <div className="institution-profile__grid">
             <InputField
               label="WhatsApp 1"
@@ -623,6 +872,7 @@ function InstitutionProfilePage() {
               onChange={handleInstitutionInfoChange}
               required
             />
+
             <InputField
               label="WhatsApp 2"
               name="whatsApp2"
@@ -631,20 +881,12 @@ function InstitutionProfilePage() {
             />
           </div>
 
-          <div className="institution-profile__grid">
-            <InputField
-              label="WhatsApp 3"
-              name="whatsApp3"
-              value={institutionInfoForm.whatsApp3}
-              onChange={handleInstitutionInfoChange}
-            />
-            <InputField
-              label="URL de imagen institucional"
-              name="coverImageUrl"
-              value={institutionInfoForm.coverImageUrl}
-              onChange={handleInstitutionInfoChange}
-            />
-          </div>
+          <InputField
+            label="WhatsApp 3"
+            name="whatsApp3"
+            value={institutionInfoForm.whatsApp3}
+            onChange={handleInstitutionInfoChange}
+          />
 
           <div className="institution-profile__grid">
             <InputField
@@ -654,6 +896,7 @@ function InstitutionProfilePage() {
               onChange={handleInstitutionInfoChange}
               required
             />
+
             <InputField
               label="Provincia"
               name="province"
@@ -671,40 +914,11 @@ function InstitutionProfilePage() {
               onChange={handleInstitutionInfoChange}
               required
             />
+
             <InputField
               label="Dirección"
               name="address"
               value={institutionInfoForm.address}
-              onChange={handleInstitutionInfoChange}
-            />
-          </div>
-
-          <div className="institution-profile__grid">
-            <InputField
-              label="Sitio web"
-              name="website"
-              value={institutionInfoForm.website}
-              onChange={handleInstitutionInfoChange}
-            />
-            <InputField
-              label="Instagram"
-              name="instagramUrl"
-              value={institutionInfoForm.instagramUrl}
-              onChange={handleInstitutionInfoChange}
-            />
-          </div>
-
-          <div className="institution-profile__grid">
-            <InputField
-              label="Facebook"
-              name="facebookUrl"
-              value={institutionInfoForm.facebookUrl}
-              onChange={handleInstitutionInfoChange}
-            />
-            <InputField
-              label="LinkedIn"
-              name="linkedInUrl"
-              value={institutionInfoForm.linkedInUrl}
               onChange={handleInstitutionInfoChange}
             />
           </div>
@@ -714,12 +928,12 @@ function InstitutionProfilePage() {
               type="button"
               variant="secondary"
               onClick={closeSectionModal}
-              disabled={savingInstitutionInfo}
+              disabled={savingSection === "contact"}
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={savingInstitutionInfo}>
-              {savingInstitutionInfo ? "Guardando..." : "Guardar"}
+            <Button type="submit" disabled={savingSection === "contact"}>
+              {savingSection === "contact" ? "Guardando..." : "Guardar"}
             </Button>
           </div>
         </form>

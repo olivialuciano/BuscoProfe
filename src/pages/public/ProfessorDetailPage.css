@@ -217,3 +217,85 @@
     line-height: 1.7;
   }
 }
+
+.professor-detail__hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.professor-detail__whatsapp-button {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  border: 2px solid #93c5fd;
+  background: white;
+  color: #2563eb;
+  display: grid;
+  place-items: center;
+  transition: 0.2s ease;
+}
+
+.professor-detail__whatsapp-button:hover {
+  transform: translateY(-1px);
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.professor-detail__details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.professor-detail__detail-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #fbfdff;
+  min-width: 0;
+}
+
+.professor-detail__detail-card svg {
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.professor-detail__detail-card strong {
+  display: block;
+  margin-bottom: 4px;
+  overflow-wrap: anywhere;
+}
+
+.professor-detail__detail-card span {
+  color: var(--text-soft);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.professor-detail__contact-modal {
+  display: grid;
+  gap: 14px;
+}
+
+.professor-detail__item-link {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 8px;
+  color: var(--primary);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.professor-detail__item-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .professor-detail__details-grid {
+    grid-template-columns: 1fr;
+  }
+}
