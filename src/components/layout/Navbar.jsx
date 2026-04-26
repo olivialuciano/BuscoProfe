@@ -2,7 +2,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   LogOut,
   LogIn,
-  BriefcaseBusiness,
+  Dumbbell,
   House,
   Briefcase,
   UserPlus,
@@ -157,12 +157,11 @@ function Navbar() {
         <div className="page-shell navbar__inner">
           <Link to="/" className="navbar__brand">
             <div className="navbar__logo">
-              <BriefcaseBusiness size={20} />
+              <Dumbbell size={30} />
             </div>
 
-            <div>
+            <div className="brand-title">
               <strong>Busco Profe</strong>
-              <span>Portal laboral deportivo</span>
             </div>
           </Link>
 
@@ -202,12 +201,13 @@ function Navbar() {
       <header className="mobile-navbar">
         <Link to="/" className="mobile-navbar__brand" onClick={closeMobileMenu}>
           <div className="mobile-navbar__logo">
-            <BriefcaseBusiness size={18} />
+            <Dumbbell size={28} />
           </div>
 
           <div className="mobile-navbar__brand-text">
-            <strong>Busco Profe</strong>
-            <span>Portal laboral deportivo</span>
+            <div className="brand-title">
+              <strong>Busco Profe</strong>
+            </div>
           </div>
         </Link>
 
