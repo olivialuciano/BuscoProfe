@@ -1,4 +1,4 @@
-export const API_BASE_URL = "https://www.buscoprofeapi.somee.com/api";
+export const API_BASE_URL = "https://buscoprofeapi.somee.com/api";
 
 export const ROLES = {
   ADMIN: "Admin",
