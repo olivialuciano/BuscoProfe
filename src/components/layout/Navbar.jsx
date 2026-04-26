@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   MessageSquareText,
+  ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
@@ -29,9 +30,11 @@ function Navbar() {
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showDesktopMoreMenu, setShowDesktopMoreMenu] = useState(false);
 
   const handleLogoutClick = () => {
     setShowMobileMenu(false);
+    setShowDesktopMoreMenu(false);
     setShowLogoutModal(true);
   };
 
@@ -39,6 +42,7 @@ function Navbar() {
     logout();
     setShowLogoutModal(false);
     setShowMobileMenu(false);
+    setShowDesktopMoreMenu(false);
     navigate("/");
   };
 
@@ -48,6 +52,10 @@ function Navbar() {
 
   const closeMobileMenu = () => {
     setShowMobileMenu(false);
+  };
+
+  const closeDesktopMoreMenu = () => {
+    setShowDesktopMoreMenu(false);
   };
 
   const links = !isAuthenticated
@@ -85,6 +93,11 @@ function Navbar() {
             label: "Usuarios",
             icon: <Users size={20} />,
           },
+          {
+            to: "/sugerencias",
+            label: "Sugerencias",
+            icon: <MessageSquareText size={20} />,
+          },
         ]
       : isInstitution(user)
         ? [
@@ -92,11 +105,6 @@ function Navbar() {
               to: "/institution",
               label: "Dashboard",
               icon: <LayoutDashboard size={20} />,
-            },
-            {
-              to: "/jobs",
-              label: "Vacantes",
-              icon: <Briefcase size={20} />,
             },
             {
               to: "/institution/jobs",
@@ -107,6 +115,11 @@ function Navbar() {
               to: "/institution/professors",
               label: "Profesores",
               icon: <Users size={20} />,
+            },
+            {
+              to: "/jobs",
+              label: "Vacantes",
+              icon: <Briefcase size={20} />,
             },
             {
               to: "/institution/notifications",
@@ -131,16 +144,6 @@ function Navbar() {
               icon: <Briefcase size={20} />,
             },
             {
-              to: "/professor/institutions",
-              label: "Instituciones",
-              icon: <Building2 size={20} />,
-            },
-            {
-              to: "/professor/profile",
-              label: "Perfil",
-              icon: <UserCircle size={20} />,
-            },
-            {
               to: "/professor/applications",
               label: "Postulaciones",
               icon: <LayoutDashboard size={20} />,
@@ -149,6 +152,16 @@ function Navbar() {
               to: "/professor/saved-jobs",
               label: "Guardados",
               icon: <Bookmark size={20} />,
+            },
+            {
+              to: "/professor/profile",
+              label: "Perfil",
+              icon: <UserCircle size={20} />,
+            },
+            {
+              to: "/professor/institutions",
+              label: "Instituciones",
+              icon: <Building2 size={20} />,
             },
             {
               to: "/professor/favorite-institutions",
@@ -167,11 +180,21 @@ function Navbar() {
             },
           ];
 
+  const getDesktopPrimaryLimit = () => {
+    if (!isAuthenticated) return 3;
+    if (isAdmin(user)) return 3;
+    if (isInstitution(user)) return 4;
+    return 4;
+  };
+
+  const desktopPrimaryLinks = links.slice(0, getDesktopPrimaryLimit());
+  const desktopMoreLinks = links.slice(getDesktopPrimaryLimit());
+
   return (
     <>
       <header className="navbar navbar--desktop">
         <div className="page-shell navbar__inner">
-          <Link to="/" className="navbar__brand">
+          <Link to="/" className="navbar__brand" onClick={closeDesktopMoreMenu}>
             <div className="navbar__logo">
               <Dumbbell size={30} />
             </div>
@@ -181,11 +204,12 @@ function Navbar() {
             </div>
           </Link>
 
-          <nav className="navbar__links">
-            {links.map((link) => (
+          <nav className="navbar__links" aria-label="Navegación principal">
+            {desktopPrimaryLinks.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
+                onClick={closeDesktopMoreMenu}
                 className={({ isActive }) =>
                   `navbar__link ${isActive ? "navbar__link--active" : ""}`
                 }
@@ -193,6 +217,43 @@ function Navbar() {
                 {link.label}
               </NavLink>
             ))}
+
+            {desktopMoreLinks.length ? (
+              <div className="navbar__more-wrap">
+                <button
+                  type="button"
+                  className={`navbar__more-button ${
+                    showDesktopMoreMenu ? "navbar__more-button--open" : ""
+                  }`}
+                  onClick={() => setShowDesktopMoreMenu((current) => !current)}
+                  aria-label="Abrir más opciones"
+                  aria-expanded={showDesktopMoreMenu}
+                >
+                  Más
+                  <ChevronDown size={16} />
+                </button>
+
+                {showDesktopMoreMenu ? (
+                  <div className="navbar__more-menu">
+                    {desktopMoreLinks.map((link) => (
+                      <NavLink
+                        key={link.to}
+                        to={link.to}
+                        onClick={closeDesktopMoreMenu}
+                        className={({ isActive }) =>
+                          `navbar__more-link ${
+                            isActive ? "navbar__more-link--active" : ""
+                          }`
+                        }
+                      >
+                        <span className="navbar__more-icon">{link.icon}</span>
+                        <span>{link.label}</span>
+                      </NavLink>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
 
             {isAuthenticated ? (
               <button
@@ -206,6 +267,7 @@ function Navbar() {
               <Link
                 to="/login"
                 className="navbar__login navbar__login--desktop"
+                onClick={closeDesktopMoreMenu}
               >
                 <LogIn size={16} /> Ingresar
               </Link>
@@ -243,8 +305,20 @@ function Navbar() {
           <nav
             className="mobile-menu"
             onClick={(event) => event.stopPropagation()}
+            aria-label="Navegación mobile"
           >
             <div className="mobile-menu__header">
+              <div className="mobile-menu__brand">
+                <div className="mobile-navbar__logo">
+                  <Dumbbell size={24} />
+                </div>
+
+                <div>
+                  <strong>Busco Profe</strong>
+                  <span>Menú principal</span>
+                </div>
+              </div>
+
               <button
                 type="button"
                 className="mobile-menu__close"
@@ -297,6 +371,15 @@ function Navbar() {
           </nav>
         </div>
       )}
+
+      {showDesktopMoreMenu ? (
+        <button
+          type="button"
+          className="navbar__desktop-backdrop"
+          aria-label="Cerrar menú"
+          onClick={closeDesktopMoreMenu}
+        />
+      ) : null}
 
       <Modal
         open={showLogoutModal}
