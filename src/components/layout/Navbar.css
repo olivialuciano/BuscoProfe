@@ -204,10 +204,39 @@
   background: #f8fbff;
 }
 
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 180;
+  border-bottom: 2px solid rgba(37, 99, 235, 0.26);
+  background: linear-gradient(
+    135deg,
+    rgba(248, 250, 252, 0.9),
+    rgba(255, 255, 255, 0.86)
+  );
+  backdrop-filter: blur(18px);
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.08);
+}
+
+.navbar__more-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 205;
+  width: 270px;
+  padding: 10px;
+  border: 1px solid rgba(37, 99, 235, 0.14);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.18);
+  animation: navbarMenuIn 0.18s ease-out;
+}
+
 .navbar__desktop-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 190;
+  z-index: 120;
   border: none;
   background: transparent;
 }
