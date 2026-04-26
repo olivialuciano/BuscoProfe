@@ -169,72 +169,21 @@ function HomePage() {
             </p>
 
             <div className="home-page__hero-actions">
-              <Link to="/jobs">
-                <Button icon={<ArrowRight size={16} />}>Ver vacantes</Button>
-              </Link>
-
               <Link to="/register">
                 <Button variant="secondary">Crear cuenta</Button>
               </Link>
             </div>
-
-            <div className="home-page__trust-row">
-              <span>
-                <BadgeCheck size={16} />
-                Perfiles profesionales
-              </span>
-              <span>
-                <BadgeCheck size={16} />
-                Búsquedas deportivas
-              </span>
-              <span>
-                <BadgeCheck size={16} />
-                Contacto directo
-              </span>
-            </div>
-          </div>
-
-          <div className="home-page__abstract-visual">
-            <div className="home-page__orb home-page__orb--main">
-              <div className="home-page__orb-inner">
-                <Target size={68} />
-              </div>
-            </div>
-
-            <Card className="home-page__floating-info home-page__floating-info--top">
-              <Building2 size={22} />
-              <div>
-                <strong>Instituciones</strong>
-                <span>Publican y gestionan búsquedas</span>
-              </div>
-            </Card>
-
-            <Card className="home-page__floating-info home-page__floating-info--bottom">
-              <UserRoundSearch size={22} />
-              <div>
-                <strong>Profesores</strong>
-                <span>Crean perfiles y se postulan</span>
-              </div>
-            </Card>
-
-            <div className="home-page__orbit home-page__orbit--one" />
-            <div className="home-page__orbit home-page__orbit--two" />
           </div>
         </div>
       </section>
 
       <section className="page-shell home-page__section">
         <div className="home-page__section-heading home-page__reveal">
-          <span className="home-page__eyebrow">
-            Una plataforma, dos caminos
-          </span>
+          <span className="home-page__eyebrow">Una plataforma, dos roles</span>
           <h2>
-            Diseñada para quienes buscan talento y para quienes buscan trabajo
+            Diseñada para quienes buscan profesionales y para quienes buscan
+            oportunidades.
           </h2>
-          <p>
-            Cada tipo de usuario tiene una experiencia clara, enfocada y simple
-            de usar.
-          </p>
         </div>
 
         <div className="home-page__features">
@@ -247,14 +196,8 @@ function HomePage() {
 
             <p>
               Publican vacantes, muestran su perfil institucional y contactan
-              profesores de forma ordenada.
+              con profesionales.
             </p>
-
-            <ul>
-              <li>Perfil público de institución</li>
-              <li>Publicación de vacantes</li>
-              <li>Gestión de búsquedas laborales</li>
-            </ul>
           </Card>
 
           <Card className="home-page__feature-card home-page__feature-card--highlight home-page__reveal">
@@ -265,34 +208,9 @@ function HomePage() {
             <h3>Para profesores</h3>
 
             <p>
-              Crean un perfil profesional, cargan experiencia, aptitudes,
-              educación, idiomas y se postulan a oportunidades.
+              Crean un perfil y se postulan a oportunidades de manera simple y
+              directa.
             </p>
-
-            <ul>
-              <li>Perfil profesional completo</li>
-              <li>Postulación a vacantes</li>
-              <li>Favoritos y seguimiento</li>
-            </ul>
-          </Card>
-
-          <Card className="home-page__feature-card home-page__reveal">
-            <div className="home-page__feature-icon">
-              <ShieldCheck size={28} />
-            </div>
-
-            <h3>Para administración</h3>
-
-            <p>
-              Permite cuidar la calidad de la plataforma, gestionar usuarios y
-              mantener el ecosistema ordenado.
-            </p>
-
-            <ul>
-              <li>Gestión de usuarios</li>
-              <li>Control de instituciones</li>
-              <li>Supervisión general</li>
-            </ul>
           </Card>
         </div>
       </section>
@@ -301,103 +219,29 @@ function HomePage() {
         <div className="page-shell home-page__section">
           <div className="home-page__section-heading home-page__reveal">
             <span className="home-page__eyebrow">Flujo simple</span>
-            <h2>Una experiencia pensada para avanzar sin fricción</h2>
+            <h2>Una experiencia pensada para avanzar sin fricción.</h2>
             <p>
               Desde el registro hasta el contacto, la plataforma guía al usuario
-              con pasos claros.
+              con pasos claros. <br />
+              Los usuarios pueden navegar perfiles, vacantes e información del
+              ecosistema deportivo. <br />
+              Las instituciones publican búsquedas y los profesores se postulan
+              de manera directa.
             </p>
-          </div>
-
-          <div className="home-page__steps">
-            <Card className="home-page__step-card home-page__reveal">
-              <span className="home-page__step-number">01</span>
-              <Search size={28} />
-              <h3>Explorar</h3>
-              <p>
-                Los usuarios pueden navegar perfiles, vacantes e información
-                relevante del ecosistema deportivo.
-              </p>
-            </Card>
-
-            <Card className="home-page__step-card home-page__reveal">
-              <span className="home-page__step-number">02</span>
-              <ClipboardCheck size={28} />
-              <h3>Accionar</h3>
-              <p>
-                Las instituciones publican búsquedas y los profesores se
-                postulan desde una experiencia clara.
-              </p>
-            </Card>
-
-            <Card className="home-page__step-card home-page__reveal">
-              <span className="home-page__step-number">03</span>
-              <MessageCircle size={28} />
-              <h3>Conectar</h3>
-              <p>
-                El contacto directo ayuda a que ambas partes puedan avanzar sin
-                procesos innecesarios.
-              </p>
-            </Card>
           </div>
         </div>
-      </section>
-
-      <section className="page-shell home-page__section">
-        <Card className="home-page__value-card home-page__reveal">
-          <div>
-            <span className="home-page__eyebrow">Enfoque especializado</span>
-            <h2>
-              No es una bolsa laboral genérica. Es una plataforma deportiva.
-            </h2>
-            <p>
-              Busco Profe pone en primer plano los datos que realmente importan
-              en el mundo deportivo: experiencia, ubicación, disponibilidad,
-              modalidad, aptitudes, idiomas y formas de contacto.
-            </p>
-          </div>
-
-          <div className="home-page__value-list">
-            <span>
-              <CheckCircle2 size={18} />
-              Información ordenada por secciones
-            </span>
-            <span>
-              <CheckCircle2 size={18} />
-              Perfiles públicos claros
-            </span>
-            <span>
-              <CheckCircle2 size={18} />
-              Diseño responsive
-            </span>
-            <span>
-              <CheckCircle2 size={18} />
-              Contacto directo entre usuarios
-            </span>
-          </div>
-        </Card>
       </section>
 
       <section className="page-shell home-page__final-cta">
         <Card className="home-page__final-cta-card home-page__reveal">
           <div>
             <span className="home-page__eyebrow">Empezá ahora</span>
-            <h2>
-              Sumate a una forma más profesional de buscar y ofrecer trabajo
-              deportivo
-            </h2>
-            <p>
-              Creá tu cuenta, completá tu perfil y empezá a conectar con el
-              ecosistema deportivo.
-            </p>
+            <h2>Creá tu cuenta y conectá con oportunidades deportivas.</h2>
           </div>
 
           <div className="home-page__final-actions">
             <Link to="/register">
               <Button icon={<Send size={16} />}>Crear cuenta</Button>
-            </Link>
-
-            <Link to="/jobs">
-              <Button variant="secondary">Explorar vacantes</Button>
             </Link>
           </div>
         </Card>

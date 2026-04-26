@@ -155,19 +155,30 @@
   min-height: calc(100vh - 78px);
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 64px 0;
 }
 
 .home-page__hero-content,
 .home-page__auth-content {
+  width: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
+  justify-items: center;
   gap: 56px;
+  text-align: center;
 }
 
-.home-page__auth-content {
-  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.8fr);
+.home-page__hero-copy,
+.home-page__auth-copy {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .home-page__reveal {
@@ -178,8 +189,9 @@
   width: fit-content;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  margin-bottom: 16px;
+  margin: 0 auto 16px;
   padding: 8px 12px;
   border: 1px solid rgba(37, 99, 235, 0.18);
   border-radius: 999px;
@@ -191,12 +203,13 @@
   letter-spacing: 0.08em;
   box-shadow: 0 10px 24px rgba(37, 99, 235, 0.08);
   backdrop-filter: blur(12px);
+  text-align: center;
 }
 
 .home-page__hero-copy h1,
 .home-page__auth-copy h1 {
   max-width: 960px;
-  margin: 0;
+  margin: 0 auto;
   color: var(--text);
   font-size: clamp(2.6rem, 5.6vw, 5.8rem);
   font-weight: 950;
@@ -204,6 +217,7 @@
   letter-spacing: -0.08em;
   text-transform: uppercase;
   font-style: italic;
+  text-align: center;
 }
 
 .home-page__auth-copy h1 {
@@ -212,17 +226,19 @@
 
 .home-page__hero-copy p,
 .home-page__auth-copy p {
-  max-width: 690px;
-  margin: 24px 0 0;
+  max-width: 720px;
+  margin: 24px auto 0;
   color: var(--text-soft);
   font-size: clamp(1rem, 1.45vw, 1.2rem);
   line-height: 1.75;
+  text-align: center;
 }
 
 .home-page__hero-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 14px;
   margin-top: 30px;
 }
@@ -231,12 +247,14 @@
   margin-top: 28px;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
 }
 
 .home-page__trust-row span {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 9px 12px;
   border-radius: 999px;
@@ -367,13 +385,15 @@
 }
 
 .home-page__auth-panel {
+  width: min(100%, 560px);
   padding: 30px;
+  text-align: center;
 }
 
 .home-page__panel-icon {
   width: 64px;
   height: 64px;
-  margin-bottom: 18px;
+  margin: 0 auto 18px;
   border-radius: 22px;
   display: grid;
   place-items: center;
@@ -387,12 +407,14 @@
   font-size: 1.55rem;
   font-weight: 950;
   letter-spacing: -0.05em;
+  text-align: center;
 }
 
 .home-page__auth-panel p {
-  margin: 12px 0 0;
+  margin: 12px auto 0;
   color: var(--text-soft);
   line-height: 1.7;
+  text-align: center;
 }
 
 .home-page__panel-list {
@@ -404,9 +426,11 @@
 .home-page__panel-list span {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   color: var(--text-soft);
   font-weight: 800;
+  text-align: center;
 }
 
 .home-page__panel-list svg {
@@ -432,26 +456,31 @@
 .home-page__section-heading h2,
 .home-page__value-card h2,
 .home-page__final-cta-card h2 {
-  margin: 0;
+  margin: 0 auto;
   color: var(--text);
   font-size: clamp(2rem, 4.2vw, 3.7rem);
   font-weight: 950;
   line-height: 1;
   letter-spacing: -0.07em;
+  text-align: center;
 }
 
 .home-page__section-heading p,
 .home-page__value-card p,
 .home-page__final-cta-card p {
-  margin: 16px 0 0;
+  max-width: 720px;
+  margin: 16px auto 0;
   color: var(--text-soft);
   font-size: 1rem;
   line-height: 1.75;
+  text-align: center;
 }
 
 .home-page__features {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, minmax(280px, 420px));
+  justify-content: center;
+  align-items: stretch;
   gap: 22px;
 }
 
@@ -462,6 +491,7 @@
   border: 1px solid rgba(226, 232, 240, 0.95);
   background: rgba(255, 255, 255, 0.84);
   backdrop-filter: blur(14px);
+  text-align: center;
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
@@ -482,6 +512,7 @@
 .home-page__feature-icon {
   width: 58px;
   height: 58px;
+  margin: 0 auto;
   border-radius: 20px;
   display: grid;
   place-items: center;
@@ -495,12 +526,14 @@
   font-size: 1.22rem;
   font-weight: 950;
   letter-spacing: -0.04em;
+  text-align: center;
 }
 
 .home-page__feature-card p {
-  margin: 0;
+  margin: 0 auto;
   color: var(--text-soft);
   line-height: 1.7;
+  text-align: center;
 }
 
 .home-page__feature-card ul {
@@ -514,10 +547,12 @@
 .home-page__feature-card li {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   color: var(--text);
   font-size: 0.92rem;
   font-weight: 800;
+  text-align: center;
 }
 
 .home-page__feature-card li::before {
@@ -539,7 +574,8 @@
 
 .home-page__steps {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  justify-content: center;
   gap: 22px;
 }
 
@@ -550,6 +586,7 @@
   overflow: hidden;
   background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(14px);
+  text-align: center;
 }
 
 .home-page__step-number {
@@ -572,28 +609,33 @@
   font-size: 1.25rem;
   font-weight: 950;
   letter-spacing: -0.04em;
+  text-align: center;
 }
 
 .home-page__step-card p {
-  margin: 0;
+  margin: 0 auto;
   color: var(--text-soft);
   line-height: 1.7;
+  text-align: center;
 }
 
 .home-page__value-card {
   padding: 34px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(310px, 0.72fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 34px;
   align-items: center;
+  justify-items: center;
   border: 1px solid rgba(37, 99, 235, 0.16);
   background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(14px);
+  text-align: center;
 }
 
 .home-page__value-list {
   display: grid;
   gap: 14px;
+  width: min(100%, 620px);
 }
 
 .home-page__value-list span {
@@ -601,11 +643,13 @@
   border-radius: 16px;
   display: flex;
   align-items: flex-start;
+  justify-content: center;
   gap: 10px;
   color: var(--text);
   font-weight: 850;
   background: #f8fbff;
   border: 1px solid rgba(226, 232, 240, 0.95);
+  text-align: center;
 }
 
 .home-page__value-list svg {
@@ -625,11 +669,13 @@
   overflow: hidden;
   padding: 38px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
   align-items: center;
   gap: 28px;
   color: white;
   border: none;
+  text-align: center;
   background:
     radial-gradient(
       circle at 15% 20%,
@@ -658,7 +704,7 @@
 .home-page__final-actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 12px;
 }
 
@@ -745,7 +791,10 @@
     min-height: 430px;
   }
 
-  .home-page__features,
+  .home-page__features {
+    grid-template-columns: repeat(2, minmax(260px, 420px));
+  }
+
   .home-page__steps {
     grid-template-columns: 1fr;
   }
@@ -756,7 +805,7 @@
   }
 
   .home-page__final-actions {
-    justify-content: flex-start;
+    justify-content: center;
   }
 }
 
@@ -770,6 +819,7 @@
   .home-page__hero-copy h1,
   .home-page__auth-copy h1 {
     font-size: clamp(2.25rem, 13vw, 3.8rem);
+    letter-spacing: -0.07em;
   }
 
   .home-page__hero-copy p,
@@ -779,17 +829,19 @@
 
   .home-page__hero-actions {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
   }
 
   .home-page__hero-actions a,
   .home-page__hero-actions button {
     width: 100%;
+    max-width: 320px;
   }
 
   .home-page__trust-row {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
   }
 
   .home-page__abstract-visual {
@@ -813,18 +865,27 @@
   }
 
   .home-page__section-heading {
-    text-align: left;
+    text-align: center;
   }
 
   .home-page__section-heading .home-page__eyebrow {
-    margin-left: 0;
-    margin-right: 0;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .home-page__section-heading h2,
   .home-page__value-card h2,
   .home-page__final-cta-card h2 {
     font-size: clamp(2rem, 10vw, 2.8rem);
+  }
+
+  .home-page__features {
+    grid-template-columns: minmax(0, 420px);
+    justify-content: center;
+  }
+
+  .home-page__feature-card {
+    width: 100%;
   }
 
   .home-page__feature-card,
@@ -837,11 +898,13 @@
 
   .home-page__final-actions {
     flex-direction: column;
+    align-items: center;
   }
 
   .home-page__final-actions a,
   .home-page__final-actions button {
     width: 100%;
+    max-width: 320px;
   }
 }
 
