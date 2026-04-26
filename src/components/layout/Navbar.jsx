@@ -15,6 +15,7 @@ import {
   Star,
   Menu,
   X,
+  MessageSquareText,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
@@ -60,6 +61,11 @@ function Navbar() {
           to: "/jobs",
           label: "Vacantes",
           icon: <Briefcase size={20} />,
+        },
+        {
+          to: "/sugerencias",
+          label: "Sugerencias",
+          icon: <MessageSquareText size={20} />,
         },
         {
           to: "/register",
@@ -112,6 +118,11 @@ function Navbar() {
               label: "Perfil",
               icon: <UserCircle size={20} />,
             },
+            {
+              to: "/sugerencias",
+              label: "Sugerencias",
+              icon: <MessageSquareText size={20} />,
+            },
           ]
         : [
             {
@@ -148,6 +159,11 @@ function Navbar() {
               to: "/professor/notifications",
               label: "Notificaciones",
               icon: <Bell size={20} />,
+            },
+            {
+              to: "/sugerencias",
+              label: "Sugerencias",
+              icon: <MessageSquareText size={20} />,
             },
           ];
 

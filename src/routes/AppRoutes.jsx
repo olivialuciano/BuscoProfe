@@ -13,6 +13,8 @@ import InstitutionDetailPage from "../pages/public/InstitutionDetailPage";
 import InstitutionJobPostingsPage from "../pages/public/InstitutionJobPostingsPage";
 import ProfessorDetailPage from "../pages/public/ProfessorDetailPage";
 import VerifyEmailCodePage from "../pages/auth/VerifyEmailCodePage";
+import NotFoundPage from "../pages/notFound/NotFoundPage";
+import SuggestionsPage from "../pages/suggestions/SuggestionsPage";
 
 import ProfessorDashboardPage from "../pages/professor/ProfessorDashboardPage";
 import ProfessorProfilePage from "../pages/professor/ProfessorProfilePage";
@@ -51,6 +53,8 @@ function AppRoutes() {
           element={<InstitutionJobPostingsPage />}
         />
         <Route path="/professors/:id" element={<ProfessorDetailPage />} />
+        <Route path="/sugerencias" element={<SuggestionsPage />} />
+        <Route path="*" element={<NotFoundPage />} />
 
         <Route element={<ProtectedRoute allowedRoles={[ROLES.PROFESSOR]} />}>
           <Route path="/professor" element={<ProfessorDashboardPage />} />
