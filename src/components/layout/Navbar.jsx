@@ -65,11 +65,7 @@ function Navbar() {
           label: "Inicio",
           icon: <House size={20} />,
         },
-        {
-          to: "/jobs",
-          label: "Vacantes",
-          icon: <Briefcase size={20} />,
-        },
+
         {
           to: "/sugerencias",
           label: "Sugerencias",

@@ -41,18 +41,11 @@ function AppRoutes() {
     <AppLayout>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/jobs" element={<JobsPage />} />
-        <Route path="/jobs/:id" element={<JobDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterChoicePage />} />
         <Route path="/register/:type" element={<RegisterPage />} />
-        <Route path="/institutions/:id" element={<InstitutionDetailPage />} />
         <Route path="/verify-email-code" element={<VerifyEmailCodePage />} />
-        <Route
-          path="/institutions/:id/jobs"
-          element={<InstitutionJobPostingsPage />}
-        />
-        <Route path="/professors/:id" element={<ProfessorDetailPage />} />
+
         <Route path="/sugerencias" element={<SuggestionsPage />} />
         <Route path="*" element={<NotFoundPage />} />
 
