@@ -731,6 +731,14 @@ function JobDetailPage() {
           </div>
         </div>
       </ProfileSectionModal>
+      {canApply ? (
+        <Button
+          onClick={() => setShowApplyModal(true)}
+          icon={<Send size={16} />}
+        >
+          Postularse
+        </Button>
+      ) : null}
     </div>
   );
 }

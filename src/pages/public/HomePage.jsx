@@ -1,21 +1,13 @@
 import { Link } from "react-router-dom";
 import {
-  ArrowRight,
   Building2,
   UserRoundSearch,
-  ShieldCheck,
   LayoutDashboard,
-  Search,
-  ClipboardCheck,
-  MessageCircle,
   Sparkles,
-  BadgeCheck,
   BriefcaseBusiness,
   CheckCircle2,
   Send,
   Waves,
-  Target,
-  UsersRound,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Card from "../../components/common/Card";
@@ -23,10 +15,60 @@ import Button from "../../components/common/Button";
 import { useAuth } from "../../contexts/AuthContext";
 import { isAdmin, isInstitution } from "../../utils/roleUtils";
 import "./HomePage.css";
+import { getMyUser } from "../../api/usersService";
+
+const getJwtPayload = (token) => {
+  try {
+    const payload = token.split(".")[1];
+    const decodedPayload = atob(payload);
+    return JSON.parse(decodedPayload);
+  } catch {
+    return null;
+  }
+};
+
+const getStoredToken = () => {
+  return (
+    localStorage.getItem("token") ||
+    localStorage.getItem("authToken") ||
+    localStorage.getItem("accessToken") ||
+    sessionStorage.getItem("token") ||
+    sessionStorage.getItem("authToken") ||
+    sessionStorage.getItem("accessToken")
+  );
+};
+
+const getLoggedUserId = (user) => {
+  const token = getStoredToken();
+  const payload = token ? getJwtPayload(token) : null;
+
+  return (
+    user?.id ||
+    user?.Id ||
+    user?.userId ||
+    user?.UserId ||
+    user?.nameIdentifier ||
+    user?.[
+      "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+    ] ||
+    payload?.id ||
+    payload?.Id ||
+    payload?.userId ||
+    payload?.UserId ||
+    payload?.nameid ||
+    payload?.sub ||
+    payload?.[
+      "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+    ]
+  );
+};
 
 function HomePage() {
   const { isAuthenticated, user } = useAuth();
+
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [profileUser, setProfileUser] = useState(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
 
   useEffect(() => {
     const updateScrollProgress = () => {
@@ -48,6 +90,37 @@ function HomePage() {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchLoggedUserData = async () => {
+      if (!isAuthenticated || !user) return;
+
+      const loggedUserId = getLoggedUserId(user);
+
+      if (!loggedUserId) {
+        console.warn("No se pudo detectar el ID del usuario logueado.");
+        setProfileUser(user);
+        return;
+      }
+
+      try {
+        setIsLoadingProfile(true);
+
+        const data = await getMyUser(loggedUserId);
+
+        console.log("Usuario completo desde API:", data);
+
+        setProfileUser(data);
+      } catch (error) {
+        console.error("Error obteniendo datos del usuario logueado:", error);
+        setProfileUser(user);
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    fetchLoggedUserData();
+  }, [isAuthenticated, user]);
+
   const pageStyle = {
     "--scroll-progress": scrollProgress,
     "--flow-y": `${scrollProgress * 220}px`,
@@ -56,6 +129,35 @@ function HomePage() {
   };
 
   if (isAuthenticated) {
+    const currentUser = profileUser || user;
+
+    const professorName =
+      currentUser?.firstName || currentUser?.FirstName || "profe";
+
+    const institutionName =
+      currentUser?.tradeName || currentUser?.TradeName || "institución";
+
+    const adminName =
+      currentUser?.firstName ||
+      currentUser?.FirstName ||
+      currentUser?.name ||
+      currentUser?.Name ||
+      "Administrador";
+
+    const authenticatedTitle = isLoadingProfile
+      ? "Hola..."
+      : isAdmin(user)
+        ? `Hola, ${adminName}`
+        : isInstitution(user)
+          ? `Hola, ${institutionName}`
+          : `Hola, ${professorName}`;
+
+    const authenticatedDescription = isAdmin(user)
+      ? "Gestioná usuarios, perfiles y el funcionamiento general de la plataforma desde tu panel administrativo."
+      : isInstitution(user)
+        ? "Publicá vacantes, mantené actualizado tu perfil institucional y conectá con profesionales del mundo deportivo."
+        : "Mantené tu perfil actualizado, explorá vacantes deportivas y postuláte a oportunidades que se ajusten a tu experiencia.";
+
     const dashboardPath = isAdmin(user)
       ? "/admin"
       : isInstitution(user)
@@ -86,12 +188,9 @@ function HomePage() {
                 Sesión activa · {roleLabel}
               </span>
 
-              <h1>Bienvenido/a a Busco Profe</h1>
+              <h1>{authenticatedTitle}</h1>
 
-              <p>
-                Accedé rápidamente a tu panel, mantené tu perfil actualizado y
-                seguí gestionando tus oportunidades dentro de la plataforma.
-              </p>
+              <p>{authenticatedDescription}</p>
 
               <div className="home-page__hero-actions">
                 <Link to={dashboardPath}>

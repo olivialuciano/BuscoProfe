@@ -8,6 +8,9 @@ import EmptyState from "../../components/common/EmptyState";
 import SelectField from "../../components/common/SelectField";
 import Button from "../../components/common/Button";
 import { getPublicJobPostings } from "../../api/jobPostingsService";
+import { getProfessorApplications } from "../../api/applicationsService";
+import { useAuth } from "../../contexts/AuthContext";
+import { isAdmin, isInstitution } from "../../utils/roleUtils";
 import { getApiErrorMessage } from "../../utils/errorUtils";
 import {
   availabilityOptions,
@@ -33,10 +36,84 @@ function getEnumLabel(options, value) {
   );
 }
 
+function getStatusBadgeClass(status) {
+  switch (Number(status)) {
+    case 1:
+      return "soft-badge soft-badge--info";
+    case 2:
+      return "soft-badge soft-badge--danger";
+    case 3:
+      return "soft-badge soft-badge--neutral";
+    default:
+      return "soft-badge soft-badge--neutral";
+  }
+}
+
+function getUiStatusLabel(status) {
+  switch (Number(status)) {
+    case 1:
+      return "Activa";
+    case 2:
+      return "Inactiva";
+    case 3:
+      return "Cerrada";
+    default:
+      return "Borrador";
+  }
+}
+
+function getJwtPayload(token) {
+  try {
+    const payload = token.split(".")[1];
+    const decodedPayload = atob(payload);
+    return JSON.parse(decodedPayload);
+  } catch {
+    return null;
+  }
+}
+
+function getStoredToken() {
+  return (
+    localStorage.getItem("token") ||
+    localStorage.getItem("authToken") ||
+    localStorage.getItem("accessToken") ||
+    sessionStorage.getItem("token") ||
+    sessionStorage.getItem("authToken") ||
+    sessionStorage.getItem("accessToken")
+  );
+}
+
+function getLoggedUserId(user) {
+  const token = getStoredToken();
+  const payload = token ? getJwtPayload(token) : null;
+
+  return (
+    user?.id ||
+    user?.Id ||
+    user?.userId ||
+    user?.UserId ||
+    user?.nameIdentifier ||
+    user?.[
+      "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+    ] ||
+    payload?.id ||
+    payload?.Id ||
+    payload?.userId ||
+    payload?.UserId ||
+    payload?.nameid ||
+    payload?.sub ||
+    payload?.[
+      "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+    ]
+  );
+}
+
 function JobsPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [jobs, setJobs] = useState([]);
+  const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -47,6 +124,8 @@ function JobsPage() {
     availability: "",
     contractType: "",
   });
+
+  const isProfessorUser = user && !isAdmin(user) && !isInstitution(user);
 
   useEffect(() => {
     const loadJobs = async () => {
@@ -68,8 +147,53 @@ function JobsPage() {
     loadJobs();
   }, []);
 
+  useEffect(() => {
+    const loadProfessorApplications = async () => {
+      if (!isProfessorUser) {
+        setApplications([]);
+        return;
+      }
+
+      const professorUserId = getLoggedUserId(user);
+
+      if (!professorUserId) {
+        setApplications([]);
+        return;
+      }
+
+      try {
+        const data = await getProfessorApplications(professorUserId);
+        setApplications(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error(
+          "No se pudieron cargar las postulaciones del profesor.",
+          err,
+        );
+        setApplications([]);
+      }
+    };
+
+    loadProfessorApplications();
+  }, [isProfessorUser, user]);
+
+  const appliedJobPostingIds = useMemo(() => {
+    return new Set(
+      applications
+        .map((application) =>
+          Number(
+            application.jobPostingId ||
+              application.JobPostingId ||
+              application.jobPosting?.id ||
+              application.JobPosting?.Id,
+          ),
+        )
+        .filter(Boolean),
+    );
+  }, [applications]);
+
   const handleFilterChange = (event) => {
     const { name, value } = event.target;
+
     setFilters((current) => ({
       ...current,
       [name]: value,
@@ -117,31 +241,6 @@ function JobsPage() {
       </div>
     );
   }
-  function getStatusBadgeClass(status) {
-    switch (Number(status)) {
-      case 1:
-        return "soft-badge soft-badge--info";
-      case 2:
-        return "soft-badge soft-badge--danger";
-      case 3:
-        return "soft-badge soft-badge--neutral";
-      default:
-        return "soft-badge soft-badge--neutral";
-    }
-  }
-
-  function getUiStatusLabel(status) {
-    switch (Number(status)) {
-      case 1:
-        return "Activa";
-      case 2:
-        return "Inactiva";
-      case 3:
-        return "Cerrada";
-      default:
-        return "Borrador";
-    }
-  }
 
   return (
     <div className="page-shell jobs-page">
@@ -168,47 +267,58 @@ function JobsPage() {
 
       {filteredJobs.length ? (
         <div className="jobs-page__grid">
-          {filteredJobs.map((job) => (
-            <div
-              key={job.id}
-              className="jobs-page__job-card-wrapper"
-              onClick={() => navigate(`/jobs/${job.id}`)}
-            >
-              <Card className="jobs-page__job-card">
-                <div className="institution-jobs-page__badges">
-                  <span className={getStatusBadgeClass(job.status)}>
-                    {getUiStatusLabel(job.status)}
-                  </span>
-                </div>
-                <h3>{job.title}</h3>
-                <p>{job.description || "Sin descripción."}</p>
+          {filteredJobs.map((job) => {
+            const alreadyApplied =
+              isProfessorUser && appliedJobPostingIds.has(Number(job.id));
 
-                <div className="jobs-page__meta">
-                  <span>
-                    <MapPin size={14} />
-                    {[job.city, job.province, job.country]
-                      .filter(Boolean)
-                      .join(", ") || "Ubicación no informada"}
-                  </span>
+            return (
+              <div
+                key={job.id}
+                className="jobs-page__job-card-wrapper"
+                onClick={() => navigate(`/jobs/${job.id}`)}
+              >
+                <Card className="jobs-page__job-card">
+                  <div className="institution-jobs-page__badges">
+                    <span className={getStatusBadgeClass(job.status)}>
+                      {getUiStatusLabel(job.status)}
+                    </span>
 
-                  <span>
-                    <Briefcase size={14} />
-                    {getEnumLabel(workModeOptions, job.workMode)}
-                  </span>
+                    {alreadyApplied && (
+                      <span className="soft-badge soft-badge--success">
+                        Ya te postulaste
+                      </span>
+                    )}
+                  </div>
 
-                  <span>
-                    <Clock3 size={14} />
-                    {getEnumLabel(availabilityOptions, job.availability)}
-                  </span>
+                  <h3>{job.title}</h3>
 
-                  <span>
-                    <FileText size={14} />
-                    {getEnumLabel(contractTypeOptions, job.contractType)}
-                  </span>
-                </div>
-              </Card>
-            </div>
-          ))}
+                  <div className="jobs-page__meta">
+                    <span>
+                      <MapPin size={14} />
+                      {[job.city, job.province, job.country]
+                        .filter(Boolean)
+                        .join(", ") || "Ubicación no informada"}
+                    </span>
+
+                    <span>
+                      <Briefcase size={14} />
+                      {getEnumLabel(workModeOptions, job.workMode)}
+                    </span>
+
+                    <span>
+                      <Clock3 size={14} />
+                      {getEnumLabel(availabilityOptions, job.availability)}
+                    </span>
+
+                    <span>
+                      <FileText size={14} />
+                      {getEnumLabel(contractTypeOptions, job.contractType)}
+                    </span>
+                  </div>
+                </Card>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <EmptyState
@@ -284,6 +394,7 @@ function JobsPage() {
           <Button variant="secondary" onClick={clearFilters}>
             Limpiar
           </Button>
+
           <Button onClick={() => setFiltersOpen(false)}>Aplicar</Button>
         </div>
       </aside>

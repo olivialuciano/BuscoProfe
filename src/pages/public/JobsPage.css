@@ -193,3 +193,16 @@
     width: 100%;
   }
 }
+
+.soft-badge--success {
+  color: #047857;
+  background: #d1fae5;
+  border: 1px solid rgba(4, 120, 87, 0.18);
+}
+
+.institution-jobs-page__badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}

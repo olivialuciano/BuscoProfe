@@ -112,11 +112,7 @@ function Navbar() {
               label: "Profesores",
               icon: <Users size={20} />,
             },
-            {
-              to: "/jobs",
-              label: "Vacantes",
-              icon: <Briefcase size={20} />,
-            },
+
             {
               to: "/institution/notifications",
               label: "Notificaciones",
