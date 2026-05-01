@@ -92,3 +92,23 @@
     align-items: stretch;
   }
 }
+
+.saved-job-postings-page__badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.soft-badge--success {
+  color: #047857;
+  background: #d1fae5;
+  border: 1px solid rgba(4, 120, 87, 0.18);
+}
+
+.soft-badge--warning {
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid rgba(146, 64, 14, 0.18);
+}

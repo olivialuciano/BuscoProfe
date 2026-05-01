@@ -1,26 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Briefcase,
-  Clock3,
-  MapPin,
-  FileText,
-  Bookmark,
-  RefreshCw,
-} from "lucide-react";
+import { Briefcase, Clock3, MapPin, FileText } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { getFavoriteJobPostingsByProfessor } from "../../api/favoriteJobPostingsService";
+import { getProfessorApplications } from "../../api/applicationsService";
 import Card from "../../components/common/Card";
-import Button from "../../components/common/Button";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
 import ApiMessage from "../../components/common/ApiMessage";
 import { getApiErrorMessage } from "../../utils/errorUtils";
+import { isAdmin, isInstitution } from "../../utils/roleUtils";
+
 import {
   availabilityOptions,
   workModeOptions,
   contractTypeOptions,
 } from "../../utils/enumOptions";
+
 import "./SavedJobPostingsPage.css";
 
 function getEnumLabel(options, value) {
@@ -34,35 +30,89 @@ function getEnumLabel(options, value) {
   );
 }
 
+function getStatusBadgeClass(status) {
+  switch (Number(status)) {
+    case 1:
+      return "soft-badge soft-badge--info";
+    case 2:
+      return "soft-badge soft-badge--danger";
+    case 3:
+      return "soft-badge soft-badge--neutral";
+    default:
+      return "soft-badge soft-badge--neutral";
+  }
+}
+
+function getUiStatusLabel(status) {
+  switch (Number(status)) {
+    case 1:
+      return "Activa";
+    case 2:
+      return "Inactiva";
+    case 3:
+      return "Cerrada";
+    default:
+      return "Borrador";
+  }
+}
+
 function SavedJobPostingsPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const [savedJobPostings, setSavedJobPostings] = useState([]);
+  const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [reloading, setReloading] = useState(false);
   const [error, setError] = useState("");
 
-  const loadSavedJobPostings = async (isReload = false) => {
-    if (!user?.id) return;
+  const isProfessorUser = user && !isAdmin(user) && !isInstitution(user);
 
-    if (isReload) {
-      setReloading(true);
-    } else {
-      setLoading(true);
+  const applicationsByJobPostingId = useMemo(() => {
+    const map = new Map();
+
+    applications.forEach((application) => {
+      const jobPostingId = Number(
+        application.jobPostingId ||
+          application.JobPostingId ||
+          application.jobPosting?.id ||
+          application.JobPosting?.Id,
+      );
+
+      if (jobPostingId) {
+        map.set(jobPostingId, application);
+      }
+    });
+
+    return map;
+  }, [applications]);
+
+  const loadSavedJobPostings = async () => {
+    if (!user?.id) {
+      setLoading(false);
+      return;
     }
 
+    setLoading(true);
     setError("");
 
     try {
-      const data = await getFavoriteJobPostingsByProfessor(user.id);
-      const favorites = Array.isArray(data) ? data : [];
+      const favoritesData = await getFavoriteJobPostingsByProfessor(user.id);
+      const favorites = Array.isArray(favoritesData) ? favoritesData : [];
 
       const jobs = favorites
         .map((item) => item?.jobPosting || item?.JobPosting || null)
         .filter(Boolean);
 
       setSavedJobPostings(jobs);
+
+      if (isProfessorUser) {
+        const applicationsData = await getProfessorApplications(user.id);
+        setApplications(
+          Array.isArray(applicationsData) ? applicationsData : [],
+        );
+      } else {
+        setApplications([]);
+      }
     } catch (err) {
       setError(
         getApiErrorMessage(
@@ -71,18 +121,12 @@ function SavedJobPostingsPage() {
         ),
       );
     } finally {
-      if (isReload) {
-        setReloading(false);
-      } else {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (user?.id) {
-      loadSavedJobPostings();
-    }
+    loadSavedJobPostings();
   }, [user?.id]);
 
   if (loading) {
@@ -114,6 +158,9 @@ function SavedJobPostingsPage() {
                 .filter(Boolean)
                 .join(", ") || "Ubicación no informada";
 
+            const application = applicationsByJobPostingId.get(Number(job.id));
+            const alreadyApplied = Boolean(application);
+
             return (
               <div
                 key={job.id}
@@ -121,11 +168,18 @@ function SavedJobPostingsPage() {
                 onClick={() => navigate(`/jobs/${job.id}`)}
               >
                 <Card className="saved-job-postings-page__card">
-                  <div className="saved-job-postings-page__card-top">
-                    <div className="saved-job-postings-page__bookmark-chip">
-                      <Bookmark size={14} fill="currentColor" />
-                      <span>Guardada</span>
-                    </div>
+                  <div className="saved-job-postings-page__badges">
+                    <span className={getStatusBadgeClass(job.status)}>
+                      {getUiStatusLabel(job.status)}
+                    </span>
+
+                    {alreadyApplied && (
+                      <>
+                        <span className="soft-badge soft-badge--success">
+                          Ya te postulaste
+                        </span>
+                      </>
+                    )}
                   </div>
 
                   <h3>{job.title || "Vacante sin título"}</h3>
