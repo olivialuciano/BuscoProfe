@@ -9,6 +9,7 @@ import SelectField from "../../components/common/SelectField";
 import Button from "../../components/common/Button";
 import { getPublicJobPostings } from "../../api/jobPostingsService";
 import { getProfessorApplications } from "../../api/applicationsService";
+import { getAllInstitutions } from "../../api/usersService";
 import { useAuth } from "../../contexts/AuthContext";
 import { isAdmin, isInstitution } from "../../utils/roleUtils";
 import { getApiErrorMessage } from "../../utils/errorUtils";
@@ -106,11 +107,24 @@ function getLoggedUserId(user) {
   );
 }
 
+function getInstitutionName(institution) {
+  return (
+    institution?.tradeName ||
+    institution?.TradeName ||
+    institution?.legalName ||
+    institution?.LegalName ||
+    institution?.email ||
+    institution?.Email ||
+    "Institución sin nombre"
+  );
+}
+
 function JobsPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
   const [jobs, setJobs] = useState([]);
+  const [institutions, setInstitutions] = useState([]);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -118,6 +132,7 @@ function JobsPage() {
 
   const [filters, setFilters] = useState({
     status: "1",
+    institutionUserId: "",
     workMode: "",
     availability: "",
     contractType: "",
@@ -129,13 +144,20 @@ function JobsPage() {
   const isProfessorUser = user && !isAdmin(user) && !isInstitution(user);
 
   useEffect(() => {
-    const loadJobs = async () => {
+    const loadInitialData = async () => {
       setLoading(true);
       setError("");
 
       try {
-        const data = await getPublicJobPostings();
-        setJobs(Array.isArray(data) ? data : []);
+        const [jobsData, institutionsData] = await Promise.all([
+          getPublicJobPostings(),
+          getAllInstitutions(),
+        ]);
+
+        setJobs(Array.isArray(jobsData) ? jobsData : []);
+        setInstitutions(
+          Array.isArray(institutionsData) ? institutionsData : [],
+        );
       } catch (err) {
         setError(
           getApiErrorMessage(err, "No se pudieron cargar las vacantes."),
@@ -145,7 +167,7 @@ function JobsPage() {
       }
     };
 
-    loadJobs();
+    loadInitialData();
   }, []);
 
   useEffect(() => {
@@ -177,6 +199,20 @@ function JobsPage() {
     loadProfessorApplications();
   }, [isProfessorUser, user]);
 
+  const institutionOptions = useMemo(() => {
+    return institutions
+      .map((institution) => {
+        const institutionId = institution?.id || institution?.Id;
+
+        return {
+          value: String(institutionId),
+          label: getInstitutionName(institution),
+        };
+      })
+      .filter((option) => option.value && option.value !== "undefined")
+      .sort((a, b) => a.label.localeCompare(b.label, "es"));
+  }, [institutions]);
+
   const appliedJobPostingIds = useMemo(() => {
     return new Set(
       applications
@@ -204,6 +240,7 @@ function JobsPage() {
   const clearFilters = () => {
     setFilters({
       status: "1",
+      institutionUserId: "",
       workMode: "",
       availability: "",
       contractType: "",
@@ -221,6 +258,13 @@ function JobsPage() {
           ? true
           : Number(getJobValue(job, "status", "Status")) ===
             Number(filters.status),
+      )
+      .filter((job) =>
+        filters.institutionUserId === ""
+          ? true
+          : Number(
+              getJobValue(job, "institutionUserId", "InstitutionUserId"),
+            ) === Number(filters.institutionUserId),
       )
       .filter((job) =>
         filters.workMode === ""
@@ -338,6 +382,26 @@ function JobsPage() {
                     <span>
                       <Briefcase size={14} />
                       {getEnumLabel(
+                        professionalTypeOptions,
+                        getJobValue(
+                          job,
+                          "professionalType",
+                          "ProfessionalType",
+                        ),
+                      )}
+                    </span>
+
+                    <span>
+                      <FileText size={14} />
+                      {getEnumLabel(
+                        disciplineOptions,
+                        getJobValue(job, "discipline", "Discipline"),
+                      )}
+                    </span>
+
+                    <span>
+                      <Briefcase size={14} />
+                      {getEnumLabel(
                         workModeOptions,
                         getJobValue(job, "workMode", "WorkMode"),
                       )}
@@ -407,6 +471,14 @@ function JobsPage() {
             value={filters.status}
             onChange={handleFilterChange}
             options={JOB_STATUS_OPTIONS}
+          />
+
+          <SelectField
+            label="Institución"
+            name="institutionUserId"
+            value={filters.institutionUserId}
+            onChange={handleFilterChange}
+            options={[{ value: "", label: "Todas" }, ...institutionOptions]}
           />
 
           <SelectField

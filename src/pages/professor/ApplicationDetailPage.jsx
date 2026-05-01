@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Clock3, FileText, Info, Trash2, AlertTriangle } from "lucide-react";
+import {
+  Clock3,
+  FileText,
+  Info,
+  Trash2,
+  AlertTriangle,
+  MessageCircle,
+} from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import {
@@ -10,6 +17,7 @@ import {
   rejectApplication,
 } from "../../api/applicationsService";
 import { getJobPostingById } from "../../api/jobPostingsService";
+import { getProfessorPublicProfile } from "../../api/usersService";
 import Card from "../../components/common/Card";
 import Button from "../../components/common/Button";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
@@ -62,6 +70,40 @@ function formatDate(value) {
   });
 }
 
+function cleanWhatsappNumber(value) {
+  if (!value) return "";
+
+  let number = String(value).replace(/\D/g, "");
+
+  if (!number) return "";
+
+  if (number.startsWith("00")) {
+    number = number.slice(2);
+  }
+
+  if (number.startsWith("0")) {
+    number = number.slice(1);
+  }
+
+  if (!number.startsWith("54")) {
+    number = `54${number}`;
+  }
+
+  return number;
+}
+
+function buildWhatsappUrl(phoneNumber, message) {
+  const cleanNumber = cleanWhatsappNumber(phoneNumber);
+
+  if (!cleanNumber) return "";
+
+  return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
+}
+
+function getValue(source, camelCaseName, pascalCaseName) {
+  return source?.[camelCaseName] ?? source?.[pascalCaseName];
+}
+
 function ApplicationDetailPage() {
   const { id, applicationId } = useParams();
   const resolvedApplicationId = applicationId || id;
@@ -78,10 +120,15 @@ function ApplicationDetailPage() {
 
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showWhatsappModal, setShowWhatsappModal] = useState(false);
+
   const [updatingStatus, setUpdatingStatus] = useState(false);
 
   const [openingJob, setOpeningJob] = useState(false);
   const [isDeletedJobPosting, setIsDeletedJobPosting] = useState(false);
+
+  const [jobPostingDetail, setJobPostingDetail] = useState(null);
+  const [professorDetail, setProfessorDetail] = useState(null);
 
   const loadApplication = async () => {
     setLoading(true);
@@ -100,6 +147,26 @@ function ApplicationDetailPage() {
       setIsDeletedJobPosting(
         embeddedStatuses.some((value) => Number(value) === 4),
       );
+
+      if (data.jobPostingId) {
+        try {
+          const job = await getJobPostingById(data.jobPostingId);
+          setJobPostingDetail(job);
+        } catch {
+          setJobPostingDetail(null);
+        }
+      }
+
+      if (data.professorUserId) {
+        try {
+          const professor = await getProfessorPublicProfile(
+            data.professorUserId,
+          );
+          setProfessorDetail(professor);
+        } catch {
+          setProfessorDetail(null);
+        }
+      }
     } catch (err) {
       setError(
         getApiErrorMessage(
@@ -120,23 +187,79 @@ function ApplicationDetailPage() {
 
   const jobTitle = useMemo(() => {
     if (!application) return "";
+
     return (
       application.jobTitle ||
       application.jobPostingTitle ||
       application.title ||
+      jobPostingDetail?.title ||
+      jobPostingDetail?.Title ||
       "Vacante sin título"
     );
-  }, [application]);
+  }, [application, jobPostingDetail]);
 
   const professorName = useMemo(() => {
-    if (!application) return "";
+    if (!application && !professorDetail) return "";
 
+    const applicationName = `${application?.professorFirstName || ""} ${
+      application?.professorLastName || ""
+    }`.trim();
+
+    const professorProfileName =
+      `${professorDetail?.firstName || professorDetail?.FirstName || ""} ${
+        professorDetail?.lastName || professorDetail?.LastName || ""
+      }`.trim();
+
+    return applicationName || professorProfileName || "Profesor sin nombre";
+  }, [application, professorDetail]);
+
+  const institutionName = useMemo(() => {
     return (
-      `${application.professorFirstName || ""} ${
-        application.professorLastName || ""
-      }`.trim() || "Profesor sin nombre"
+      user?.tradeName ||
+      user?.TradeName ||
+      user?.legalName ||
+      user?.LegalName ||
+      jobPostingDetail?.institution?.tradeName ||
+      jobPostingDetail?.Institution?.TradeName ||
+      jobPostingDetail?.institutionTradeName ||
+      jobPostingDetail?.InstitutionTradeName ||
+      "tu institución"
     );
-  }, [application]);
+  }, [user, jobPostingDetail]);
+
+  const professorWhatsapp = useMemo(() => {
+    return (
+      professorDetail?.whatsApp1 ||
+      professorDetail?.WhatsApp1 ||
+      professorDetail?.whatsapp1 ||
+      professorDetail?.Whatsapp1 ||
+      application?.professorWhatsApp1 ||
+      application?.professorWhatsapp1 ||
+      application?.professorPhone ||
+      ""
+    );
+  }, [professorDetail, application]);
+
+  const jobDaysAndHours = useMemo(() => {
+    return (
+      getValue(jobPostingDetail, "daysAndHours", "DaysAndHours") ||
+      application?.daysAndHours ||
+      application?.DaysAndHours ||
+      "días y horarios a coordinar"
+    );
+  }, [jobPostingDetail, application]);
+
+  const whatsappMessage = useMemo(() => {
+    return `Hola ${professorName}, ¿cómo estás? Te escribimos desde ${institutionName} para avisarte que tu postulación para la vacante "${jobTitle}" fue aceptada.
+
+La vacante tiene como días y horarios: ${jobDaysAndHours}.
+
+Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
+  }, [professorName, institutionName, jobTitle, jobDaysAndHours]);
+
+  const whatsappUrl = useMemo(() => {
+    return buildWhatsappUrl(professorWhatsapp, whatsappMessage);
+  }, [professorWhatsapp, whatsappMessage]);
 
   const isProfessor = user?.role === ROLES.PROFESSOR;
   const isInstitution = user?.role === ROLES.INSTITUTION;
@@ -226,6 +349,7 @@ function ApplicationDetailPage() {
 
       showToast("Postulación aceptada.", "success");
       setShowAcceptModal(false);
+      setShowWhatsappModal(true);
     } catch (err) {
       showToast(
         getApiErrorMessage(err, "No se pudo aceptar la postulación."),
@@ -234,6 +358,19 @@ function ApplicationDetailPage() {
     } finally {
       setUpdatingStatus(false);
     }
+  };
+
+  const handleOpenWhatsapp = () => {
+    if (!whatsappUrl) {
+      showToast(
+        "El profesor no tiene un WhatsApp cargado en su perfil.",
+        "error",
+      );
+      return;
+    }
+
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    setShowWhatsappModal(false);
   };
 
   const handleReject = async () => {
@@ -373,6 +510,7 @@ function ApplicationDetailPage() {
               </button>
             </div>
           </div>
+
           <div className="application-detail__meta-card">
             <Info size={16} />
             <div>
@@ -469,6 +607,40 @@ function ApplicationDetailPage() {
               disabled={updatingStatus}
             >
               {updatingStatus ? "Aceptando..." : "Sí, aceptar"}
+            </Button>
+          </div>
+        </div>
+      </ProfileSectionModal>
+
+      <ProfileSectionModal
+        open={showWhatsappModal}
+        onClose={() => setShowWhatsappModal(false)}
+        title="Postulación aceptada"
+        subtitle={`Comunicate por WhatsApp con ${professorName} y avisale que su postulación fue aceptada.`}
+      >
+        <div className="application-detail__whatsapp-modal">
+          {!whatsappUrl ? (
+            <ApiMessage type="error">
+              El profesor no tiene un WhatsApp cargado en su perfil.
+            </ApiMessage>
+          ) : null}
+
+          <div className="application-detail__delete-actions">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setShowWhatsappModal(false)}
+            >
+              Cerrar
+            </Button>
+
+            <Button
+              type="button"
+              icon={<MessageCircle size={16} />}
+              onClick={handleOpenWhatsapp}
+              disabled={!whatsappUrl}
+            >
+              Abrir WhatsApp
             </Button>
           </div>
         </div>
