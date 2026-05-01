@@ -2,10 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Clock3,
-  FileText,
   UserRound,
   BriefcaseBusiness,
   ChevronDown,
+  UsersRound,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { getInstitutionJobPostings } from "../../api/jobPostingsService";
@@ -98,16 +98,12 @@ function getApplicationId(application) {
   return application?.id || application?.Id;
 }
 
-function getMessagePreview(message) {
-  if (!message) return "Sin mensaje";
+function getJobId(job) {
+  return getValue(job, "id", "Id");
+}
 
-  const normalizedMessage = String(message).trim();
-
-  if (normalizedMessage.length <= 42) {
-    return normalizedMessage;
-  }
-
-  return `${normalizedMessage.slice(0, 42)}...`;
+function getJobTitle(job) {
+  return getValue(job, "title", "Title") || "Vacante sin título";
 }
 
 function InstitutionApplicationsPage() {
@@ -115,7 +111,7 @@ function InstitutionApplicationsPage() {
   const navigate = useNavigate();
 
   const [groups, setGroups] = useState([]);
-  const [expandedMessages, setExpandedMessages] = useState({});
+  const [expandedJobs, setExpandedJobs] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -128,7 +124,10 @@ function InstitutionApplicationsPage() {
 
   useEffect(() => {
     const loadApplicationsByJobPosting = async () => {
-      if (!user?.id) return;
+      if (!user?.id) {
+        setLoading(false);
+        return;
+      }
 
       setLoading(true);
       setError("");
@@ -143,7 +142,7 @@ function InstitutionApplicationsPage() {
 
         const groupedData = await Promise.all(
           visibleJobs.map(async (job) => {
-            const jobId = getValue(job, "id", "Id");
+            const jobId = getJobId(job);
 
             try {
               const applicationsData = await getApplicationsByJobPosting(jobId);
@@ -194,6 +193,17 @@ function InstitutionApplicationsPage() {
           });
 
         setGroups(onlyJobsWithApplications);
+
+        setExpandedJobs((current) => {
+          const nextState = {};
+
+          onlyJobsWithApplications.forEach((group) => {
+            const jobId = getJobId(group.job);
+            nextState[jobId] = current[jobId] ?? false;
+          });
+
+          return nextState;
+        });
       } catch (err) {
         setError(
           getApiErrorMessage(err, "No se pudieron cargar las postulaciones."),
@@ -206,10 +216,10 @@ function InstitutionApplicationsPage() {
     loadApplicationsByJobPosting();
   }, [user?.id]);
 
-  const toggleMessage = (applicationId) => {
-    setExpandedMessages((current) => ({
+  const toggleJob = (jobId) => {
+    setExpandedJobs((current) => ({
       ...current,
-      [applicationId]: !current[applicationId],
+      [jobId]: !current[jobId],
     }));
   };
 
@@ -243,88 +253,119 @@ function InstitutionApplicationsPage() {
         <div className="institution-applications-page__groups">
           {groups.map((group) => {
             const job = group.job;
-            const jobId = getValue(job, "id", "Id");
-            const jobTitle =
-              getValue(job, "title", "Title") || "Vacante sin título";
+            const jobId = getJobId(job);
+            const jobTitle = getJobTitle(job);
+            const applicationsCount = group.applications.length;
+            const isExpanded = Boolean(expandedJobs[jobId]);
 
             return (
               <section
                 key={jobId}
-                className="institution-applications-page__group"
+                className={`institution-applications-page__group ${
+                  isExpanded ? "institution-applications-page__group--open" : ""
+                }`}
               >
-                <button
-                  type="button"
-                  className="institution-applications-page__job-title"
-                  onClick={() => navigate(`/jobs/${jobId}`)}
-                  title="Ver detalle de la vacante"
-                >
-                  <BriefcaseBusiness size={16} />
-                  <span>{jobTitle}</span>
-                </button>
+                <div className="institution-applications-page__job-row">
+                  <button
+                    type="button"
+                    className="institution-applications-page__job-title"
+                    onClick={() => navigate(`/jobs/${jobId}`)}
+                    title="Ver detalle de la vacante"
+                  >
+                    <BriefcaseBusiness size={16} />
+                    <span>{jobTitle}</span>
+                  </button>
 
-                <div className="institution-applications-page__list">
-                  {group.applications.map((application) => {
-                    const applicationId = getApplicationId(application);
-                    const professorId = getProfessorId(application);
-                    const professorName = getProfessorName(application);
-                    const status = getValue(application, "status", "Status");
-                    const appliedAt = getValue(
-                      application,
-                      "appliedAt",
-                      "AppliedAt",
-                    );
-                    const message = getValue(application, "message", "Message");
-                    const isMessageExpanded = Boolean(
-                      expandedMessages[applicationId],
-                    );
+                  <div className="institution-applications-page__job-actions">
+                    <span className="institution-applications-page__job-count">
+                      <UsersRound size={15} />
+                      {applicationsCount} {applicationsCount === 1}
+                    </span>
 
-                    return (
-                      <div
-                        key={applicationId}
-                        className="institution-applications-page__card-wrapper"
-                        onClick={() =>
-                          navigate(
-                            `/institution/job-postings/${jobId}/applications/${applicationId}`,
-                          )
-                        }
-                      >
-                        <Card className="institution-applications-page__card">
-                          <div className="institution-applications-page__card-top">
-                            <div className="institution-applications-page__identity">
-                              <button
-                                type="button"
-                                className="institution-applications-page__professor-link"
-                                onClick={(event) => {
-                                  event.stopPropagation();
+                    <button
+                      type="button"
+                      className={`institution-applications-page__job-toggle ${
+                        isExpanded
+                          ? "institution-applications-page__job-toggle--open"
+                          : ""
+                      }`}
+                      onClick={() => toggleJob(jobId)}
+                      aria-expanded={isExpanded}
+                      title={
+                        isExpanded
+                          ? "Ocultar postulaciones"
+                          : "Ver postulaciones"
+                      }
+                    >
+                      <span>{isExpanded ? "Ocultar" : "Ver"}</span>
+                      <ChevronDown size={17} />
+                    </button>
+                  </div>
+                </div>
 
-                                  if (professorId) {
-                                    navigate(`/professors/${professorId}`);
-                                  }
-                                }}
-                                disabled={!professorId}
-                                title="Ver perfil público del profesor"
+                {isExpanded ? (
+                  <div className="institution-applications-page__list">
+                    {group.applications.map((application) => {
+                      const applicationId = getApplicationId(application);
+                      const professorId = getProfessorId(application);
+                      const professorName = getProfessorName(application);
+                      const status = getValue(application, "status", "Status");
+                      const appliedAt = getValue(
+                        application,
+                        "appliedAt",
+                        "AppliedAt",
+                      );
+
+                      return (
+                        <div
+                          key={applicationId}
+                          className="institution-applications-page__card-wrapper"
+                          onClick={() =>
+                            navigate(
+                              `/institution/job-postings/${jobId}/applications/${applicationId}`,
+                            )
+                          }
+                        >
+                          <Card className="institution-applications-page__card">
+                            <div className="institution-applications-page__card-top">
+                              <div className="institution-applications-page__identity">
+                                <button
+                                  type="button"
+                                  className="institution-applications-page__professor-link"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+
+                                    if (professorId) {
+                                      navigate(`/professors/${professorId}`);
+                                    }
+                                  }}
+                                  disabled={!professorId}
+                                  title="Ver perfil público del profesor"
+                                >
+                                  <UserRound size={16} />
+                                  <span>{professorName}</span>
+                                </button>
+                              </div>
+
+                              <span
+                                className={getApplicationStatusClass(status)}
                               >
-                                <UserRound size={16} />
-                                <span>{professorName}</span>
-                              </button>
+                                {getApplicationStatusLabel(status)}
+                              </span>
                             </div>
 
-                            <span className={getApplicationStatusClass(status)}>
-                              {getApplicationStatusLabel(status)}
-                            </span>
-                          </div>
-
-                          <div className="institution-applications-page__meta">
-                            <span>
-                              <Clock3 size={14} />
-                              {formatDate(appliedAt)}
-                            </span>
-                          </div>
-                        </Card>
-                      </div>
-                    );
-                  })}
-                </div>
+                            <div className="institution-applications-page__meta">
+                              <span>
+                                <Clock3 size={14} />
+                                {formatDate(appliedAt)}
+                              </span>
+                            </div>
+                          </Card>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : null}
               </section>
             );
           })}

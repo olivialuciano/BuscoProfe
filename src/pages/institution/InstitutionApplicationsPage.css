@@ -25,16 +25,43 @@
 
 .institution-applications-page__groups {
   display: grid;
-  gap: 28px;
+  gap: 18px;
 }
 
 .institution-applications-page__group {
   display: grid;
+  gap: 0;
+  padding: 14px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 22px;
+  background:
+    radial-gradient(
+      circle at 98% 0%,
+      rgba(59, 130, 246, 0.08),
+      transparent 28%
+    ),
+    rgba(255, 255, 255, 0.96);
+  box-shadow: 0 16px 42px rgba(15, 23, 42, 0.055);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.institution-applications-page__group--open {
+  gap: 14px;
+  border-color: rgba(59, 130, 246, 0.26);
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.075);
+}
+
+.institution-applications-page__job-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 14px;
 }
 
 .institution-applications-page__job-title {
-  width: fit-content;
+  min-width: 0;
   max-width: 100%;
   padding: 10px 14px;
   border: 1px solid rgba(59, 130, 246, 0.22);
@@ -59,7 +86,7 @@
 
 .institution-applications-page__job-title span {
   min-width: 0;
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 950;
   letter-spacing: -0.03em;
   line-height: 1.25;
@@ -79,9 +106,70 @@
   );
 }
 
+.institution-applications-page__job-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.institution-applications-page__job-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  color: var(--text-soft);
+  font-size: 0.84rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.institution-applications-page__job-count svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.institution-applications-page__job-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 11px;
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.08);
+  color: #1d4ed8;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.institution-applications-page__job-toggle:hover {
+  transform: translateY(-1px);
+  background: rgba(59, 130, 246, 0.13);
+  border-color: rgba(59, 130, 246, 0.28);
+}
+
+.institution-applications-page__job-toggle svg {
+  transition: transform 0.2s ease;
+}
+
+.institution-applications-page__job-toggle--open svg {
+  transform: rotate(180deg);
+}
+
 .institution-applications-page__list {
   display: grid;
-  gap: 16px;
+  gap: 14px;
+  padding-top: 2px;
 }
 
 .institution-applications-page__card-wrapper {
@@ -89,14 +177,19 @@
 }
 
 .institution-applications-page__card {
-  padding: 22px;
+  padding: 18px;
   display: grid;
-  gap: 14px;
-  transition: 0.2s ease;
+  gap: 12px;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .institution-applications-page__card:hover {
   transform: translateY(-2px);
+  border-color: rgba(59, 130, 246, 0.22);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
 }
 
 .institution-applications-page__card-top {
@@ -127,7 +220,7 @@
   align-items: center;
   gap: 8px;
   font: inherit;
-  font-size: 1.08rem;
+  font-size: 1.02rem;
   font-weight: 900;
   text-align: left;
   cursor: pointer;
@@ -158,28 +251,12 @@
   align-items: center;
   gap: 8px;
   color: var(--text-soft);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
-.institution-applications-page__meta svg,
-.institution-applications-page__message strong svg {
+.institution-applications-page__meta svg {
   color: var(--primary);
   flex-shrink: 0;
-}
-
-.institution-applications-page__message {
-  display: grid;
-  gap: 8px;
-  padding: 14px 16px;
-  border-radius: 16px;
-  background: #f8fbff;
-  border: 1px solid var(--border);
-}
-
-.institution-applications-page__message p {
-  margin: 0;
-  color: var(--text-soft);
-  line-height: 1.7;
 }
 
 .institution-applications-page__badge {
@@ -222,65 +299,6 @@
   color: #475569;
 }
 
-.institution-applications-page__message-accordion {
-  display: grid;
-  gap: 10px;
-}
-
-.institution-applications-page__accordion-button {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: #f8fbff;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  text-align: left;
-  transition: 0.2s ease;
-}
-
-.institution-applications-page__accordion-button:hover {
-  background: #f3f8ff;
-}
-
-.institution-applications-page__accordion-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.94rem;
-  font-weight: 700;
-}
-
-.institution-applications-page__accordion-label svg {
-  color: var(--primary);
-  flex-shrink: 0;
-}
-
-.institution-applications-page__accordion-right {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-.institution-applications-page__accordion-preview {
-  color: var(--text-soft);
-  font-size: 0.88rem;
-  font-weight: 600;
-}
-
-.institution-applications-page__accordion-icon {
-  color: var(--text-soft);
-  transition: transform 0.2s ease;
-}
-
-.institution-applications-page__accordion-button--expanded
-  .institution-applications-page__accordion-icon {
-  transform: rotate(180deg);
-}
-
 @media (max-width: 768px) {
   .institution-applications-page__header {
     flex-direction: column;
@@ -291,19 +309,21 @@
     width: fit-content;
   }
 
+  .institution-applications-page__job-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .institution-applications-page__job-actions {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .institution-applications-page__job-title {
+    width: 100%;
+  }
+
   .institution-applications-page__card-top {
     flex-direction: column;
-  }
-
-  .institution-applications-page__accordion-button {
-    padding: 12px 14px;
-  }
-
-  .institution-applications-page__accordion-right {
-    gap: 8px;
-  }
-
-  .institution-applications-page__accordion-preview {
-    font-size: 0.82rem;
   }
 }
