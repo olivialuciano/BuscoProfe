@@ -487,3 +487,27 @@
   cursor: not-allowed;
   text-decoration: none;
 }
+
+.job-detail-page__hero-badges {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.job-detail-page__badge {
+  gap: 6px;
+}
+
+.job-detail-page__badge--urgent {
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.22);
+}
+
+@media (max-width: 768px) {
+  .job-detail-page__hero-badges {
+    justify-content: flex-start;
+  }
+}

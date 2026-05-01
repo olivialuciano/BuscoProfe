@@ -18,8 +18,65 @@
   gap: 16px;
 }
 
+.institution-create-job__urgent-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(245, 158, 11, 0.22);
+  border-radius: 18px;
+  background: rgba(245, 158, 11, 0.08);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.institution-create-job__urgent-option input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.institution-create-job__urgent-option span {
+  display: grid;
+  gap: 4px;
+}
+
+.institution-create-job__urgent-option strong {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #92400e;
+}
+
+.institution-create-job__urgent-option small {
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.institution-create-job__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(239, 68, 68, 0.08);
+  color: #991b1b;
+  border: 1px solid rgba(239, 68, 68, 0.14);
+  font-weight: 700;
+}
+
+.institution-create-job__error svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
 @media (max-width: 700px) {
   .institution-create-job__grid {
     grid-template-columns: 1fr;
+  }
+
+  .institution-create-job__card {
+    padding: 22px;
   }
 }

@@ -205,7 +205,6 @@ function InstitutionJobsPage() {
                   </div>
 
                   <h3>{job.title}</h3>
-                  <p>{job.description || "Sin descripción."}</p>
 
                   <div className="institution-jobs-page__meta">
                     <span>
