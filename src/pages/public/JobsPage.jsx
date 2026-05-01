@@ -382,26 +382,6 @@ function JobsPage() {
                     <span>
                       <Briefcase size={14} />
                       {getEnumLabel(
-                        professionalTypeOptions,
-                        getJobValue(
-                          job,
-                          "professionalType",
-                          "ProfessionalType",
-                        ),
-                      )}
-                    </span>
-
-                    <span>
-                      <FileText size={14} />
-                      {getEnumLabel(
-                        disciplineOptions,
-                        getJobValue(job, "discipline", "Discipline"),
-                      )}
-                    </span>
-
-                    <span>
-                      <Briefcase size={14} />
-                      {getEnumLabel(
                         workModeOptions,
                         getJobValue(job, "workMode", "WorkMode"),
                       )}

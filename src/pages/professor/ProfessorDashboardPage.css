@@ -1,16 +1,923 @@
 .professor-dashboard {
+  --dashboard-blue: #2563eb;
+  --dashboard-blue-soft: rgba(37, 99, 235, 0.1);
+  --dashboard-violet: #7c3aed;
+  --dashboard-violet-soft: rgba(124, 58, 237, 0.1);
+  --dashboard-amber: #d97706;
+  --dashboard-amber-soft: rgba(245, 158, 11, 0.13);
+  --dashboard-green: #059669;
+  --dashboard-green-soft: rgba(16, 185, 129, 0.12);
+  --dashboard-rose: #e11d48;
+  --dashboard-rose-soft: rgba(225, 29, 72, 0.1);
+  --dashboard-border: rgba(226, 232, 240, 0.95);
+  --dashboard-shadow: 0 22px 60px rgba(15, 23, 42, 0.08);
+
+  position: relative;
   display: grid;
   gap: 22px;
+  padding-bottom: 44px;
 }
 
-.professor-dashboard__stats {
+.professor-dashboard::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(37, 99, 235, 0.09), transparent 28%),
+    radial-gradient(
+      circle at 92% 16%,
+      rgba(124, 58, 237, 0.08),
+      transparent 26%
+    ),
+    linear-gradient(180deg, #f8fbff 0%, #ffffff 44%, #f8fafc 100%);
+}
+
+/* Loading */
+
+.professor-dashboard__loading-card {
+  min-height: 360px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  place-items: center;
+  border: 1px solid var(--dashboard-border);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--dashboard-shadow);
+}
+
+/* Hero */
+
+.professor-dashboard__hero {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  gap: 24px;
+  align-items: stretch;
+  padding: clamp(22px, 4vw, 34px);
+  border: 1px solid rgba(191, 219, 254, 0.8);
+  border-radius: 34px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.94),
+      rgba(239, 246, 255, 0.86)
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(59, 130, 246, 0.16),
+      transparent 34%
+    );
+  box-shadow: 0 28px 80px rgba(37, 99, 235, 0.12);
+}
+
+.professor-dashboard__hero-glow {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 999px;
+  filter: blur(8px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.professor-dashboard__hero-glow--one {
+  right: 220px;
+  top: -170px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.2), transparent 68%);
+}
+
+.professor-dashboard__hero-glow--two {
+  left: -150px;
+  bottom: -170px;
+  background: radial-gradient(
+    circle,
+    rgba(124, 58, 237, 0.14),
+    transparent 68%
+  );
+}
+
+.professor-dashboard__hero-content,
+.professor-dashboard__hero-panel {
+  position: relative;
+  z-index: 1;
+}
+
+.professor-dashboard__eyebrow {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 13px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #1d4ed8;
+  background: rgba(37, 99, 235, 0.09);
+  border: 1px solid rgba(37, 99, 235, 0.16);
+  font-size: 0.74rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.085em;
+}
+
+.professor-dashboard__hero h1 {
+  max-width: 850px;
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(2rem, 4.8vw, 4rem);
+  font-weight: 950;
+  line-height: 0.96;
+  letter-spacing: -0.075em;
+}
+
+.professor-dashboard__hero p {
+  max-width: 680px;
+  margin: 18px 0 0;
+  color: var(--text-soft);
+  font-size: clamp(0.98rem, 1.6vw, 1.12rem);
+  line-height: 1.65;
+  font-weight: 650;
+}
+
+.professor-dashboard__hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.professor-dashboard__primary-action,
+.professor-dashboard__secondary-action,
+.professor-dashboard__opportunity-strip button,
+.professor-dashboard__empty-action {
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  font-weight: 900;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.professor-dashboard__primary-action {
+  padding: 12px 17px;
+  color: white;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 16px 34px rgba(37, 99, 235, 0.28);
+}
+
+.professor-dashboard__secondary-action {
+  padding: 12px 16px;
+  color: #1d4ed8;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(37, 99, 235, 0.16);
+}
+
+.professor-dashboard__primary-action:hover,
+.professor-dashboard__secondary-action:hover,
+.professor-dashboard__opportunity-strip button:hover,
+.professor-dashboard__empty-action:hover {
+  transform: translateY(-2px);
+}
+
+.professor-dashboard__hero-panel {
+  min-height: 100%;
+  padding: 18px;
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(30, 41, 59, 0.94)),
+    radial-gradient(circle at top, rgba(59, 130, 246, 0.4), transparent 40%);
+  color: white;
+  box-shadow: 0 24px 56px rgba(15, 23, 42, 0.22);
+  display: grid;
+  align-content: space-between;
   gap: 18px;
 }
 
-@media (max-width: 900px) {
-  .professor-dashboard__stats {
+.professor-dashboard__hero-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.professor-dashboard__hero-panel-header span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.84rem;
+  font-weight: 850;
+}
+
+.professor-dashboard__hero-panel-header strong {
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #bfdbfe;
+  background: rgba(59, 130, 246, 0.18);
+  border: 1px solid rgba(147, 197, 253, 0.18);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.professor-dashboard__status-ring {
+  width: 164px;
+  height: 164px;
+  margin: 4px auto;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle, #0f172a 57%, transparent 58%),
+    conic-gradient(from 180deg, #60a5fa, #a78bfa, #34d399, #60a5fa);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.professor-dashboard__status-ring div {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+
+.professor-dashboard__status-ring strong {
+  color: white;
+  font-size: 2.35rem;
+  font-weight: 950;
+  letter-spacing: -0.08em;
+  line-height: 1;
+}
+
+.professor-dashboard__status-ring span {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.professor-dashboard__hero-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.professor-dashboard__hero-panel-grid div {
+  padding: 13px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.professor-dashboard__hero-panel-grid span {
+  display: block;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.professor-dashboard__hero-panel-grid strong {
+  display: block;
+  margin-top: 5px;
+  color: white;
+  font-size: 1.35rem;
+  font-weight: 950;
+}
+
+/* Metrics */
+
+.professor-dashboard__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.professor-dashboard__metric {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 13px;
+  align-items: start;
+  padding: 17px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--dashboard-border);
+  box-shadow: 0 16px 44px rgba(15, 23, 42, 0.055);
+}
+
+.professor-dashboard__metric-icon {
+  width: 43px;
+  height: 43px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+}
+
+.professor-dashboard__metric--blue .professor-dashboard__metric-icon {
+  color: var(--dashboard-blue);
+  background: var(--dashboard-blue-soft);
+}
+
+.professor-dashboard__metric--violet .professor-dashboard__metric-icon {
+  color: var(--dashboard-violet);
+  background: var(--dashboard-violet-soft);
+}
+
+.professor-dashboard__metric--amber .professor-dashboard__metric-icon {
+  color: var(--dashboard-amber);
+  background: var(--dashboard-amber-soft);
+}
+
+.professor-dashboard__metric--green .professor-dashboard__metric-icon {
+  color: var(--dashboard-green);
+  background: var(--dashboard-green-soft);
+}
+
+.professor-dashboard__metric span {
+  display: block;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.professor-dashboard__metric strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--text);
+  font-size: clamp(1.6rem, 3vw, 2.05rem);
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.professor-dashboard__metric p {
+  margin: 7px 0 0;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  font-weight: 650;
+}
+
+/* Recommendation strip */
+
+.professor-dashboard__opportunity-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px;
+  border-radius: 26px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(239, 246, 255, 0.95),
+      rgba(250, 245, 255, 0.95)
+    ),
+    white;
+  border: 1px solid rgba(191, 219, 254, 0.72);
+  box-shadow: 0 16px 46px rgba(15, 23, 42, 0.055);
+}
+
+.professor-dashboard__opportunity-strip span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #1d4ed8;
+  font-size: 0.82rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.professor-dashboard__opportunity-strip p {
+  margin: 6px 0 0;
+  color: var(--text-soft);
+  line-height: 1.5;
+  font-size: 0.94rem;
+  font-weight: 650;
+}
+
+.professor-dashboard__opportunity-strip button {
+  flex-shrink: 0;
+  padding: 11px 14px;
+  color: #1d4ed8;
+  background: white;
+  border: 1px solid rgba(37, 99, 235, 0.16);
+}
+
+/* Sections */
+
+.professor-dashboard__sections {
+  display: grid;
+  gap: 16px;
+}
+
+.professor-dashboard__section-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 52px rgba(15, 23, 42, 0.06);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.professor-dashboard__section-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  opacity: 0.9;
+}
+
+.professor-dashboard__section-card:hover {
+  border-color: rgba(59, 130, 246, 0.22);
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.075);
+  transform: translateY(-1px);
+}
+
+.professor-dashboard__section-card--open {
+  border-color: rgba(59, 130, 246, 0.28);
+}
+
+.professor-dashboard__section-main {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  border: none;
+  background:
+    radial-gradient(
+      circle at 96% 10%,
+      rgba(59, 130, 246, 0.08),
+      transparent 28%
+    ),
+    transparent;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 19px 20px 19px 22px;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.professor-dashboard__section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.professor-dashboard__section-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 17px;
+  display: grid;
+  place-items: center;
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.1);
+  flex-shrink: 0;
+}
+
+.professor-dashboard__section-card--violet .professor-dashboard__section-icon {
+  color: var(--dashboard-violet);
+  background: var(--dashboard-violet-soft);
+}
+
+.professor-dashboard__section-card--amber .professor-dashboard__section-icon {
+  color: var(--dashboard-amber);
+  background: var(--dashboard-amber-soft);
+}
+
+.professor-dashboard__section-card--rose .professor-dashboard__section-icon {
+  color: var(--dashboard-rose);
+  background: var(--dashboard-rose-soft);
+}
+
+.professor-dashboard__section-title-content {
+  min-width: 0;
+}
+
+.professor-dashboard__section-title-content h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.02rem, 1.6vw, 1.22rem);
+  font-weight: 950;
+  letter-spacing: -0.035em;
+}
+
+.professor-dashboard__section-title-content p {
+  margin: 4px 0 0;
+  color: var(--text-soft);
+  line-height: 1.45;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.professor-dashboard__section-side {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.professor-dashboard__section-number {
+  color: var(--text);
+  font-size: clamp(1.5rem, 3vw, 2.05rem);
+  font-weight: 950;
+  letter-spacing: -0.07em;
+  line-height: 0.95;
+}
+
+.professor-dashboard__section-toggle {
+  width: fit-content;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.professor-dashboard__section-toggle svg {
+  transition: transform 0.2s ease;
+}
+
+.professor-dashboard__section-toggle--open svg {
+  transform: rotate(180deg);
+}
+
+.professor-dashboard__section-content {
+  position: relative;
+  z-index: 1;
+  max-height: 410px;
+  overflow-y: auto;
+  padding: 0 16px 16px 22px;
+  margin-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(37, 99, 235, 0.35) transparent;
+}
+
+.professor-dashboard__section-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.professor-dashboard__section-content::-webkit-scrollbar-thumb {
+  background: rgba(37, 99, 235, 0.28);
+  border-radius: 999px;
+}
+
+.professor-dashboard__section-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.professor-dashboard__list {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 22px;
+  background: #f8fbff;
+  border: 1px solid rgba(226, 232, 240, 0.86);
+}
+
+.professor-dashboard__list--compact {
+  gap: 8px;
+}
+
+/* Mini cards */
+
+.professor-dashboard__mini-card,
+.professor-dashboard__application-mini-card {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 19px;
+  background: rgba(255, 255, 255, 0.96);
+  display: grid;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.professor-dashboard__mini-card--urgent {
+  border-color: rgba(225, 29, 72, 0.2);
+  background:
+    radial-gradient(circle at 96% 0%, rgba(225, 29, 72, 0.08), transparent 26%),
+    white;
+}
+
+.professor-dashboard__mini-card:hover,
+.professor-dashboard__application-mini-card:hover {
+  background: #ffffff;
+  border-color: rgba(59, 130, 246, 0.24);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.07);
+}
+
+.professor-dashboard__mini-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 13px;
+}
+
+.professor-dashboard__mini-card-title {
+  min-width: 0;
+}
+
+.professor-dashboard__mini-card h3,
+.professor-dashboard__application-mini-card h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.98rem;
+  font-weight: 950;
+  letter-spacing: -0.025em;
+  line-height: 1.28;
+}
+
+.professor-dashboard__mini-card-title p {
+  margin: 5px 0 0;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  font-weight: 750;
+}
+
+.professor-dashboard__mini-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.professor-dashboard__mini-card-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.professor-dashboard__mini-card-meta svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.professor-dashboard__mini-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 4px;
+  color: #1d4ed8;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.professor-dashboard__badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.professor-dashboard__badge {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 0.69rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.professor-dashboard__badge--open,
+.professor-dashboard__badge--review,
+.professor-dashboard__badge--applied {
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.16);
+}
+
+.professor-dashboard__badge--accepted {
+  color: #047857;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+.professor-dashboard__badge--urgent {
+  color: #be123c;
+  background: rgba(225, 29, 72, 0.09);
+  border: 1px solid rgba(225, 29, 72, 0.18);
+}
+
+.professor-dashboard__badge--rejected,
+.professor-dashboard__badge--inactive {
+  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.09);
+  border: 1px solid rgba(239, 68, 68, 0.16);
+}
+
+.professor-dashboard__badge--withdrawn,
+.professor-dashboard__badge--closed,
+.professor-dashboard__badge--neutral {
+  color: #475569;
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+/* Empty state */
+
+.professor-dashboard__empty {
+  padding: 24px 18px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top, rgba(59, 130, 246, 0.07), transparent 38%),
+    white;
+  color: var(--text-soft);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.professor-dashboard__empty-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.professor-dashboard__empty h3 {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 950;
+  letter-spacing: -0.025em;
+}
+
+.professor-dashboard__empty p {
+  max-width: 520px;
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.5;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.professor-dashboard__empty-action {
+  margin-top: 8px;
+  padding: 10px 13px;
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+/* Responsive */
+
+@media (max-width: 1050px) {
+  .professor-dashboard__hero {
     grid-template-columns: 1fr;
+  }
+
+  .professor-dashboard__hero-panel {
+    max-width: 100%;
+  }
+
+  .professor-dashboard__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .professor-dashboard {
+    gap: 16px;
+    padding-bottom: 86px;
+  }
+
+  .professor-dashboard__hero {
+    padding: 20px;
+    border-radius: 28px;
+  }
+
+  .professor-dashboard__hero h1 {
+    letter-spacing: -0.055em;
+  }
+
+  .professor-dashboard__hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .professor-dashboard__primary-action,
+  .professor-dashboard__secondary-action {
+    width: 100%;
+  }
+
+  .professor-dashboard__metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .professor-dashboard__opportunity-strip {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .professor-dashboard__opportunity-strip button {
+    width: 100%;
+  }
+
+  .professor-dashboard__section-main {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+    padding: 17px;
+  }
+
+  .professor-dashboard__section-side {
+    width: 100%;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    justify-items: start;
+  }
+
+  .professor-dashboard__section-toggle {
+    justify-self: end;
+  }
+
+  .professor-dashboard__section-header {
+    align-items: flex-start;
+  }
+
+  .professor-dashboard__section-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 15px;
+  }
+
+  .professor-dashboard__section-content {
+    padding: 0 12px 12px 17px;
+    max-height: 460px;
+  }
+
+  .professor-dashboard__list {
+    padding: 10px;
+  }
+
+  .professor-dashboard__mini-card-top {
+    flex-direction: column;
+  }
+
+  .professor-dashboard__badge-row {
+    justify-content: flex-start;
+  }
+
+  .professor-dashboard__hero-panel-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 430px) {
+  .professor-dashboard__hero {
+    padding: 18px;
+  }
+
+  .professor-dashboard__metric {
+    padding: 15px;
+  }
+
+  .professor-dashboard__section-title-content h2 {
+    font-size: 1rem;
+  }
+
+  .professor-dashboard__section-title-content p {
+    font-size: 0.84rem;
+  }
+
+  .professor-dashboard__mini-card,
+  .professor-dashboard__application-mini-card {
+    padding: 13px;
   }
 }
