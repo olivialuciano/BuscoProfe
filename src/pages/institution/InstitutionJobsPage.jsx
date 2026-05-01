@@ -16,7 +16,6 @@ import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ApiMessage from "../../components/common/ApiMessage";
 import EmptyState from "../../components/common/EmptyState";
 import SelectField from "../../components/common/SelectField";
-import ProfileSectionModal from "../../components/profile/ProfileSectionModal";
 import { getInstitutionJobPostings } from "../../api/jobPostingsService";
 import { getApiErrorMessage } from "../../utils/errorUtils";
 import {
@@ -24,6 +23,15 @@ import {
   workModeOptions,
   contractTypeOptions,
 } from "../../utils/enumOptions";
+import {
+  disciplineOptions,
+  professionalTypeOptions,
+  urgentFilterOptions,
+  getEnumLabel,
+  getJobValue,
+  isJobUrgent,
+  sortUrgentJobsFirst,
+} from "../../utils/jobPostingOptions";
 import "./InstitutionJobsPage.css";
 
 const JOB_STATUS_OPTIONS = [
@@ -31,17 +39,6 @@ const JOB_STATUS_OPTIONS = [
   { value: "2", label: "Inactivo" },
   { value: "3", label: "Cerrado" },
 ];
-
-function getEnumLabel(options, value) {
-  if (value === null || value === undefined || value === "") {
-    return "No especificado";
-  }
-
-  return (
-    options.find((option) => Number(option.value) === Number(value))?.label ||
-    "No especificado"
-  );
-}
 
 function getUiStatusLabel(status) {
   switch (Number(status)) {
@@ -76,7 +73,6 @@ function InstitutionJobsPage() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const [filters, setFilters] = useState({
@@ -84,6 +80,9 @@ function InstitutionJobsPage() {
     workMode: "",
     availability: "",
     contractType: "",
+    discipline: "",
+    professionalType: "",
+    isUrgent: "",
   });
 
   const loadJobs = async () => {
@@ -108,6 +107,7 @@ function InstitutionJobsPage() {
 
   const handleFilterChange = (event) => {
     const { name, value } = event.target;
+
     setFilters((current) => ({
       ...current,
       [name]: value,
@@ -120,32 +120,58 @@ function InstitutionJobsPage() {
       workMode: "",
       availability: "",
       contractType: "",
+      discipline: "",
+      professionalType: "",
+      isUrgent: "",
     });
   };
 
   const filteredJobs = useMemo(() => {
-    return jobs
-      .filter((job) => Number(job.status) !== 4)
+    const result = jobs
+      .filter((job) => Number(getJobValue(job, "status", "Status")) !== 4)
       .filter((job) =>
         filters.status === ""
           ? true
-          : Number(job.status) === Number(filters.status),
+          : Number(getJobValue(job, "status", "Status")) ===
+            Number(filters.status),
       )
       .filter((job) =>
         filters.workMode === ""
           ? true
-          : Number(job.workMode) === Number(filters.workMode),
+          : Number(getJobValue(job, "workMode", "WorkMode")) ===
+            Number(filters.workMode),
       )
       .filter((job) =>
         filters.availability === ""
           ? true
-          : Number(job.availability) === Number(filters.availability),
+          : Number(getJobValue(job, "availability", "Availability")) ===
+            Number(filters.availability),
       )
       .filter((job) =>
         filters.contractType === ""
           ? true
-          : Number(job.contractType) === Number(filters.contractType),
+          : Number(getJobValue(job, "contractType", "ContractType")) ===
+            Number(filters.contractType),
+      )
+      .filter((job) =>
+        filters.discipline === ""
+          ? true
+          : Number(getJobValue(job, "discipline", "Discipline")) ===
+            Number(filters.discipline),
+      )
+      .filter((job) =>
+        filters.professionalType === ""
+          ? true
+          : Number(getJobValue(job, "professionalType", "ProfessionalType")) ===
+            Number(filters.professionalType),
+      )
+      .filter((job) =>
+        filters.isUrgent === ""
+          ? true
+          : isJobUrgent(job) === (filters.isUrgent === "true"),
       );
+
+    return sortUrgentJobsFirst(result);
   }, [jobs, filters]);
 
   if (loading) {
@@ -191,20 +217,29 @@ function InstitutionJobsPage() {
       {filteredJobs.length ? (
         <div className="institution-jobs-page__grid">
           {filteredJobs.map((job) => {
+            const jobId = getJobValue(job, "id", "Id");
+            const jobStatus = getJobValue(job, "status", "Status");
+
             return (
               <div
-                key={job.id}
+                key={jobId}
                 className="institution-jobs-page__job-card-wrapper"
-                onClick={() => navigate(`/jobs/${job.id}`)}
+                onClick={() => navigate(`/jobs/${jobId}`)}
               >
                 <Card className="institution-jobs-page__job-card">
                   <div className="institution-jobs-page__badges">
-                    <span className={getStatusBadgeClass(job.status)}>
-                      {getUiStatusLabel(job.status)}
+                    <span className={getStatusBadgeClass(jobStatus)}>
+                      {getUiStatusLabel(jobStatus)}
                     </span>
+
+                    {isJobUrgent(job) && (
+                      <span className="soft-badge soft-badge--urgent">
+                        Urgente
+                      </span>
+                    )}
                   </div>
 
-                  <h3>{job.title}</h3>
+                  <h3>{job.title || job.Title}</h3>
 
                   <div className="institution-jobs-page__meta">
                     <span>
@@ -216,17 +251,26 @@ function InstitutionJobsPage() {
 
                     <span>
                       <Briefcase size={14} />
-                      {getEnumLabel(workModeOptions, job.workMode)}
+                      {getEnumLabel(
+                        workModeOptions,
+                        getJobValue(job, "workMode", "WorkMode"),
+                      )}
                     </span>
 
                     <span>
                       <Clock3 size={14} />
-                      {getEnumLabel(availabilityOptions, job.availability)}
+                      {getEnumLabel(
+                        availabilityOptions,
+                        getJobValue(job, "availability", "Availability"),
+                      )}
                     </span>
 
                     <span>
                       <FileText size={14} />
-                      {getEnumLabel(contractTypeOptions, job.contractType)}
+                      {getEnumLabel(
+                        contractTypeOptions,
+                        getJobValue(job, "contractType", "ContractType"),
+                      )}
                     </span>
                   </div>
                 </Card>
@@ -277,6 +321,33 @@ function InstitutionJobsPage() {
             value={filters.status}
             onChange={handleFilterChange}
             options={JOB_STATUS_OPTIONS}
+          />
+
+          <SelectField
+            label="Urgencia"
+            name="isUrgent"
+            value={filters.isUrgent}
+            onChange={handleFilterChange}
+            options={urgentFilterOptions}
+          />
+
+          <SelectField
+            label="Tipo de profesional"
+            name="professionalType"
+            value={filters.professionalType}
+            onChange={handleFilterChange}
+            options={[
+              { value: "", label: "Todos" },
+              ...professionalTypeOptions,
+            ]}
+          />
+
+          <SelectField
+            label="Disciplina"
+            name="discipline"
+            value={filters.discipline}
+            onChange={handleFilterChange}
+            options={[{ value: "", label: "Todas" }, ...disciplineOptions]}
           />
 
           <SelectField

@@ -10,25 +10,20 @@ import EmptyState from "../../components/common/EmptyState";
 import ApiMessage from "../../components/common/ApiMessage";
 import { getApiErrorMessage } from "../../utils/errorUtils";
 import { isAdmin, isInstitution } from "../../utils/roleUtils";
-
 import {
   availabilityOptions,
   workModeOptions,
   contractTypeOptions,
 } from "../../utils/enumOptions";
-
+import {
+  disciplineOptions,
+  professionalTypeOptions,
+  getEnumLabel,
+  getJobValue,
+  isJobUrgent,
+  sortUrgentJobsFirst,
+} from "../../utils/jobPostingOptions";
 import "./SavedJobPostingsPage.css";
-
-function getEnumLabel(options, value) {
-  if (value === null || value === undefined || value === "") {
-    return "No especificado";
-  }
-
-  return (
-    options.find((option) => Number(option.value) === Number(value))?.label ||
-    "No especificado"
-  );
-}
 
 function getStatusBadgeClass(status) {
   switch (Number(status)) {
@@ -103,7 +98,7 @@ function SavedJobPostingsPage() {
         .map((item) => item?.jobPosting || item?.JobPosting || null)
         .filter(Boolean);
 
-      setSavedJobPostings(jobs);
+      setSavedJobPostings(sortUrgentJobsFirst(jobs));
 
       if (isProfessorUser) {
         const applicationsData = await getProfessorApplications(user.id);
@@ -153,36 +148,43 @@ function SavedJobPostingsPage() {
       {savedJobPostings.length ? (
         <div className="saved-job-postings-page__grid">
           {savedJobPostings.map((job) => {
+            const jobId = getJobValue(job, "id", "Id");
+            const jobStatus = getJobValue(job, "status", "Status");
+
             const locationText =
               [job.city, job.province, job.country]
                 .filter(Boolean)
                 .join(", ") || "Ubicación no informada";
 
-            const application = applicationsByJobPostingId.get(Number(job.id));
+            const application = applicationsByJobPostingId.get(Number(jobId));
             const alreadyApplied = Boolean(application);
 
             return (
               <div
-                key={job.id}
+                key={jobId}
                 className="saved-job-postings-page__card-wrapper"
-                onClick={() => navigate(`/jobs/${job.id}`)}
+                onClick={() => navigate(`/jobs/${jobId}`)}
               >
                 <Card className="saved-job-postings-page__card">
                   <div className="saved-job-postings-page__badges">
-                    <span className={getStatusBadgeClass(job.status)}>
-                      {getUiStatusLabel(job.status)}
+                    <span className={getStatusBadgeClass(jobStatus)}>
+                      {getUiStatusLabel(jobStatus)}
                     </span>
 
+                    {isJobUrgent(job) && (
+                      <span className="soft-badge soft-badge--urgent">
+                        Urgente
+                      </span>
+                    )}
+
                     {alreadyApplied && (
-                      <>
-                        <span className="soft-badge soft-badge--success">
-                          Ya te postulaste
-                        </span>
-                      </>
+                      <span className="soft-badge soft-badge--success">
+                        Ya te postulaste
+                      </span>
                     )}
                   </div>
 
-                  <h3>{job.title || "Vacante sin título"}</h3>
+                  <h3>{job.title || job.Title || "Vacante sin título"}</h3>
 
                   <div className="saved-job-postings-page__meta">
                     <span>
@@ -192,17 +194,26 @@ function SavedJobPostingsPage() {
 
                     <span>
                       <Briefcase size={14} />
-                      {getEnumLabel(workModeOptions, job.workMode)}
+                      {getEnumLabel(
+                        workModeOptions,
+                        getJobValue(job, "workMode", "WorkMode"),
+                      )}
                     </span>
 
                     <span>
                       <Clock3 size={14} />
-                      {getEnumLabel(availabilityOptions, job.availability)}
+                      {getEnumLabel(
+                        availabilityOptions,
+                        getJobValue(job, "availability", "Availability"),
+                      )}
                     </span>
 
                     <span>
                       <FileText size={14} />
-                      {getEnumLabel(contractTypeOptions, job.contractType)}
+                      {getEnumLabel(
+                        contractTypeOptions,
+                        getJobValue(job, "contractType", "ContractType"),
+                      )}
                     </span>
                   </div>
                 </Card>

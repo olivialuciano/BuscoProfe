@@ -1,17 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  ArrowLeft,
-  Briefcase,
-  Clock3,
-  FileText,
-  MapPin,
-  RefreshCw,
-} from "lucide-react";
+import { Briefcase, Clock3, FileText, MapPin } from "lucide-react";
 import { getAllInstitutions } from "../../api/usersService";
 import { getAllJobPostings } from "../../api/jobPostingsService";
 import Card from "../../components/common/Card";
-import Button from "../../components/common/Button";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
 import ApiMessage from "../../components/common/ApiMessage";
@@ -21,17 +13,40 @@ import {
   workModeOptions,
   contractTypeOptions,
 } from "../../utils/enumOptions";
+import {
+  disciplineOptions,
+  professionalTypeOptions,
+  getEnumLabel,
+  getJobValue,
+  isJobUrgent,
+  sortUrgentJobsFirst,
+} from "../../utils/jobPostingOptions";
 import "./InstitutionJobPostingsPage.css";
 
-function getEnumLabel(options, value) {
-  if (value === null || value === undefined || value === "") {
-    return "No especificado";
+function getStatusBadgeClass(status) {
+  switch (Number(status)) {
+    case 1:
+      return "soft-badge soft-badge--info";
+    case 2:
+      return "soft-badge soft-badge--danger";
+    case 3:
+      return "soft-badge soft-badge--neutral";
+    default:
+      return "soft-badge soft-badge--neutral";
   }
+}
 
-  return (
-    options.find((option) => Number(option.value) === Number(value))?.label ||
-    "No especificado"
-  );
+function getUiStatusLabel(status) {
+  switch (Number(status)) {
+    case 1:
+      return "Activa";
+    case 2:
+      return "Inactiva";
+    case 3:
+      return "Cerrada";
+    default:
+      return "Borrador";
+  }
 }
 
 function InstitutionJobPostingsPage() {
@@ -41,16 +56,10 @@ function InstitutionJobPostingsPage() {
   const [institution, setInstitution] = useState(null);
   const [jobPostings, setJobPostings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [reloading, setReloading] = useState(false);
   const [error, setError] = useState("");
 
-  const loadData = async (isReload = false) => {
-    if (isReload) {
-      setReloading(true);
-    } else {
-      setLoading(true);
-    }
-
+  const loadData = async () => {
+    setLoading(true);
     setError("");
 
     try {
@@ -65,7 +74,7 @@ function InstitutionJobPostingsPage() {
       const jobs = Array.isArray(jobPostingsData) ? jobPostingsData : [];
 
       const foundInstitution = institutions.find(
-        (item) => Number(item.id) === Number(id),
+        (item) => Number(item.id || item.Id) === Number(id),
       );
 
       if (!foundInstitution) {
@@ -75,12 +84,12 @@ function InstitutionJobPostingsPage() {
 
       const filteredJobs = jobs.filter(
         (job) =>
-          Number(job.institutionUserId) === Number(id) &&
-          Number(job.status) !== 4,
+          Number(getJobValue(job, "institutionUserId", "InstitutionUserId")) ===
+            Number(id) && Number(getJobValue(job, "status", "Status")) !== 4,
       );
 
       setInstitution(foundInstitution);
-      setJobPostings(filteredJobs);
+      setJobPostings(sortUrgentJobsFirst(filteredJobs));
     } catch (err) {
       setError(
         getApiErrorMessage(
@@ -89,11 +98,7 @@ function InstitutionJobPostingsPage() {
         ),
       );
     } finally {
-      if (isReload) {
-        setReloading(false);
-      } else {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
@@ -102,7 +107,13 @@ function InstitutionJobPostingsPage() {
   }, [id]);
 
   const institutionName = useMemo(() => {
-    return institution?.tradeName || institution?.legalName || "Institución";
+    return (
+      institution?.tradeName ||
+      institution?.TradeName ||
+      institution?.legalName ||
+      institution?.LegalName ||
+      "Institución"
+    );
   }, [institution]);
 
   if (loading) {
@@ -111,32 +122,6 @@ function InstitutionJobPostingsPage() {
         <LoadingSpinner text="Cargando vacantes..." />
       </div>
     );
-  }
-
-  function getStatusBadgeClass(status) {
-    switch (Number(status)) {
-      case 1:
-        return "soft-badge soft-badge--info";
-      case 2:
-        return "soft-badge soft-badge--danger";
-      case 3:
-        return "soft-badge soft-badge--neutral";
-      default:
-        return "soft-badge soft-badge--neutral";
-    }
-  }
-
-  function getUiStatusLabel(status) {
-    switch (Number(status)) {
-      case 1:
-        return "Activa";
-      case 2:
-        return "Inactiva";
-      case 3:
-        return "Cerrada";
-      default:
-        return "Borrador";
-    }
   }
 
   return (
@@ -153,6 +138,9 @@ function InstitutionJobPostingsPage() {
       {jobPostings.length ? (
         <div className="institution-job-postings-page__grid">
           {jobPostings.map((job) => {
+            const jobId = getJobValue(job, "id", "Id");
+            const jobStatus = getJobValue(job, "status", "Status");
+
             const locationText =
               [job.city, job.province, job.country]
                 .filter(Boolean)
@@ -160,18 +148,27 @@ function InstitutionJobPostingsPage() {
 
             return (
               <div
-                key={job.id}
+                key={jobId}
                 className="institution-job-postings-page__card-wrapper"
-                onClick={() => navigate(`/jobs/${job.id}`)}
+                onClick={() => navigate(`/jobs/${jobId}`)}
               >
                 <Card className="institution-job-postings-page__card">
                   <div className="institution-jobs-page__badges">
-                    <span className={getStatusBadgeClass(job.status)}>
-                      {getUiStatusLabel(job.status)}
+                    <span className={getStatusBadgeClass(jobStatus)}>
+                      {getUiStatusLabel(jobStatus)}
                     </span>
+
+                    {isJobUrgent(job) && (
+                      <span className="soft-badge soft-badge--urgent">
+                        Urgente
+                      </span>
+                    )}
                   </div>
-                  <h3>{job.title || "Vacante sin título"}</h3>
-                  <p>{job.description || "Sin descripción."}</p>
+
+                  <h3>{job.title || job.Title || "Vacante sin título"}</h3>
+                  <p>
+                    {job.description || job.Description || "Sin descripción."}
+                  </p>
 
                   <div className="institution-job-postings-page__meta">
                     <span>
@@ -181,17 +178,26 @@ function InstitutionJobPostingsPage() {
 
                     <span>
                       <Briefcase size={14} />
-                      {getEnumLabel(workModeOptions, job.workMode)}
+                      {getEnumLabel(
+                        workModeOptions,
+                        getJobValue(job, "workMode", "WorkMode"),
+                      )}
                     </span>
 
                     <span>
                       <Clock3 size={14} />
-                      {getEnumLabel(availabilityOptions, job.availability)}
+                      {getEnumLabel(
+                        availabilityOptions,
+                        getJobValue(job, "availability", "Availability"),
+                      )}
                     </span>
 
                     <span>
                       <FileText size={14} />
-                      {getEnumLabel(contractTypeOptions, job.contractType)}
+                      {getEnumLabel(
+                        contractTypeOptions,
+                        getJobValue(job, "contractType", "ContractType"),
+                      )}
                     </span>
                   </div>
                 </Card>
