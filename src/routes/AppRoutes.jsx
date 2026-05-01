@@ -32,6 +32,7 @@ import InstitutionProfilePage from "../pages/institution/InstitutionProfilePage"
 import InstitutionNotificationsPage from "../pages/institution/InstitutionNotificationsPage";
 import JobPostingApplicationsPage from "../pages/institution/JobPostingApplicationsPage";
 import InstitutionProfessorsPage from "../pages/institution/InstitutionProfessorsPage";
+import InstitutionApplicationsPage from "../pages/institution/InstitutionApplicationsPage";
 
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminUsersPage from "../pages/admin/AdminUsersPage";
@@ -115,6 +116,10 @@ function AppRoutes() {
           <Route
             path="/institution/jobs/new"
             element={<InstitutionCreateJobPage />}
+          />
+          <Route
+            path="/institution/applications"
+            element={<InstitutionApplicationsPage />}
           />
 
           <Route

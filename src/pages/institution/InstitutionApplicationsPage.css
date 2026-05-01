@@ -1,0 +1,309 @@
+.institution-applications-page {
+  display: grid;
+  gap: 22px;
+}
+
+.institution-applications-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.institution-applications-page__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: 999px;
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.16);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.institution-applications-page__groups {
+  display: grid;
+  gap: 28px;
+}
+
+.institution-applications-page__group {
+  display: grid;
+  gap: 14px;
+}
+
+.institution-applications-page__job-title {
+  width: fit-content;
+  max-width: 100%;
+  padding: 10px 14px;
+  border: 1px solid rgba(59, 130, 246, 0.22);
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.1),
+    rgba(239, 246, 255, 0.92)
+  );
+  color: #1d4ed8;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(59, 130, 246, 0.08);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.institution-applications-page__job-title span {
+  min-width: 0;
+  font-size: 1rem;
+  font-weight: 950;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+.institution-applications-page__job-title svg {
+  flex-shrink: 0;
+}
+
+.institution-applications-page__job-title:hover {
+  transform: translateY(-1px);
+  border-color: rgba(37, 99, 235, 0.36);
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.14),
+    rgba(239, 246, 255, 1)
+  );
+}
+
+.institution-applications-page__list {
+  display: grid;
+  gap: 16px;
+}
+
+.institution-applications-page__card-wrapper {
+  cursor: pointer;
+}
+
+.institution-applications-page__card {
+  padding: 22px;
+  display: grid;
+  gap: 14px;
+  transition: 0.2s ease;
+}
+
+.institution-applications-page__card:hover {
+  transform: translateY(-2px);
+}
+
+.institution-applications-page__card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.institution-applications-page__identity {
+  display: grid;
+  gap: 6px;
+}
+
+.institution-applications-page__identity p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+}
+
+.institution-applications-page__professor-link {
+  width: fit-content;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+  font-size: 1.08rem;
+  font-weight: 900;
+  text-align: left;
+  cursor: pointer;
+}
+
+.institution-applications-page__professor-link svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.institution-applications-page__professor-link:hover:not(:disabled) {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.institution-applications-page__professor-link:disabled {
+  color: var(--text-soft);
+  cursor: not-allowed;
+}
+
+.institution-applications-page__meta {
+  display: grid;
+  gap: 10px;
+}
+
+.institution-applications-page__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+}
+
+.institution-applications-page__meta svg,
+.institution-applications-page__message strong svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.institution-applications-page__message {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #f8fbff;
+  border: 1px solid var(--border);
+}
+
+.institution-applications-page__message p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.institution-applications-page__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.institution-applications-page__badge--pending {
+  background: rgba(59, 130, 246, 0.08);
+  color: #1d4ed8;
+}
+
+.institution-applications-page__badge--review {
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+}
+
+.institution-applications-page__badge--accepted {
+  background: rgba(34, 197, 94, 0.1);
+  color: #15803d;
+}
+
+.institution-applications-page__badge--rejected {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+.institution-applications-page__badge--withdrawn {
+  background: rgba(107, 114, 128, 0.1);
+  color: #374151;
+}
+
+.institution-applications-page__badge--neutral {
+  background: rgba(148, 163, 184, 0.12);
+  color: #475569;
+}
+
+.institution-applications-page__message-accordion {
+  display: grid;
+  gap: 10px;
+}
+
+.institution-applications-page__accordion-button {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #f8fbff;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  transition: 0.2s ease;
+}
+
+.institution-applications-page__accordion-button:hover {
+  background: #f3f8ff;
+}
+
+.institution-applications-page__accordion-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.institution-applications-page__accordion-label svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.institution-applications-page__accordion-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.institution-applications-page__accordion-preview {
+  color: var(--text-soft);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.institution-applications-page__accordion-icon {
+  color: var(--text-soft);
+  transition: transform 0.2s ease;
+}
+
+.institution-applications-page__accordion-button--expanded
+  .institution-applications-page__accordion-icon {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 768px) {
+  .institution-applications-page__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .institution-applications-page__summary {
+    width: fit-content;
+  }
+
+  .institution-applications-page__card-top {
+    flex-direction: column;
+  }
+
+  .institution-applications-page__accordion-button {
+    padding: 12px 14px;
+  }
+
+  .institution-applications-page__accordion-right {
+    gap: 8px;
+  }
+
+  .institution-applications-page__accordion-preview {
+    font-size: 0.82rem;
+  }
+}

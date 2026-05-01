@@ -108,6 +108,10 @@ function Navbar() {
               icon: <Bookmark size={20} />,
             },
             {
+              to: "/institution/applications",
+              label: "Postulaciones",
+            },
+            {
               to: "/institution/professors",
               label: "Profesores",
               icon: <Users size={20} />,
