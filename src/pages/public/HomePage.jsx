@@ -3,11 +3,13 @@ import {
   Building2,
   UserRoundSearch,
   LayoutDashboard,
-  Sparkles,
-  BriefcaseBusiness,
-  CheckCircle2,
   Send,
   Waves,
+  Briefcase,
+  Bookmark,
+  ClipboardList,
+  Plus,
+  UsersRound,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Card from "../../components/common/Card";
@@ -107,8 +109,6 @@ function HomePage() {
 
         const data = await getMyUser(loggedUserId);
 
-        console.log("Usuario completo desde API:", data);
-
         setProfileUser(data);
       } catch (error) {
         console.error("Error obteniendo datos del usuario logueado:", error);
@@ -144,31 +144,101 @@ function HomePage() {
       currentUser?.Name ||
       "Administrador";
 
+    const isInstitutionUser = isInstitution(user);
+    const isAdminUser = isAdmin(user);
+
     const authenticatedTitle = isLoadingProfile
       ? "Hola..."
-      : isAdmin(user)
+      : isAdminUser
         ? `Hola, ${adminName}`
-        : isInstitution(user)
+        : isInstitutionUser
           ? `Hola, ${institutionName}`
           : `Hola, ${professorName}`;
 
-    const authenticatedDescription = isAdmin(user)
+    const authenticatedDescription = isAdminUser
       ? "Gestioná usuarios, perfiles y el funcionamiento general de la plataforma desde tu panel administrativo."
-      : isInstitution(user)
-        ? "Publicá vacantes, mantené actualizado tu perfil institucional y conectá con profesionales del mundo deportivo."
-        : "Mantené tu perfil actualizado, explorá vacantes deportivas y postuláte a oportunidades que se ajusten a tu experiencia.";
+      : isInstitutionUser
+        ? "Accedé rápido a tus vacantes, postulaciones y nuevas búsquedas laborales."
+        : "Explorá oportunidades, seguí tus postulaciones y revisá las vacantes que guardaste.";
 
-    const dashboardPath = isAdmin(user)
+    const dashboardPath = isAdminUser
       ? "/admin"
-      : isInstitution(user)
+      : isInstitutionUser
         ? "/institution"
         : "/professor";
 
-    const roleLabel = isAdmin(user)
-      ? "Administrador"
-      : isInstitution(user)
-        ? "Institución"
-        : "Profesor";
+    const primaryActions = isAdminUser
+      ? [
+          {
+            to: dashboardPath,
+            label: "Ir a mi panel",
+            icon: <LayoutDashboard size={16} />,
+            variant: "primary",
+          },
+          {
+            to: "/admin/users",
+            label: "Usuarios",
+            icon: <UsersRound size={16} />,
+            variant: "secondary",
+          },
+        ]
+      : isInstitutionUser
+        ? [
+            {
+              to: dashboardPath,
+              label: "Ir a mi panel",
+              icon: <LayoutDashboard size={16} />,
+              variant: "primary",
+            },
+            {
+              to: "/institution/jobs/new",
+              label: "Publicar vacante",
+              icon: <Plus size={16} />,
+              variant: "secondary",
+            },
+          ]
+        : [
+            {
+              to: dashboardPath,
+              label: "Ir a mi panel",
+              icon: <LayoutDashboard size={16} />,
+              variant: "primary",
+            },
+            {
+              to: "/jobs",
+              label: "Ver vacantes",
+              icon: <Briefcase size={16} />,
+              variant: "secondary",
+            },
+          ];
+
+    const secondaryActions = isAdminUser
+      ? []
+      : isInstitutionUser
+        ? [
+            {
+              to: "/institution/jobs",
+              label: "Mis vacantes",
+              icon: <Briefcase size={16} />,
+            },
+            {
+              to: "/institution/applications",
+              label: "Postulaciones",
+              icon: <ClipboardList size={16} />,
+            },
+          ]
+        : [
+            {
+              to: "/professor/applications",
+              label: "Mis postulaciones",
+              icon: <ClipboardList size={16} />,
+            },
+            {
+              to: "/professor/saved-jobs",
+              label: "Vacantes guardadas",
+              icon: <Bookmark size={16} />,
+            },
+          ];
 
     return (
       <div className="home-page home-page--authenticated" style={pageStyle}>
@@ -183,55 +253,37 @@ function HomePage() {
         <section className="home-page__auth-hero">
           <div className="page-shell home-page__auth-content">
             <div className="home-page__auth-copy home-page__reveal">
-              <span className="home-page__eyebrow">
-                <Sparkles size={16} />
-                Sesión activa · {roleLabel}
-              </span>
-
               <h1>{authenticatedTitle}</h1>
 
               <p>{authenticatedDescription}</p>
 
               <div className="home-page__hero-actions">
-                <Link to={dashboardPath}>
-                  <Button icon={<LayoutDashboard size={16} />}>
-                    Ir a mi panel
-                  </Button>
-                </Link>
-
-                <Link to="/jobs">
-                  <Button variant="secondary">Ver vacantes</Button>
-                </Link>
+                {primaryActions.map((action) => (
+                  <Link key={action.to} to={action.to}>
+                    <Button
+                      variant={
+                        action.variant === "secondary" ? "secondary" : undefined
+                      }
+                      icon={action.icon}
+                    >
+                      {action.label}
+                    </Button>
+                  </Link>
+                ))}
               </div>
+
+              {secondaryActions.length ? (
+                <div className="home-page__hero-actions">
+                  {secondaryActions.map((action) => (
+                    <Link key={action.to} to={action.to}>
+                      <Button variant="secondary" icon={action.icon}>
+                        {action.label}
+                      </Button>
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
             </div>
-
-            <Card className="home-page__auth-panel home-page__glass-card">
-              <div className="home-page__panel-icon">
-                <BriefcaseBusiness size={28} />
-              </div>
-
-              <h2>Tu espacio de trabajo</h2>
-
-              <p>
-                La plataforma organiza tus acciones principales según tu rol,
-                para que puedas avanzar sin perder tiempo.
-              </p>
-
-              <div className="home-page__panel-list">
-                <span>
-                  <CheckCircle2 size={16} />
-                  Acceso rápido a funcionalidades
-                </span>
-                <span>
-                  <CheckCircle2 size={16} />
-                  Perfil y datos actualizables
-                </span>
-                <span>
-                  <CheckCircle2 size={16} />
-                  Navegación simple y responsive
-                </span>
-              </div>
-            </Card>
           </div>
         </section>
       </div>
@@ -269,7 +321,7 @@ function HomePage() {
 
             <div className="home-page__hero-actions">
               <Link to="/register">
-                <Button variant="secondary">Crear cuenta</Button>
+                <Button variant="primary">Crear cuenta</Button>
               </Link>
             </div>
           </div>
