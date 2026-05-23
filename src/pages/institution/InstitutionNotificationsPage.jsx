@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Bell, CheckCheck, Clock3, RefreshCw } from "lucide-react";
+import { Bell, CheckCheck } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import {
@@ -14,42 +14,35 @@ import ApiMessage from "../../components/common/ApiMessage";
 import { getApiErrorMessage } from "../../utils/errorUtils";
 import "./InstitutionNotificationsPage.css";
 
-function getNotificationTypeLabel(type) {
+function getNotificationToneClass(type) {
   switch (Number(type)) {
     case 0:
-      return "Violeta";
+      return "institution-notifications-page__card--purple";
     case 1:
-      return "Azul";
+      return "institution-notifications-page__card--blue";
     case 2:
-      return "Verde";
+      return "institution-notifications-page__card--green";
     case 3:
-      return "Amarillo";
+      return "institution-notifications-page__card--yellow";
     case 4:
-      return "Naranja";
+      return "institution-notifications-page__card--orange";
     case 5:
-      return "Rojo";
+      return "institution-notifications-page__card--red";
     default:
-      return "General";
+      return "institution-notifications-page__card--neutral";
   }
 }
 
-function getNotificationTypeClass(type) {
-  switch (Number(type)) {
-    case 0:
-      return "notification-chip notification-chip--purple";
-    case 1:
-      return "notification-chip notification-chip--blue";
-    case 2:
-      return "notification-chip notification-chip--green";
-    case 3:
-      return "notification-chip notification-chip--yellow";
-    case 4:
-      return "notification-chip notification-chip--orange";
-    case 5:
-      return "notification-chip notification-chip--red";
-    default:
-      return "notification-chip notification-chip--neutral";
-  }
+function formatNotificationDate(value) {
+  if (!value) return "Fecha no informada";
+
+  return new Date(value).toLocaleString("es-AR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function InstitutionNotificationsPage() {
@@ -58,19 +51,13 @@ function InstitutionNotificationsPage() {
 
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [reloading, setReloading] = useState(false);
   const [error, setError] = useState("");
   const [markingId, setMarkingId] = useState(null);
 
-  const loadNotifications = async (isReload = false) => {
+  const loadNotifications = async () => {
     if (!user?.id) return;
 
-    if (isReload) {
-      setReloading(true);
-    } else {
-      setLoading(true);
-    }
-
+    setLoading(true);
     setError("");
 
     try {
@@ -81,11 +68,7 @@ function InstitutionNotificationsPage() {
         getApiErrorMessage(err, "No se pudieron cargar las notificaciones."),
       );
     } finally {
-      if (isReload) {
-        setReloading(false);
-      } else {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
@@ -142,6 +125,8 @@ function InstitutionNotificationsPage() {
       setNotifications((current) =>
         current.map((item) => ({ ...item, isRead: true })),
       );
+
+      showToast("Notificaciones marcadas como leídas.", "success");
     } catch (err) {
       showToast(
         getApiErrorMessage(err, "No se pudieron marcar todas como leídas."),
@@ -191,7 +176,9 @@ function InstitutionNotificationsPage() {
           {notifications.map((notification) => (
             <Card
               key={notification.id}
-              className={`institution-notifications-page__card ${
+              className={`institution-notifications-page__card ${getNotificationToneClass(
+                notification.type,
+              )} ${
                 notification.isRead
                   ? "institution-notifications-page__card--read"
                   : "institution-notifications-page__card--unread"
@@ -199,10 +186,11 @@ function InstitutionNotificationsPage() {
             >
               <div className="institution-notifications-page__card-top">
                 <div className="institution-notifications-page__card-header">
+                  <div className="institution-notifications-page__icon">
+                    <Bell size={18} />
+                  </div>
+
                   <h3>{notification.title || "Notificación"}</h3>
-                  <span className={getNotificationTypeClass(notification.type)}>
-                    {getNotificationTypeLabel(notification.type)}
-                  </span>
                 </div>
 
                 {!notification.isRead ? (
@@ -216,9 +204,7 @@ function InstitutionNotificationsPage() {
 
               <div className="institution-notifications-page__footer">
                 <span className="institution-notifications-page__date">
-                  {notification.createdAt
-                    ? new Date(notification.createdAt).toLocaleString()
-                    : "Fecha no informada"}
+                  {formatNotificationDate(notification.createdAt)}
                 </span>
 
                 {!notification.isRead ? (

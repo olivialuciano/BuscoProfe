@@ -324,12 +324,17 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
 
     try {
       setWithdrawing(true);
+
       await withdrawApplication(application.id);
-      showToast("Postulación retirada.", "success");
+
+      showToast("Postulación eliminada.", "success");
       setShowWithdrawModal(false);
       navigate("/professor/applications");
-    } catch {
-      showToast("No se pudo retirar la postulación.", "error");
+    } catch (err) {
+      showToast(
+        getApiErrorMessage(err, "No se pudo eliminar la postulación."),
+        "error",
+      );
     } finally {
       setWithdrawing(false);
     }
@@ -426,8 +431,8 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
             type="button"
             className="application-detail__delete-button"
             onClick={() => setShowWithdrawModal(true)}
-            aria-label="Retirar postulación"
-            title="Retirar postulación"
+            aria-label="Eliminar postulación"
+            title="Eliminar postulación"
           >
             <Trash2 size={18} />
           </button>
@@ -542,14 +547,14 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
         onClose={() => {
           if (!withdrawing) setShowWithdrawModal(false);
         }}
-        title="¿Querés retirar esta postulación?"
-        subtitle="Esta acción quitará tu candidatura actual para esta vacante."
+        title="¿Querés eliminar esta postulación?"
+        subtitle="Esta acción eliminará definitivamente tu postulación para esta vacante."
       >
         <div className="application-detail__delete-modal">
           <div className="application-detail__delete-warning">
             <AlertTriangle size={18} />
             <span>
-              {`¿Estás seguro de que querés retirar tu postulación a "${jobTitle}"?`}
+              {`¿Estás seguro de que querés eliminar tu postulación a "${jobTitle}"?`}
             </span>
           </div>
 
@@ -569,7 +574,7 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
               onClick={handleWithdraw}
               disabled={withdrawing}
             >
-              {withdrawing ? "Retirando..." : "Sí, retirar postulación"}
+              {withdrawing ? "Eliminando..." : "Sí, eliminar postulación"}
             </Button>
           </div>
         </div>

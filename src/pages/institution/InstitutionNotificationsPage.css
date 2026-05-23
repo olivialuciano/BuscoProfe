@@ -16,56 +16,124 @@
   flex-wrap: wrap;
 }
 
-.institution-notifications-page__summary {
-  padding: 20px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
-
-.institution-notifications-page__summary-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 16px;
-  background: #fbfdff;
-}
-
-.institution-notifications-page__summary-item svg {
-  color: var(--primary);
-  flex-shrink: 0;
-}
-
-.institution-notifications-page__summary-item strong {
-  display: block;
-  margin-bottom: 4px;
-}
-
-.institution-notifications-page__summary-item span {
-  color: var(--text-soft);
-}
-
 .institution-notifications-page__list {
   display: grid;
   gap: 16px;
 }
 
 .institution-notifications-page__card {
+  position: relative;
+  overflow: hidden;
   padding: 22px;
   display: grid;
   gap: 14px;
-  border-left: 4px solid transparent;
+  border-left: 5px solid transparent;
+  background: #ffffff;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.institution-notifications-page__card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.08);
+}
+
+.institution-notifications-page__card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.72;
+}
+
+.institution-notifications-page__card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .institution-notifications-page__card--unread {
-  border-left-color: var(--primary);
-  background: #fcfdff;
+  box-shadow: 0 16px 42px rgba(15, 23, 42, 0.06);
 }
 
 .institution-notifications-page__card--read {
-  opacity: 0.92;
+  opacity: 0.88;
+}
+
+.institution-notifications-page__card--purple::before {
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(168, 85, 247, 0.16),
+      transparent 34%
+    ),
+    linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(255, 255, 255, 0.96));
+}
+
+.institution-notifications-page__card--blue::before {
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(59, 130, 246, 0.18),
+      transparent 34%
+    ),
+    linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0.96));
+}
+
+.institution-notifications-page__card--green::before {
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(34, 197, 94, 0.18),
+      transparent 34%
+    ),
+    linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(255, 255, 255, 0.96));
+}
+
+.institution-notifications-page__card--yellow::before {
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(250, 204, 21, 0.24),
+      transparent 34%
+    ),
+    linear-gradient(135deg, rgba(250, 204, 21, 0.1), rgba(255, 255, 255, 0.96));
+}
+
+.institution-notifications-page__card--orange::before {
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(249, 115, 22, 0.2),
+      transparent 34%
+    ),
+    linear-gradient(135deg, rgba(249, 115, 22, 0.09), rgba(255, 255, 255, 0.96));
+}
+
+.institution-notifications-page__card--red::before {
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(239, 68, 68, 0.18),
+      transparent 34%
+    ),
+    linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(255, 255, 255, 0.96));
+}
+
+.institution-notifications-page__card--neutral::before {
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(148, 163, 184, 0.18),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(148, 163, 184, 0.08),
+      rgba(255, 255, 255, 0.96)
+    );
 }
 
 .institution-notifications-page__card-top {
@@ -77,15 +145,27 @@
 
 .institution-notifications-page__card-header {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
+  min-width: 0;
 }
 
 .institution-notifications-page__card-header h3 {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 900;
+  color: var(--text);
+}
+
+.institution-notifications-page__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  background: rgba(59, 130, 246, 0.1);
+  flex-shrink: 0;
 }
 
 .institution-notifications-page__unread-dot {
@@ -122,51 +202,6 @@
   color: #64748b;
 }
 
-.notification-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 0.76rem;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.notification-chip--purple {
-  background: rgba(168, 85, 247, 0.12);
-  color: #7e22ce;
-}
-
-.notification-chip--blue {
-  background: rgba(59, 130, 246, 0.12);
-  color: #1d4ed8;
-}
-
-.notification-chip--green {
-  background: rgba(34, 197, 94, 0.12);
-  color: #15803d;
-}
-
-.notification-chip--yellow {
-  background: rgba(250, 204, 21, 0.18);
-  color: #a16207;
-}
-
-.notification-chip--orange {
-  background: rgba(249, 115, 22, 0.14);
-  color: #c2410c;
-}
-
-.notification-chip--red {
-  background: rgba(239, 68, 68, 0.12);
-  color: #b91c1c;
-}
-
-.notification-chip--neutral {
-  background: rgba(148, 163, 184, 0.12);
-  color: #475569;
-}
-
 @media (max-width: 768px) {
   .institution-notifications-page__header {
     flex-direction: column;
@@ -181,10 +216,6 @@
     width: 100%;
   }
 
-  .institution-notifications-page__summary {
-    grid-template-columns: 1fr;
-  }
-
   .institution-notifications-page__footer {
     flex-direction: column;
     align-items: stretch;
@@ -193,4 +224,8 @@
   .institution-notifications-page__footer > * {
     width: 100%;
   }
+}
+
+.institution-notifications-page__card.institution-notifications-page__card--unread {
+  border-left-color: var(--primary);
 }

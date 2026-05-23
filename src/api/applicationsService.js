@@ -38,7 +38,7 @@ export async function createApplication(payload) {
 }
 
 export async function withdrawApplication(id) {
-  const { data } = await api.put(`/applications/${id}/withdraw`);
+  const { data } = await api.delete(`/applications/${id}`);
   return data;
 }
 
