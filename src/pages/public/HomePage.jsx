@@ -304,20 +304,20 @@ function HomePage() {
       <section className="home-page__hero">
         <div className="page-shell home-page__hero-content">
           <div className="home-page__hero-copy home-page__reveal">
-            <span className="home-page__eyebrow">
-              <Waves size={16} />
-              Portal laboral deportivo
-            </span>
+            <span className="home-page__eyebrow">Portal laboral deportivo</span>
 
-            <h1>
-              El punto de encuentro entre instituciones deportivas y profesores.
-            </h1>
+            <div className="home-page__section-heading home-page__reveal">
+              <h2>
+                El portal laboral para profesionales de la educación física, el
+                deporte y actividades afines.
+              </h2>
 
-            <p>
-              Busco Profe ayuda a ordenar, profesionalizar y simplificar las
-              búsquedas laborales del mundo deportivo mediante perfiles,
-              vacantes, postulaciones y contacto directo.
-            </p>
+              <h3>
+                Busco Profe conecta profesores, instructores, preparadores
+                físicos, entrenadores y profesionales afines con instituciones
+                que buscan cubrir vacantes de forma rápida y simple.
+              </h3>
+            </div>
 
             <div className="home-page__hero-actions">
               <Link to="/register">
@@ -345,10 +345,10 @@ function HomePage() {
 
             <h3>Para instituciones</h3>
 
-            <p>
+            <h4>
               Publican vacantes, muestran su perfil institucional y contactan
               con profesionales.
-            </p>
+            </h4>
           </Card>
 
           <Card className="home-page__feature-card home-page__feature-card--highlight home-page__reveal">
@@ -358,10 +358,10 @@ function HomePage() {
 
             <h3>Para profesores</h3>
 
-            <p>
+            <h4>
               Crean un perfil y se postulan a oportunidades de manera simple y
               directa.
-            </p>
+            </h4>
           </Card>
         </div>
       </section>
@@ -370,15 +370,12 @@ function HomePage() {
         <div className="page-shell home-page__section">
           <div className="home-page__section-heading home-page__reveal">
             <span className="home-page__eyebrow">Flujo simple</span>
-            <h2>Una experiencia pensada para avanzar sin fricción.</h2>
-            <p>
-              Desde el registro hasta el contacto, la plataforma guía al usuario
-              con pasos claros. <br />
-              Los usuarios pueden navegar perfiles, vacantes e información del
-              ecosistema deportivo. <br />
-              Las instituciones publican búsquedas y los profesores se postulan
-              de manera directa.
-            </p>
+            <h2>Diseñada para hacer más simple la búsqueda laboral.</h2>
+            <h3>
+              Encontrá oportunidades reales en instituciones deportivas,
+              educativas y recreativas. Postulate fácil, ahorrá tiempo y seguí
+              tus procesos desde un solo lugar.
+            </h3>
           </div>
         </div>
       </section>
@@ -387,7 +384,13 @@ function HomePage() {
         <Card className="home-page__final-cta-card home-page__reveal">
           <div>
             <span className="home-page__eyebrow">Empezá ahora</span>
-            <h2>Creá tu cuenta y conectá con oportunidades deportivas.</h2>
+            <h2>
+              Creá tu cuenta y empezá a conectar con oportunidades reales.
+            </h2>
+            <h3>
+              Registrate como profesional para postularte a vacantes o como
+              institución para encontrar al profe que necesitás.
+            </h3>
           </div>
 
           <div className="home-page__final-actions">

@@ -224,14 +224,18 @@
   font-size: clamp(2.4rem, 4.8vw, 4.9rem);
 }
 
-.home-page__hero-copy p,
-.home-page__auth-copy p {
+.home-page__hero-copy h3,
+.home-page__auth-copy h3 {
   max-width: 720px;
   margin: 24px auto 0;
   color: var(--text-soft);
   font-size: clamp(1rem, 1.45vw, 1.2rem);
   line-height: 1.75;
   text-align: center;
+}
+
+.home-page__feature-card h4 {
+  color: var(--text-soft);
 }
 
 .home-page__hero-actions {
@@ -410,7 +414,7 @@
   text-align: center;
 }
 
-.home-page__auth-panel p {
+.home-page__auth-panel h3 {
   margin: 12px auto 0;
   color: var(--text-soft);
   line-height: 1.7;
@@ -465,9 +469,9 @@
   text-align: center;
 }
 
-.home-page__section-heading p,
-.home-page__value-card p,
-.home-page__final-cta-card p {
+.home-page__section-heading h3,
+.home-page__value-card h3,
+.home-page__final-cta-card h3 {
   max-width: 720px;
   margin: 16px auto 0;
   color: var(--text-soft);
@@ -529,7 +533,7 @@
   text-align: center;
 }
 
-.home-page__feature-card p {
+.home-page__feature-card h3 {
   margin: 0 auto;
   color: var(--text-soft);
   line-height: 1.7;
@@ -612,7 +616,7 @@
   text-align: center;
 }
 
-.home-page__step-card p {
+.home-page__step-card h3 {
   margin: 0 auto;
   color: var(--text-soft);
   line-height: 1.7;
@@ -674,30 +678,23 @@
   align-items: center;
   gap: 28px;
   color: white;
-  border: none;
   text-align: center;
-  background:
-    radial-gradient(
-      circle at 15% 20%,
-      rgba(255, 255, 255, 0.22),
-      transparent 30%
-    ),
-    linear-gradient(135deg, #1d4ed8, #2563eb 48%, #0284c7);
+
   box-shadow: 0 28px 80px rgba(37, 99, 235, 0.24);
 }
 
 .home-page__final-cta-card .home-page__eyebrow {
-  color: white;
-  border-color: rgba(255, 255, 255, 0.28);
+  color: #1d4ed8;
+  border: 1px solid rgba(37, 99, 235, 0.18);
   background: rgba(255, 255, 255, 0.14);
 }
 
 .home-page__final-cta-card h2,
-.home-page__final-cta-card p {
-  color: white;
+.home-page__final-cta-card h3 {
+  color: var(--text);
 }
 
-.home-page__final-cta-card p {
+.home-page__final-cta-card h3 {
   opacity: 0.9;
 }
 
@@ -822,8 +819,8 @@
     letter-spacing: -0.07em;
   }
 
-  .home-page__hero-copy p,
-  .home-page__auth-copy p {
+  .home-page__hero-copy h3,
+  .home-page__auth-copy h3 {
     font-size: 1rem;
   }
 
