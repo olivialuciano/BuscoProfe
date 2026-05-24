@@ -18,6 +18,7 @@ const baseForm = {
   role: USER_ROLE_VALUES.PROFESSOR,
   email: "",
   password: "",
+  confirmPassword: "",
   firstName: "",
   lastName: "",
   legalName: "",
@@ -67,26 +68,93 @@ function RegisterPage() {
     }));
   };
 
+  const validateForm = () => {
+    if (isInstitution) {
+      if (!form.legalName.trim()) {
+        return "Ingresá la razón social.";
+      }
+
+      if (!form.tradeName.trim()) {
+        return "Ingresá el nombre comercial.";
+      }
+
+      if (form.institutionType === "") {
+        return "Seleccioná el tipo de institución.";
+      }
+    }
+
+    if (isProfessor) {
+      if (!form.firstName.trim()) {
+        return "Ingresá tu nombre.";
+      }
+
+      if (!form.lastName.trim()) {
+        return "Ingresá tu apellido.";
+      }
+    }
+
+    if (!form.city.trim()) {
+      return "Ingresá la ciudad.";
+    }
+
+    if (!form.province.trim()) {
+      return "Ingresá la provincia.";
+    }
+
+    if (!form.country.trim()) {
+      return "Ingresá el país.";
+    }
+
+    if (!form.email.trim()) {
+      return "Ingresá tu email.";
+    }
+
+    if (!form.password) {
+      return "Ingresá una contraseña.";
+    }
+
+    if (form.password.length < 6) {
+      return "La contraseña debe tener al menos 6 caracteres.";
+    }
+
+    if (!form.confirmPassword) {
+      return "Repetí la contraseña.";
+    }
+
+    if (form.password !== form.confirmPassword) {
+      return "Las contraseñas no coinciden.";
+    }
+
+    return "";
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setMessage("");
     setError("");
 
+    const validationError = validateForm();
+
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     const payload = {
       email: form.email.trim().toLowerCase(),
       password: form.password,
       role: Number(form.role),
-      firstName: isInstitution ? null : form.firstName || null,
-      lastName: isInstitution ? null : form.lastName || null,
-      legalName: isInstitution ? form.legalName || null : null,
-      tradeName: isInstitution ? form.tradeName || null : null,
+      firstName: isInstitution ? null : form.firstName.trim(),
+      lastName: isInstitution ? null : form.lastName.trim(),
+      legalName: isInstitution ? form.legalName.trim() : null,
+      tradeName: isInstitution ? form.tradeName.trim() : null,
       institutionType:
         isInstitution && form.institutionType !== ""
           ? Number(form.institutionType)
           : null,
-      city: form.city || null,
-      province: form.province || null,
-      country: form.country || null,
+      city: form.city.trim(),
+      province: form.province.trim(),
+      country: form.country.trim(),
     };
 
     try {
@@ -100,7 +168,14 @@ function RegisterPage() {
 
       setMessage(successMessage);
 
-      navigate(`/verify-email-code?email=${encodeURIComponent(payload.email)}`);
+      navigate(
+        `/verify-email-code?email=${encodeURIComponent(payload.email)}`,
+        {
+          state: {
+            message: successMessage,
+          },
+        },
+      );
     } catch (err) {
       setError(getApiErrorMessage(err, "No se pudo iniciar el registro."));
     } finally {
@@ -159,6 +234,7 @@ function RegisterPage() {
                 name="legalName"
                 value={form.legalName}
                 onChange={handleChange}
+                required
               />
 
               <InputField
@@ -166,6 +242,7 @@ function RegisterPage() {
                 name="tradeName"
                 value={form.tradeName}
                 onChange={handleChange}
+                required
               />
 
               <SelectField
@@ -174,6 +251,7 @@ function RegisterPage() {
                 value={form.institutionType}
                 onChange={handleChange}
                 options={INSTITUTION_TYPE_OPTIONS}
+                required
               />
             </>
           ) : (
@@ -188,12 +266,15 @@ function RegisterPage() {
                   name="firstName"
                   value={form.firstName}
                   onChange={handleChange}
+                  required
                 />
+
                 <InputField
                   label="Apellido"
                   name="lastName"
                   value={form.lastName}
                   onChange={handleChange}
+                  required
                 />
               </div>
             </>
@@ -207,12 +288,15 @@ function RegisterPage() {
               name="city"
               value={form.city}
               onChange={handleChange}
+              required
             />
+
             <InputField
               label="Provincia"
               name="province"
               value={form.province}
               onChange={handleChange}
+              required
             />
           </div>
 
@@ -221,6 +305,7 @@ function RegisterPage() {
             name="country"
             value={form.country}
             onChange={handleChange}
+            required
           />
 
           <div className="register-page__section-title">Acceso</div>
@@ -231,6 +316,7 @@ function RegisterPage() {
             type="email"
             value={form.email}
             onChange={handleChange}
+            required
           />
 
           <InputField
@@ -239,6 +325,18 @@ function RegisterPage() {
             type="password"
             value={form.password}
             onChange={handleChange}
+            minLength={6}
+            required
+          />
+
+          <InputField
+            label="Repetir contraseña"
+            name="confirmPassword"
+            type="password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            minLength={6}
+            required
           />
 
           <ApiMessage type="success">{message}</ApiMessage>

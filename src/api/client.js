@@ -4,6 +4,10 @@ import { getToken, clearSession } from "../utils/storage";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
 });
 
 let onUnauthorized = null;

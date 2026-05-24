@@ -54,3 +54,7 @@ export async function getAllProfessors() {
   const { data } = await api.get("/users/professors");
   return data;
 }
+
+export async function deleteMyAccount() {
+  await api.delete("/users/me");
+}

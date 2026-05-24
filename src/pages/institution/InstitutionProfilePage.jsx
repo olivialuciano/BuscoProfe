@@ -19,6 +19,7 @@ import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ApiMessage from "../../components/common/ApiMessage";
 import EmptyState from "../../components/common/EmptyState";
 import ProfileSectionModal from "../../components/profile/ProfileSectionModal";
+import DeleteAccountSection from "../../components/account/DeleteAccountSection";
 import { getApiErrorMessage } from "../../utils/errorUtils";
 import { INSTITUTION_TYPE_OPTIONS } from "../../utils/constants";
 import "./InstitutionProfilePage.css";
@@ -938,6 +939,7 @@ function InstitutionProfilePage() {
           </div>
         </form>
       </ProfileSectionModal>
+      <DeleteAccountSection accountType="institution" />
     </div>
   );
 }

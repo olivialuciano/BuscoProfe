@@ -15,6 +15,7 @@ import ProfessorDetailPage from "../pages/public/ProfessorDetailPage";
 import VerifyEmailCodePage from "../pages/auth/VerifyEmailCodePage";
 import NotFoundPage from "../pages/notFound/NotFoundPage";
 import SuggestionsPage from "../pages/suggestions/SuggestionsPage";
+import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
 
 import ProfessorDashboardPage from "../pages/professor/ProfessorDashboardPage";
 import ProfessorProfilePage from "../pages/professor/ProfessorProfilePage";
@@ -50,6 +51,7 @@ function AppRoutes() {
         <Route path="/register/:type" element={<RegisterPage />} />
         <Route path="/verify-email-code" element={<VerifyEmailCodePage />} />
         <Route path="/sugerencias" element={<SuggestionsPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/* 
           Rutas privadas compartidas.

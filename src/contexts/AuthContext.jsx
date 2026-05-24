@@ -35,7 +35,7 @@ export function AuthProvider({ children }) {
     setLoading(true);
 
     try {
-      const response = await loginRequest({ email, password });
+      const response = await loginRequest(email, password);
 
       const normalizedUser = {
         id: response.userId,
