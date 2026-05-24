@@ -255,7 +255,7 @@ function HomePage() {
             <div className="home-page__auth-copy home-page__reveal">
               <h1>{authenticatedTitle}</h1>
 
-              <p>{authenticatedDescription}</p>
+              <h3>{authenticatedDescription}</h3>
 
               <div className="home-page__hero-actions">
                 {primaryActions.map((action) => (
