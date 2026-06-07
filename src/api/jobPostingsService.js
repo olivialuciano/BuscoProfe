@@ -46,3 +46,8 @@ export async function deleteJobPostingLogical(id) {
   const { data } = await api.put(`/jobpostings/${id}/delete`);
   return data;
 }
+
+export async function updateJobPosting(id, payload) {
+  const { data } = await api.put(`/jobpostings/${Number(id)}`, payload);
+  return data;
+}

@@ -15,6 +15,8 @@ import {
   Flame,
   Trophy,
   UserRoundCheck,
+  Pencil,
+  Save,
 } from "lucide-react";
 import Card from "../../components/common/Card";
 import Button from "../../components/common/Button";
@@ -22,8 +24,10 @@ import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ApiMessage from "../../components/common/ApiMessage";
 import ProfileSectionModal from "../../components/profile/ProfileSectionModal";
 import InputField from "../../components/common/InputField";
+import SelectField from "../../components/common/SelectField";
 import {
   getJobPostingById,
+  updateJobPosting,
   deleteJobPostingLogical,
   activateJobPosting,
   inactivateJobPosting,
@@ -244,6 +248,27 @@ function JobDetailPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [updatingJob, setUpdatingJob] = useState(false);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    description: "",
+    requirementsText: "",
+    benefitsText: "",
+    daysAndHours: "",
+    professionalType: "",
+    discipline: "",
+    isUrgent: false,
+    workMode: "",
+    contractType: "",
+    availability: "",
+    country: "",
+    province: "",
+    city: "",
+    address: "",
+    salaryText: "",
+  });
+
   const [togglingStatus, setTogglingStatus] = useState(false);
   const [showCloseModal, setShowCloseModal] = useState(false);
   const [closingJob, setClosingJob] = useState(false);
@@ -394,6 +419,130 @@ function JobDetailPage() {
   const closeConfig = useMemo(() => {
     return getCloseButtonConfig(job?.status || job?.Status);
   }, [job?.status, job?.Status]);
+
+  const buildEditFormFromJob = (currentJob) => ({
+    title: currentJob?.title || currentJob?.Title || "",
+    description: currentJob?.description || currentJob?.Description || "",
+    requirementsText:
+      currentJob?.requirementsText || currentJob?.RequirementsText || "",
+    benefitsText: currentJob?.benefitsText || currentJob?.BenefitsText || "",
+    daysAndHours: currentJob?.daysAndHours || currentJob?.DaysAndHours || "",
+    professionalType:
+      currentJob?.professionalType ?? currentJob?.ProfessionalType ?? "",
+    discipline: currentJob?.discipline ?? currentJob?.Discipline ?? "",
+    isUrgent: Boolean(currentJob?.isUrgent ?? currentJob?.IsUrgent),
+    workMode: currentJob?.workMode ?? currentJob?.WorkMode ?? "",
+    contractType: currentJob?.contractType ?? currentJob?.ContractType ?? "",
+    availability: currentJob?.availability ?? currentJob?.Availability ?? "",
+    country: currentJob?.country || currentJob?.Country || "",
+    province: currentJob?.province || currentJob?.Province || "",
+    city: currentJob?.city || currentJob?.City || "",
+    address: currentJob?.address || currentJob?.Address || "",
+    salaryText: currentJob?.salaryText || currentJob?.SalaryText || "",
+  });
+
+  const openEditModal = () => {
+    if (!job) return;
+
+    setEditForm(buildEditFormFromJob(job));
+    setShowEditModal(true);
+  };
+
+  const handleEditFormChange = (event) => {
+    const { name, value, type, checked } = event.target;
+
+    setEditForm((current) => ({
+      ...current,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleUpdateJob = async () => {
+    if (!job || updatingJob) return;
+
+    if (!editForm.title.trim()) {
+      showToast("El título es obligatorio.", "error");
+      return;
+    }
+
+    if (!editForm.description.trim()) {
+      showToast("La descripción es obligatoria.", "error");
+      return;
+    }
+
+    if (editForm.contractType === "") {
+      showToast("Seleccioná el tipo de contrato.", "error");
+      return;
+    }
+
+    const payload = {
+      institutionUserId: Number(job.institutionUserId || job.InstitutionUserId),
+      title: editForm.title.trim(),
+      description: editForm.description.trim(),
+      requirementsText: editForm.requirementsText.trim(),
+      benefitsText: editForm.benefitsText.trim(),
+      daysAndHours: editForm.daysAndHours.trim(),
+      professionalType:
+        editForm.professionalType === ""
+          ? null
+          : Number(editForm.professionalType),
+      discipline:
+        editForm.discipline === "" ? null : Number(editForm.discipline),
+      isUrgent: Boolean(editForm.isUrgent),
+      sportId: null,
+      workMode: Number(editForm.workMode),
+      contractType: Number(editForm.contractType),
+      availability: Number(editForm.availability),
+      country: editForm.country.trim(),
+      province: editForm.province.trim(),
+      city: editForm.city.trim(),
+      address: editForm.address.trim(),
+      salaryText: editForm.salaryText.trim(),
+    };
+
+    try {
+      setUpdatingJob(true);
+
+      const updatedJob = await updateJobPosting(job.id || job.Id, payload);
+
+      setJob((current) => ({
+        ...current,
+        ...updatedJob,
+        id: updatedJob.id ?? updatedJob.Id ?? current.id ?? current.Id,
+        Id: updatedJob.id ?? updatedJob.Id ?? current.id ?? current.Id,
+        institutionUserId:
+          updatedJob.institutionUserId ??
+          updatedJob.InstitutionUserId ??
+          current.institutionUserId ??
+          current.InstitutionUserId,
+        InstitutionUserId:
+          updatedJob.institutionUserId ??
+          updatedJob.InstitutionUserId ??
+          current.institutionUserId ??
+          current.InstitutionUserId,
+        status:
+          updatedJob.status ??
+          updatedJob.Status ??
+          current.status ??
+          current.Status,
+        Status:
+          updatedJob.status ??
+          updatedJob.Status ??
+          current.status ??
+          current.Status,
+      }));
+
+      setShowEditModal(false);
+      showToast("Vacante actualizada correctamente.", "success");
+    } catch (err) {
+      showToast(
+        getApiErrorMessage(err, "No se pudo actualizar la vacante."),
+        "error",
+      );
+    } finally {
+      setUpdatingJob(false);
+    }
+  };
 
   const handleDelete = async () => {
     if (!job || deleting) return;
@@ -587,6 +736,16 @@ function JobDetailPage() {
 
           {canDeleteJob ? (
             <div className="job-detail-page__institution-actions">
+              <Button
+                type="button"
+                className="job-detail-page__applications-button"
+                onClick={() =>
+                  navigate(`/institution/job-postings/${jobId}/applications`)
+                }
+              >
+                Ver postulaciones
+              </Button>
+
               <div className="job-detail-page__institution-actions-row">
                 <button
                   type="button"
@@ -613,6 +772,19 @@ function JobDetailPage() {
 
                 <button
                   type="button"
+                  className="job-detail-page__outline-action"
+                  onClick={openEditModal}
+                  disabled={
+                    togglingStatus || closingJob || deleting || updatingJob
+                  }
+                  aria-label="Editar vacante"
+                  title="Editar vacante"
+                >
+                  <Pencil size={16} />
+                </button>
+
+                <button
+                  type="button"
                   className="job-detail-page__delete-button"
                   onClick={() => setShowDeleteModal(true)}
                   aria-label="Eliminar vacante"
@@ -622,16 +794,6 @@ function JobDetailPage() {
                   <Trash2 size={18} />
                 </button>
               </div>
-
-              <Button
-                type="button"
-                className="job-detail-page__applications-button"
-                onClick={() =>
-                  navigate(`/institution/job-postings/${jobId}/applications`)
-                }
-              >
-                Ver postulaciones
-              </Button>
             </div>
           ) : null}
         </div>
@@ -794,6 +956,161 @@ function JobDetailPage() {
           </Button>
         </div>
       ) : null}
+
+      <ProfileSectionModal
+        open={showEditModal}
+        onClose={() => {
+          if (!updatingJob) setShowEditModal(false);
+        }}
+        title="Editar vacante"
+        subtitle="Modificá los datos de la vacante y guardá los cambios."
+      >
+        <div className="job-detail-page__edit-modal">
+          <InputField
+            label="Título"
+            name="title"
+            value={editForm.title}
+            onChange={handleEditFormChange}
+            required
+          />
+
+          <InputField
+            label="Descripción"
+            name="description"
+            textarea
+            value={editForm.description}
+            onChange={handleEditFormChange}
+            required
+          />
+
+          <InputField
+            label="Requisitos"
+            name="requirementsText"
+            textarea
+            value={editForm.requirementsText}
+            onChange={handleEditFormChange}
+          />
+
+          <InputField
+            label="Beneficios"
+            name="benefitsText"
+            textarea
+            value={editForm.benefitsText}
+            onChange={handleEditFormChange}
+          />
+
+          <InputField
+            label="Días y horarios"
+            name="daysAndHours"
+            value={editForm.daysAndHours}
+            onChange={handleEditFormChange}
+            placeholder="Ej: Lunes y miércoles de 18 a 20 hs"
+          />
+
+          <div className="job-detail-page__edit-grid">
+            <SelectField
+              label="Tipo de profesional"
+              name="professionalType"
+              value={editForm.professionalType}
+              onChange={handleEditFormChange}
+              options={[
+                { value: "", label: "No especificado" },
+                ...professionalTypeOptions,
+              ]}
+            />
+
+            <SelectField
+              label="Disciplina"
+              name="discipline"
+              value={editForm.discipline}
+              onChange={handleEditFormChange}
+              options={[
+                { value: "", label: "No especificada" },
+                ...disciplineOptions,
+              ]}
+            />
+          </div>
+
+          <div className="job-detail-page__edit-grid">
+            <SelectField
+              label="Tipo de contrato"
+              name="contractType"
+              value={editForm.contractType}
+              onChange={handleEditFormChange}
+              options={contractTypeOptions}
+              required
+            />
+          </div>
+
+          <div className="job-detail-page__edit-grid">
+            <InputField
+              label="Ciudad"
+              name="city"
+              value={editForm.city}
+              onChange={handleEditFormChange}
+            />
+
+            <InputField
+              label="Provincia"
+              name="province"
+              value={editForm.province}
+              onChange={handleEditFormChange}
+            />
+          </div>
+
+          <InputField
+            label="País"
+            name="country"
+            value={editForm.country}
+            onChange={handleEditFormChange}
+          />
+
+          <InputField
+            label="Dirección"
+            name="address"
+            value={editForm.address}
+            onChange={handleEditFormChange}
+          />
+
+          <InputField
+            label="Salario"
+            name="salaryText"
+            value={editForm.salaryText}
+            onChange={handleEditFormChange}
+            placeholder="Ej: A convenir / $10.000 por hora"
+          />
+
+          <label className="job-detail-page__checkbox-row">
+            <input
+              type="checkbox"
+              name="isUrgent"
+              checked={editForm.isUrgent}
+              onChange={handleEditFormChange}
+            />
+            <span>Marcar como urgente</span>
+          </label>
+
+          <div className="job-detail-page__delete-actions">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setShowEditModal(false)}
+              disabled={updatingJob}
+            >
+              Cancelar
+            </Button>
+
+            <Button
+              type="button"
+              onClick={handleUpdateJob}
+              disabled={updatingJob}
+              icon={<Save size={16} />}
+            >
+              {updatingJob ? "Guardando..." : "Guardar cambios"}
+            </Button>
+          </div>
+        </div>
+      </ProfileSectionModal>
 
       <ProfileSectionModal
         open={showDeleteModal}
