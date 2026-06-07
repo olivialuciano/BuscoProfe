@@ -1,21 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Briefcase, Clock3, FileText, MapPin } from "lucide-react";
+import { Bookmark, FileText, MapPin } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useToast } from "../../contexts/ToastContext";
 import { getAllInstitutions } from "../../api/usersService";
 import { getAllJobPostings } from "../../api/jobPostingsService";
+import { getProfessorApplications } from "../../api/applicationsService";
+import {
+  getFavoriteJobPostingsByProfessor,
+  createFavoriteJobPosting,
+  deleteFavoriteJobPostingByProfessorAndJobPosting,
+} from "../../api/favoriteJobPostingsService";
 import Card from "../../components/common/Card";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
 import ApiMessage from "../../components/common/ApiMessage";
 import { getApiErrorMessage } from "../../utils/errorUtils";
+import { isAdmin, isInstitution } from "../../utils/roleUtils";
+import { contractTypeOptions } from "../../utils/enumOptions";
 import {
-  availabilityOptions,
-  workModeOptions,
-  contractTypeOptions,
-} from "../../utils/enumOptions";
-import {
-  disciplineOptions,
-  professionalTypeOptions,
   getEnumLabel,
   getJobValue,
   isJobUrgent,
@@ -52,11 +55,39 @@ function getUiStatusLabel(status) {
 function InstitutionJobPostingsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { showToast } = useToast();
 
   const [institution, setInstitution] = useState(null);
   const [jobPostings, setJobPostings] = useState([]);
+  const [applications, setApplications] = useState([]);
+  const [favoriteJobPostingIds, setFavoriteJobPostingIds] = useState(
+    () => new Set(),
+  );
+  const [favoriteLoadingIds, setFavoriteLoadingIds] = useState(() => new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const isProfessorUser = user && !isAdmin(user) && !isInstitution(user);
+
+  const applicationsByJobPostingId = useMemo(() => {
+    const map = new Map();
+
+    applications.forEach((application) => {
+      const jobPostingId = Number(
+        application.jobPostingId ||
+          application.JobPostingId ||
+          application.jobPosting?.id ||
+          application.JobPosting?.Id,
+      );
+
+      if (jobPostingId) {
+        map.set(jobPostingId, application);
+      }
+    });
+
+    return map;
+  }, [applications]);
 
   const loadData = async () => {
     setLoading(true);
@@ -90,6 +121,39 @@ function InstitutionJobPostingsPage() {
 
       setInstitution(foundInstitution);
       setJobPostings(sortUrgentJobsFirst(filteredJobs));
+
+      if (isProfessorUser && user?.id) {
+        const [applicationsData, favoritesData] = await Promise.all([
+          getProfessorApplications(user.id),
+          getFavoriteJobPostingsByProfessor(user.id),
+        ]);
+
+        const applicationsList = Array.isArray(applicationsData)
+          ? applicationsData
+          : [];
+
+        const favoritesList = Array.isArray(favoritesData) ? favoritesData : [];
+
+        setApplications(applicationsList);
+
+        setFavoriteJobPostingIds(
+          new Set(
+            favoritesList
+              .map((favorite) =>
+                Number(
+                  favorite.jobPostingId ||
+                    favorite.JobPostingId ||
+                    favorite.jobPosting?.id ||
+                    favorite.JobPosting?.Id,
+                ),
+              )
+              .filter(Boolean),
+          ),
+        );
+      } else {
+        setApplications([]);
+        setFavoriteJobPostingIds(new Set());
+      }
     } catch (err) {
       setError(
         getApiErrorMessage(
@@ -104,7 +168,7 @@ function InstitutionJobPostingsPage() {
 
   useEffect(() => {
     loadData();
-  }, [id]);
+  }, [id, user?.id]);
 
   const institutionName = useMemo(() => {
     return (
@@ -115,6 +179,82 @@ function InstitutionJobPostingsPage() {
       "Institución"
     );
   }, [institution]);
+
+  const setFavoriteLoadingForJob = (jobId, isLoading) => {
+    setFavoriteLoadingIds((current) => {
+      const next = new Set(current);
+
+      if (isLoading) {
+        next.add(Number(jobId));
+      } else {
+        next.delete(Number(jobId));
+      }
+
+      return next;
+    });
+  };
+
+  const handleToggleFavoriteJob = async (event, jobId) => {
+    event.stopPropagation();
+
+    if (!isProfessorUser || !user?.id || !jobId) return;
+
+    const numericJobId = Number(jobId);
+
+    if (favoriteLoadingIds.has(numericJobId)) return;
+
+    const isFavorite = favoriteJobPostingIds.has(numericJobId);
+
+    try {
+      setFavoriteLoadingForJob(numericJobId, true);
+
+      if (isFavorite) {
+        await deleteFavoriteJobPostingByProfessorAndJobPosting(
+          user.id,
+          numericJobId,
+        );
+
+        setFavoriteJobPostingIds((current) => {
+          const next = new Set(current);
+          next.delete(numericJobId);
+          return next;
+        });
+
+        return;
+      }
+
+      await createFavoriteJobPosting({
+        professorUserId: Number(user.id),
+        jobPostingId: numericJobId,
+      });
+
+      setFavoriteJobPostingIds((current) => {
+        const next = new Set(current);
+        next.add(numericJobId);
+        return next;
+      });
+    } catch (err) {
+      const backendMessage = getApiErrorMessage(
+        err,
+        "No se pudo actualizar el guardado de la vacante.",
+      );
+
+      if (
+        backendMessage.toLowerCase().includes("ya está en favoritos") ||
+        backendMessage.toLowerCase().includes("ya esta en favoritos")
+      ) {
+        setFavoriteJobPostingIds((current) => {
+          const next = new Set(current);
+          next.add(numericJobId);
+          return next;
+        });
+      } else {
+        showToast(backendMessage, "error");
+      }
+    } finally {
+      setFavoriteLoadingForJob(numericJobId, false);
+    }
+  };
 
   if (loading) {
     return (
@@ -140,6 +280,11 @@ function InstitutionJobPostingsPage() {
           {jobPostings.map((job) => {
             const jobId = getJobValue(job, "id", "Id");
             const jobStatus = getJobValue(job, "status", "Status");
+            const application = applicationsByJobPostingId.get(Number(jobId));
+            const alreadyApplied = Boolean(application);
+            const isFavoriteJob =
+              isProfessorUser && favoriteJobPostingIds.has(Number(jobId));
+            const isFavoriteLoading = favoriteLoadingIds.has(Number(jobId));
 
             const locationText =
               [job.city, job.province, job.country]
@@ -153,16 +298,54 @@ function InstitutionJobPostingsPage() {
                 onClick={() => navigate(`/jobs/${jobId}`)}
               >
                 <Card className="institution-job-postings-page__card">
-                  <div className="institution-jobs-page__badges">
-                    <span className={getStatusBadgeClass(jobStatus)}>
-                      {getUiStatusLabel(jobStatus)}
-                    </span>
-
-                    {isJobUrgent(job) && (
-                      <span className="soft-badge soft-badge--urgent">
-                        Urgente
+                  <div className="institution-job-postings-page__card-top">
+                    <div className="institution-jobs-page__badges">
+                      <span className={getStatusBadgeClass(jobStatus)}>
+                        {getUiStatusLabel(jobStatus)}
                       </span>
-                    )}
+
+                      {isJobUrgent(job) && (
+                        <span className="soft-badge soft-badge--urgent">
+                          Urgente
+                        </span>
+                      )}
+
+                      {alreadyApplied && (
+                        <span className="soft-badge soft-badge--success">
+                          Ya te postulaste
+                        </span>
+                      )}
+                    </div>
+
+                    {isProfessorUser ? (
+                      <button
+                        type="button"
+                        className={`institution-job-postings-page__save-button ${
+                          isFavoriteJob
+                            ? "institution-job-postings-page__save-button--active"
+                            : ""
+                        }`}
+                        onClick={(event) =>
+                          handleToggleFavoriteJob(event, jobId)
+                        }
+                        aria-label={
+                          isFavoriteJob
+                            ? "Quitar de guardados"
+                            : "Guardar vacante"
+                        }
+                        title={
+                          isFavoriteJob
+                            ? "Quitar de guardados"
+                            : "Guardar vacante"
+                        }
+                        disabled={isFavoriteLoading}
+                      >
+                        <Bookmark
+                          size={18}
+                          fill={isFavoriteJob ? "currentColor" : "none"}
+                        />
+                      </button>
+                    ) : null}
                   </div>
 
                   <h3>{job.title || job.Title || "Vacante sin título"}</h3>

@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Briefcase, Clock3, MapPin, FileText, Filter, X } from "lucide-react";
+import {
+  Briefcase,
+  Clock3,
+  MapPin,
+  FileText,
+  Filter,
+  X,
+  Bookmark,
+} from "lucide-react";
 import Card from "../../components/common/Card";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ApiMessage from "../../components/common/ApiMessage";
@@ -9,8 +17,14 @@ import SelectField from "../../components/common/SelectField";
 import Button from "../../components/common/Button";
 import { getPublicJobPostings } from "../../api/jobPostingsService";
 import { getProfessorApplications } from "../../api/applicationsService";
+import {
+  getFavoriteJobPostingsByProfessor,
+  createFavoriteJobPosting,
+  deleteFavoriteJobPostingByProfessorAndJobPosting,
+} from "../../api/favoriteJobPostingsService";
 import { getAllInstitutions } from "../../api/usersService";
 import { useAuth } from "../../contexts/AuthContext";
+import { useToast } from "../../contexts/ToastContext";
 import { isAdmin, isInstitution } from "../../utils/roleUtils";
 import { getApiErrorMessage } from "../../utils/errorUtils";
 import {
@@ -119,13 +133,28 @@ function getInstitutionName(institution) {
   );
 }
 
+function favoriteMatchesJob(item, jobId) {
+  return (
+    Number(item?.jobPostingId) === Number(jobId) ||
+    Number(item?.JobPostingId) === Number(jobId) ||
+    Number(item?.jobPosting?.id) === Number(jobId) ||
+    Number(item?.JobPosting?.Id) === Number(jobId)
+  );
+}
+
 function JobsPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { showToast } = useToast();
 
   const [jobs, setJobs] = useState([]);
   const [institutions, setInstitutions] = useState([]);
   const [applications, setApplications] = useState([]);
+  const [favoriteJobPostingIds, setFavoriteJobPostingIds] = useState(
+    () => new Set(),
+  );
+  const [favoriteLoadingIds, setFavoriteLoadingIds] = useState(() => new Set());
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -171,9 +200,10 @@ function JobsPage() {
   }, []);
 
   useEffect(() => {
-    const loadProfessorApplications = async () => {
+    const loadProfessorData = async () => {
       if (!isProfessorUser) {
         setApplications([]);
+        setFavoriteJobPostingIds(new Set());
         return;
       }
 
@@ -181,22 +211,50 @@ function JobsPage() {
 
       if (!professorUserId) {
         setApplications([]);
+        setFavoriteJobPostingIds(new Set());
         return;
       }
 
       try {
-        const data = await getProfessorApplications(professorUserId);
-        setApplications(Array.isArray(data) ? data : []);
+        const [applicationsData, favoritesData] = await Promise.all([
+          getProfessorApplications(professorUserId),
+          getFavoriteJobPostingsByProfessor(professorUserId),
+        ]);
+
+        const applicationsList = Array.isArray(applicationsData)
+          ? applicationsData
+          : [];
+
+        const favoritesList = Array.isArray(favoritesData) ? favoritesData : [];
+
+        setApplications(applicationsList);
+
+        setFavoriteJobPostingIds(
+          new Set(
+            favoritesList
+              .map((favorite) =>
+                Number(
+                  favorite.jobPostingId ||
+                    favorite.JobPostingId ||
+                    favorite.jobPosting?.id ||
+                    favorite.JobPosting?.Id,
+                ),
+              )
+              .filter(Boolean),
+          ),
+        );
       } catch (err) {
         console.error(
-          "No se pudieron cargar las postulaciones del profesor.",
+          "No se pudieron cargar postulaciones o favoritos del profesor.",
           err,
         );
+
         setApplications([]);
+        setFavoriteJobPostingIds(new Set());
       }
     };
 
-    loadProfessorApplications();
+    loadProfessorData();
   }, [isProfessorUser, user]);
 
   const institutionOptions = useMemo(() => {
@@ -248,6 +306,89 @@ function JobsPage() {
       professionalType: "",
       isUrgent: "",
     });
+  };
+
+  const setFavoriteLoadingForJob = (jobId, isLoading) => {
+    setFavoriteLoadingIds((current) => {
+      const next = new Set(current);
+
+      if (isLoading) {
+        next.add(Number(jobId));
+      } else {
+        next.delete(Number(jobId));
+      }
+
+      return next;
+    });
+  };
+
+  const handleToggleFavoriteJob = async (event, jobId) => {
+    event.stopPropagation();
+
+    if (!isProfessorUser || !user || !jobId) return;
+
+    const professorUserId = getLoggedUserId(user);
+
+    if (!professorUserId) {
+      showToast("No se pudo identificar el usuario logueado.", "error");
+      return;
+    }
+
+    const numericJobId = Number(jobId);
+
+    if (favoriteLoadingIds.has(numericJobId)) return;
+
+    const isFavorite = favoriteJobPostingIds.has(numericJobId);
+
+    try {
+      setFavoriteLoadingForJob(numericJobId, true);
+
+      if (isFavorite) {
+        await deleteFavoriteJobPostingByProfessorAndJobPosting(
+          professorUserId,
+          numericJobId,
+        );
+
+        setFavoriteJobPostingIds((current) => {
+          const next = new Set(current);
+          next.delete(numericJobId);
+          return next;
+        });
+
+        return;
+      }
+
+      await createFavoriteJobPosting({
+        professorUserId: Number(professorUserId),
+        jobPostingId: numericJobId,
+      });
+
+      setFavoriteJobPostingIds((current) => {
+        const next = new Set(current);
+        next.add(numericJobId);
+        return next;
+      });
+    } catch (err) {
+      const backendMessage = getApiErrorMessage(
+        err,
+        "No se pudo actualizar el guardado de la vacante.",
+      );
+
+      if (
+        backendMessage.toLowerCase().includes("ya está en favoritos") ||
+        backendMessage.toLowerCase().includes("ya esta en favoritos")
+      ) {
+        setFavoriteJobPostingIds((current) => {
+          const next = new Set(current);
+          next.add(numericJobId);
+          return next;
+        });
+      } else {
+        showToast(backendMessage, "error");
+      }
+    } finally {
+      setFavoriteLoadingForJob(numericJobId, false);
+    }
   };
 
   const filteredJobs = useMemo(() => {
@@ -343,6 +484,9 @@ function JobsPage() {
             const jobStatus = getJobValue(job, "status", "Status");
             const alreadyApplied =
               isProfessorUser && appliedJobPostingIds.has(Number(jobId));
+            const isFavoriteJob =
+              isProfessorUser && favoriteJobPostingIds.has(Number(jobId));
+            const isFavoriteLoading = favoriteLoadingIds.has(Number(jobId));
 
             return (
               <div
@@ -351,22 +495,52 @@ function JobsPage() {
                 onClick={() => navigate(`/jobs/${jobId}`)}
               >
                 <Card className="jobs-page__job-card">
-                  <div className="institution-jobs-page__badges">
-                    <span className={getStatusBadgeClass(jobStatus)}>
-                      {getUiStatusLabel(jobStatus)}
-                    </span>
-
-                    {isJobUrgent(job) && (
-                      <span className="soft-badge soft-badge--urgent">
-                        Urgente
+                  <div className="jobs-page__card-top">
+                    <div className="jobs-page__badges">
+                      <span className={getStatusBadgeClass(jobStatus)}>
+                        {getUiStatusLabel(jobStatus)}
                       </span>
-                    )}
 
-                    {alreadyApplied && (
-                      <span className="soft-badge soft-badge--success">
-                        Ya te postulaste
-                      </span>
-                    )}
+                      {isJobUrgent(job) && (
+                        <span className="soft-badge soft-badge--urgent">
+                          Urgente
+                        </span>
+                      )}
+
+                      {alreadyApplied && (
+                        <span className="soft-badge soft-badge--success">
+                          Ya te postulaste
+                        </span>
+                      )}
+                    </div>
+
+                    {isProfessorUser ? (
+                      <button
+                        type="button"
+                        className={`jobs-page__save-button ${
+                          isFavoriteJob ? "jobs-page__save-button--active" : ""
+                        }`}
+                        onClick={(event) =>
+                          handleToggleFavoriteJob(event, jobId)
+                        }
+                        aria-label={
+                          isFavoriteJob
+                            ? "Quitar de guardados"
+                            : "Guardar vacante"
+                        }
+                        title={
+                          isFavoriteJob
+                            ? "Quitar de guardados"
+                            : "Guardar vacante"
+                        }
+                        disabled={isFavoriteLoading}
+                      >
+                        <Bookmark
+                          size={18}
+                          fill={isFavoriteJob ? "currentColor" : "none"}
+                        />
+                      </button>
+                    ) : null}
                   </div>
 
                   <h3>{job.title || job.Title}</h3>

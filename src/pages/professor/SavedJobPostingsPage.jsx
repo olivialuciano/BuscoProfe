@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Briefcase, Clock3, MapPin, FileText } from "lucide-react";
+import { Bookmark, MapPin, FileText } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
-import { getFavoriteJobPostingsByProfessor } from "../../api/favoriteJobPostingsService";
+import { useToast } from "../../contexts/ToastContext";
+import {
+  getFavoriteJobPostingsByProfessor,
+  deleteFavoriteJobPostingByProfessorAndJobPosting,
+} from "../../api/favoriteJobPostingsService";
 import { getProfessorApplications } from "../../api/applicationsService";
 import Card from "../../components/common/Card";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
@@ -10,14 +14,8 @@ import EmptyState from "../../components/common/EmptyState";
 import ApiMessage from "../../components/common/ApiMessage";
 import { getApiErrorMessage } from "../../utils/errorUtils";
 import { isAdmin, isInstitution } from "../../utils/roleUtils";
+import { contractTypeOptions } from "../../utils/enumOptions";
 import {
-  availabilityOptions,
-  workModeOptions,
-  contractTypeOptions,
-} from "../../utils/enumOptions";
-import {
-  disciplineOptions,
-  professionalTypeOptions,
   getEnumLabel,
   getJobValue,
   isJobUrgent,
@@ -53,10 +51,12 @@ function getUiStatusLabel(status) {
 
 function SavedJobPostingsPage() {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const [savedJobPostings, setSavedJobPostings] = useState([]);
   const [applications, setApplications] = useState([]);
+  const [favoriteLoadingIds, setFavoriteLoadingIds] = useState(() => new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -124,6 +124,55 @@ function SavedJobPostingsPage() {
     loadSavedJobPostings();
   }, [user?.id]);
 
+  const setFavoriteLoadingForJob = (jobId, isLoading) => {
+    setFavoriteLoadingIds((current) => {
+      const next = new Set(current);
+
+      if (isLoading) {
+        next.add(Number(jobId));
+      } else {
+        next.delete(Number(jobId));
+      }
+
+      return next;
+    });
+  };
+
+  const handleRemoveFavoriteJob = async (event, jobId) => {
+    event.stopPropagation();
+
+    if (!user?.id || !jobId) return;
+
+    const numericJobId = Number(jobId);
+
+    if (favoriteLoadingIds.has(numericJobId)) return;
+
+    try {
+      setFavoriteLoadingForJob(numericJobId, true);
+
+      await deleteFavoriteJobPostingByProfessorAndJobPosting(
+        user.id,
+        numericJobId,
+      );
+
+      setSavedJobPostings((current) =>
+        current.filter((job) => {
+          const currentJobId = Number(getJobValue(job, "id", "Id"));
+          return currentJobId !== numericJobId;
+        }),
+      );
+
+      showToast("Vacante quitada de guardados.", "success");
+    } catch (err) {
+      showToast(
+        getApiErrorMessage(err, "No se pudo quitar la vacante de guardados."),
+        "error",
+      );
+    } finally {
+      setFavoriteLoadingForJob(numericJobId, false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="page-shell saved-job-postings-page">
@@ -150,6 +199,7 @@ function SavedJobPostingsPage() {
           {savedJobPostings.map((job) => {
             const jobId = getJobValue(job, "id", "Id");
             const jobStatus = getJobValue(job, "status", "Status");
+            const isFavoriteLoading = favoriteLoadingIds.has(Number(jobId));
 
             const locationText =
               [job.city, job.province, job.country]
@@ -166,22 +216,35 @@ function SavedJobPostingsPage() {
                 onClick={() => navigate(`/jobs/${jobId}`)}
               >
                 <Card className="saved-job-postings-page__card">
-                  <div className="saved-job-postings-page__badges">
-                    <span className={getStatusBadgeClass(jobStatus)}>
-                      {getUiStatusLabel(jobStatus)}
-                    </span>
-
-                    {isJobUrgent(job) && (
-                      <span className="soft-badge soft-badge--urgent">
-                        Urgente
+                  <div className="saved-job-postings-page__card-top">
+                    <div className="saved-job-postings-page__badges">
+                      <span className={getStatusBadgeClass(jobStatus)}>
+                        {getUiStatusLabel(jobStatus)}
                       </span>
-                    )}
 
-                    {alreadyApplied && (
-                      <span className="soft-badge soft-badge--success">
-                        Ya te postulaste
-                      </span>
-                    )}
+                      {isJobUrgent(job) && (
+                        <span className="soft-badge soft-badge--urgent">
+                          Urgente
+                        </span>
+                      )}
+
+                      {alreadyApplied && (
+                        <span className="soft-badge soft-badge--success">
+                          Ya te postulaste
+                        </span>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      className="saved-job-postings-page__save-button saved-job-postings-page__save-button--active"
+                      onClick={(event) => handleRemoveFavoriteJob(event, jobId)}
+                      aria-label="Quitar de guardados"
+                      title="Quitar de guardados"
+                      disabled={isFavoriteLoading}
+                    >
+                      <Bookmark size={18} fill="currentColor" />
+                    </button>
                   </div>
 
                   <h3>{job.title || job.Title || "Vacante sin título"}</h3>
