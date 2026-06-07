@@ -35,11 +35,9 @@ export const WORK_MODE_LABELS = {
 };
 
 export const CONTRACT_TYPE_LABELS = {
-  0: "Full Time",
-  1: "Part Time",
-  2: "Por hora",
-  3: "Temporal",
-  4: "Freelance",
+  0: "Reemplazo",
+  1: "Por hora",
+  2: "Fijo",
 };
 
 export const AVAILABILITY_LABELS = {

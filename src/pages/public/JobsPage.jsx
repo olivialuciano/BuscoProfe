@@ -419,7 +419,12 @@ function JobsPage() {
           : Number(getJobValue(job, "availability", "Availability")) ===
             Number(filters.availability),
       )
-
+      .filter((job) =>
+        filters.contractType === ""
+          ? true
+          : Number(getJobValue(job, "contractType", "ContractType")) ===
+            Number(filters.contractType),
+      )
       .filter((job) =>
         filters.discipline === ""
           ? true
@@ -596,6 +601,7 @@ function JobsPage() {
             <X size={18} />
           </button>
         </div>
+
         <div className="jobs-page__filters-panel-body">
           <SelectField
             label="Tipo de profesional"
@@ -622,12 +628,21 @@ function JobsPage() {
           />
 
           <SelectField
+            label="Tipo de contrato"
+            name="contractType"
+            value={filters.contractType}
+            onChange={handleFilterChange}
+            options={[...contractTypeOptions]}
+          />
+
+          <SelectField
             label="Urgencia"
             name="isUrgent"
             value={filters.isUrgent}
             onChange={handleFilterChange}
             options={urgentFilterOptions}
           />
+
           <SelectField
             label="Estado"
             name="status"

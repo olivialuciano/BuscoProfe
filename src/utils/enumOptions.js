@@ -5,11 +5,9 @@ export const workModeOptions = [
 ];
 
 export const contractTypeOptions = [
-  { value: 0, label: "Full Time" },
-  { value: 1, label: "Part Time" },
-  { value: 2, label: "Por hora" },
-  { value: 3, label: "Temporal" },
-  { value: 4, label: "Freelance" },
+  { value: 0, label: "Reemplazo" },
+  { value: 1, label: "Por hora" },
+  { value: 2, label: "Fijo" },
 ];
 
 export const availabilityOptions = [
