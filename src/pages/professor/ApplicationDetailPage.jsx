@@ -12,7 +12,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import {
   getApplicationById,
-  withdrawApplication,
+  deleteApplication,
   acceptApplication,
   rejectApplication,
 } from "../../api/applicationsService";
@@ -319,15 +319,15 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
     }
   };
 
-  const handleWithdraw = async () => {
+  const handleDeleteApplication = async () => {
     if (!application || withdrawing) return;
 
     try {
       setWithdrawing(true);
 
-      await withdrawApplication(application.id);
+      await deleteApplication(application.id);
 
-      showToast("Postulación eliminada.", "success");
+      showToast("Postulación eliminada definitivamente.", "success");
       setShowWithdrawModal(false);
       navigate("/professor/applications");
     } catch (err) {
@@ -571,7 +571,7 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
             <Button
               type="button"
               className="application-detail__delete-confirm"
-              onClick={handleWithdraw}
+              onClick={handleDeleteApplication}
               disabled={withdrawing}
             >
               {withdrawing ? "Eliminando..." : "Sí, eliminar postulación"}

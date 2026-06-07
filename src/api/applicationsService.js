@@ -37,19 +37,16 @@ export async function createApplication(payload) {
   return data;
 }
 
-export async function withdrawApplication(id) {
-  const { data } = await api.delete(`/applications/${id}`);
-  return data;
+export async function deleteApplication(id) {
+  await api.delete(`/applications/${Number(id)}`);
 }
 
 export async function acceptApplication(id) {
-  const { data } = await api.put(`/applications/${id}/accept`);
-  return data;
+  await api.put(`/applications/${Number(id)}/accept`);
 }
 
 export async function rejectApplication(id) {
-  const { data } = await api.put(`/applications/${id}/reject`);
-  return data;
+  await api.put(`/applications/${Number(id)}/reject`);
 }
 
 export async function getApplicationById(id) {
