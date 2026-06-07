@@ -784,6 +784,17 @@ function JobDetailPage() {
         <p>{job.benefitsText || job.BenefitsText || "No especificados."}</p>
       </Card>
 
+      {canApply ? (
+        <div className="button-postularse-abajo-wrapper">
+          <Button
+            onClick={() => setShowApplyModal(true)}
+            icon={<Send size={16} />}
+          >
+            Postularse
+          </Button>
+        </div>
+      ) : null}
+
       <ProfileSectionModal
         open={showDeleteModal}
         onClose={() => {

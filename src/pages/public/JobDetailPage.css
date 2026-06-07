@@ -466,6 +466,18 @@
   flex-shrink: 0;
 }
 
+.button-postularse-abajo-wrapper {
+  width: 180px;
+  max-width: 100%;
+  justify-self: center;
+  align-self: center;
+}
+
+.button-postularse-abajo-wrapper button {
+  width: 100%;
+  white-space: nowrap;
+}
+
 .job-detail-page__institution-link {
   padding: 0;
   border: none;
