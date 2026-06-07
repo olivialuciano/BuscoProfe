@@ -419,12 +419,7 @@ function JobsPage() {
           : Number(getJobValue(job, "availability", "Availability")) ===
             Number(filters.availability),
       )
-      .filter((job) =>
-        filters.contractType === ""
-          ? true
-          : Number(getJobValue(job, "contractType", "ContractType")) ===
-            Number(filters.contractType),
-      )
+
       .filter((job) =>
         filters.discipline === ""
           ? true
@@ -601,14 +596,13 @@ function JobsPage() {
             <X size={18} />
           </button>
         </div>
-
         <div className="jobs-page__filters-panel-body">
           <SelectField
-            label="Estado"
-            name="status"
-            value={filters.status}
+            label="Tipo de profesional"
+            name="professionalType"
+            value={filters.professionalType}
             onChange={handleFilterChange}
-            options={JOB_STATUS_OPTIONS}
+            options={[...professionalTypeOptions]}
           />
 
           <SelectField
@@ -616,7 +610,15 @@ function JobsPage() {
             name="institutionUserId"
             value={filters.institutionUserId}
             onChange={handleFilterChange}
-            options={[{ value: "", label: "Todas" }, ...institutionOptions]}
+            options={[...institutionOptions]}
+          />
+
+          <SelectField
+            label="Disciplina"
+            name="discipline"
+            value={filters.discipline}
+            onChange={handleFilterChange}
+            options={[...disciplineOptions]}
           />
 
           <SelectField
@@ -626,32 +628,12 @@ function JobsPage() {
             onChange={handleFilterChange}
             options={urgentFilterOptions}
           />
-
           <SelectField
-            label="Tipo de profesional"
-            name="professionalType"
-            value={filters.professionalType}
+            label="Estado"
+            name="status"
+            value={filters.status}
             onChange={handleFilterChange}
-            options={[
-              { value: "", label: "Todos" },
-              ...professionalTypeOptions,
-            ]}
-          />
-
-          <SelectField
-            label="Disciplina"
-            name="discipline"
-            value={filters.discipline}
-            onChange={handleFilterChange}
-            options={[{ value: "", label: "Todas" }, ...disciplineOptions]}
-          />
-
-          <SelectField
-            label="Tipo de contrato"
-            name="contractType"
-            value={filters.contractType}
-            onChange={handleFilterChange}
-            options={[{ value: "", label: "Todos" }, ...contractTypeOptions]}
+            options={JOB_STATUS_OPTIONS}
           />
         </div>
 

@@ -85,7 +85,6 @@ export const disciplineOptions = [
 ];
 
 export const urgentFilterOptions = [
-  { value: "", label: "Todas" },
   { value: "true", label: "Solo urgentes" },
   { value: "false", label: "No urgentes" },
 ];
