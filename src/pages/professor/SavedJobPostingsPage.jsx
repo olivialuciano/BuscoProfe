@@ -193,22 +193,6 @@ function SavedJobPostingsPage() {
                     </span>
 
                     <span>
-                      <Briefcase size={14} />
-                      {getEnumLabel(
-                        workModeOptions,
-                        getJobValue(job, "workMode", "WorkMode"),
-                      )}
-                    </span>
-
-                    <span>
-                      <Clock3 size={14} />
-                      {getEnumLabel(
-                        availabilityOptions,
-                        getJobValue(job, "availability", "Availability"),
-                      )}
-                    </span>
-
-                    <span>
                       <FileText size={14} />
                       {getEnumLabel(
                         contractTypeOptions,

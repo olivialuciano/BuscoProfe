@@ -380,22 +380,6 @@ function JobsPage() {
                     </span>
 
                     <span>
-                      <Briefcase size={14} />
-                      {getEnumLabel(
-                        workModeOptions,
-                        getJobValue(job, "workMode", "WorkMode"),
-                      )}
-                    </span>
-
-                    <span>
-                      <Clock3 size={14} />
-                      {getEnumLabel(
-                        availabilityOptions,
-                        getJobValue(job, "availability", "Availability"),
-                      )}
-                    </span>
-
-                    <span>
                       <FileText size={14} />
                       {getEnumLabel(
                         contractTypeOptions,
@@ -486,22 +470,6 @@ function JobsPage() {
             value={filters.discipline}
             onChange={handleFilterChange}
             options={[{ value: "", label: "Todas" }, ...disciplineOptions]}
-          />
-
-          <SelectField
-            label="Modalidad"
-            name="workMode"
-            value={filters.workMode}
-            onChange={handleFilterChange}
-            options={[{ value: "", label: "Todas" }, ...workModeOptions]}
-          />
-
-          <SelectField
-            label="Disponibilidad"
-            name="availability"
-            value={filters.availability}
-            onChange={handleFilterChange}
-            options={[{ value: "", label: "Todas" }, ...availabilityOptions]}
           />
 
           <SelectField

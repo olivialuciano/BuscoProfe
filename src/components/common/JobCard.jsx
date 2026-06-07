@@ -24,10 +24,6 @@ function JobCard({ job, onView, actionLabel = "Ver detalle" }) {
           {[job.city, job.province, job.country].filter(Boolean).join(", ") ||
             "Ubicación a definir"}
         </span>
-        <span>
-          <Clock3 size={16} />
-          {WORK_MODE_LABELS[job.workMode] ?? "No informado"}
-        </span>
       </div>
 
       <p className="job-card__description">{job.description}</p>

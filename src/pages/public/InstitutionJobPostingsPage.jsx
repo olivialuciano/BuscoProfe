@@ -166,30 +166,11 @@ function InstitutionJobPostingsPage() {
                   </div>
 
                   <h3>{job.title || job.Title || "Vacante sin título"}</h3>
-                  <p>
-                    {job.description || job.Description || "Sin descripción."}
-                  </p>
 
                   <div className="institution-job-postings-page__meta">
                     <span>
                       <MapPin size={14} />
                       {locationText}
-                    </span>
-
-                    <span>
-                      <Briefcase size={14} />
-                      {getEnumLabel(
-                        workModeOptions,
-                        getJobValue(job, "workMode", "WorkMode"),
-                      )}
-                    </span>
-
-                    <span>
-                      <Clock3 size={14} />
-                      {getEnumLabel(
-                        availabilityOptions,
-                        getJobValue(job, "availability", "Availability"),
-                      )}
                     </span>
 
                     <span>

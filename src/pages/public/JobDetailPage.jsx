@@ -743,29 +743,6 @@ function JobDetailPage() {
           </div>
 
           <div className="job-detail-page__meta-card">
-            <Briefcase size={16} />
-            <div>
-              <strong>Modalidad</strong>
-              <span>
-                {getEnumLabel(workModeOptions, job.workMode ?? job.WorkMode)}
-              </span>
-            </div>
-          </div>
-
-          <div className="job-detail-page__meta-card">
-            <Clock3 size={16} />
-            <div>
-              <strong>Disponibilidad</strong>
-              <span>
-                {getEnumLabel(
-                  availabilityOptions,
-                  job.availability ?? job.Availability,
-                )}
-              </span>
-            </div>
-          </div>
-
-          <div className="job-detail-page__meta-card">
             <FileText size={16} />
             <div>
               <strong>Tipo de contrato</strong>
