@@ -265,21 +265,6 @@ function InstitutionCreateJobPage() {
 
           <div className="institution-create-job__grid">
             <SelectField
-              label="Modalidad"
-              name="workMode"
-              value={form.workMode}
-              onChange={handleChange}
-              options={[
-                { value: 0, label: "Presencial" },
-                { value: 1, label: "Remoto" },
-                { value: 2, label: "Híbrido" },
-              ]}
-              required
-            />
-          </div>
-
-          <div className="institution-create-job__grid">
-            <SelectField
               label="Contrato"
               name="contractType"
               value={form.contractType}
@@ -290,21 +275,6 @@ function InstitutionCreateJobPage() {
                 { value: 2, label: "Por hora" },
                 { value: 3, label: "Temporal" },
                 { value: 4, label: "Freelance" },
-              ]}
-              required
-            />
-
-            <SelectField
-              label="Disponibilidad"
-              name="availability"
-              value={form.availability}
-              onChange={handleChange}
-              options={[
-                { value: 0, label: "Mañana" },
-                { value: 1, label: "Tarde" },
-                { value: 2, label: "Noche" },
-                { value: 3, label: "Día completo" },
-                { value: 4, label: "Flexible" },
               ]}
               required
             />
