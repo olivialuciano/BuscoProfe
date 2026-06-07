@@ -598,18 +598,6 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
   return (
     <div className="page-shell application-detail">
       <div className="application-detail__topbar">
-        {isProfessor && canWithdraw ? (
-          <button
-            type="button"
-            className="application-detail__delete-button"
-            onClick={() => setShowWithdrawModal(true)}
-            aria-label="Eliminar postulación"
-            title="Eliminar postulación"
-          >
-            <Trash2 size={18} />
-          </button>
-        ) : null}
-
         {canInstitutionDecide ? (
           <div className="application-detail__institution-actions">
             <Button
@@ -634,7 +622,7 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
 
       <Card className="application-detail__hero">
         <div className="application-detail__hero-top">
-          <div>
+          <div className="application-detail__hero-title">
             <h1 className="application-detail__job-title">{jobTitle}</h1>
 
             {isDeletedJobPosting ? (
@@ -644,9 +632,23 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
             ) : null}
           </div>
 
-          <span className={getApplicationStatusClass(application.status)}>
-            {getApplicationStatusLabel(application.status)}
-          </span>
+          <div className="application-detail__hero-actions">
+            <span className={getApplicationStatusClass(application.status)}>
+              {getApplicationStatusLabel(application.status)}
+            </span>
+
+            {isProfessor && canWithdraw ? (
+              <button
+                type="button"
+                className="application-detail__delete-button"
+                onClick={() => setShowWithdrawModal(true)}
+                aria-label="Eliminar postulación"
+                title="Eliminar postulación"
+              >
+                <Trash2 size={18} />
+              </button>
+            ) : null}
+          </div>
         </div>
 
         <button
@@ -753,22 +755,6 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
                     <span>
                       {getEnumLabel(contractTypeOptions, jobContractType)}
                     </span>
-                  </div>
-                </div>
-
-                <div className="application-detail__job-meta-card">
-                  <Info size={16} />
-                  <div>
-                    <strong>Modalidad</strong>
-                    <span>{getDisplayValue(jobWorkMode)}</span>
-                  </div>
-                </div>
-
-                <div className="application-detail__job-meta-card">
-                  <Clock3 size={16} />
-                  <div>
-                    <strong>Disponibilidad</strong>
-                    <span>{getDisplayValue(jobAvailability)}</span>
                   </div>
                 </div>
 
