@@ -161,8 +161,6 @@ function SavedJobPostingsPage() {
           return currentJobId !== numericJobId;
         }),
       );
-
-      showToast("Vacante quitada de guardados.", "success");
     } catch (err) {
       showToast(
         getApiErrorMessage(err, "No se pudo quitar la vacante de guardados."),
