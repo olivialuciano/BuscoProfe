@@ -7,6 +7,16 @@ import {
   Trash2,
   AlertTriangle,
   MessageCircle,
+  ChevronDown,
+  ChevronUp,
+  Building2,
+  MapPin,
+  CalendarDays,
+  Briefcase,
+  Gift,
+  Flame,
+  UserRoundCheck,
+  Trophy,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
@@ -26,6 +36,111 @@ import ProfileSectionModal from "../../components/profile/ProfileSectionModal";
 import { getApiErrorMessage } from "../../utils/errorUtils";
 import { ROLES } from "../../utils/constants";
 import "./ApplicationDetailPage.css";
+
+const professionalTypeOptions = [
+  { value: 0, label: "Profesor" },
+  { value: 1, label: "Instructor" },
+  { value: 2, label: "Preparador físico" },
+  { value: 3, label: "Director técnico" },
+  { value: 4, label: "Guardavidas" },
+  { value: 5, label: "Video analista" },
+  { value: 6, label: "Otro" },
+];
+
+const disciplineOptions = [
+  { value: 0, label: "Aikido" },
+  { value: 1, label: "Ajedrez" },
+  { value: 2, label: "Aquagym" },
+  { value: 3, label: "Artes marciales mixtas" },
+  { value: 4, label: "Atletismo" },
+  { value: 5, label: "Bádminton" },
+  { value: 6, label: "Básquetbol" },
+  { value: 7, label: "Beach volley" },
+  { value: 8, label: "Béisbol" },
+  { value: 9, label: "Bochas" },
+  { value: 10, label: "Boxeo" },
+  { value: 11, label: "BMX" },
+  { value: 12, label: "Calistenia" },
+  { value: 13, label: "Cheerleading" },
+  { value: 14, label: "Ciclismo" },
+  { value: 15, label: "Crossfit" },
+  { value: 16, label: "Danza" },
+  { value: 17, label: "Equitación" },
+  { value: 18, label: "Esgrima" },
+  { value: 19, label: "Fisicoculturismo" },
+  { value: 20, label: "Frontón" },
+  { value: 21, label: "Fútbol" },
+  { value: 22, label: "Fútbol playa" },
+  { value: 23, label: "Fútbol sala" },
+  { value: 24, label: "Gimnasia acrobática" },
+  { value: 25, label: "Gimnasia artística" },
+  { value: 26, label: "Gimnasia rítmica" },
+  { value: 27, label: "Golf" },
+  { value: 28, label: "Handball" },
+  { value: 29, label: "Hockey sobre césped" },
+  { value: 30, label: "Hockey sobre patines" },
+  { value: 31, label: "Jiu jitsu" },
+  { value: 32, label: "Judo" },
+  { value: 33, label: "Karate" },
+  { value: 34, label: "Kayak" },
+  { value: 35, label: "Kickboxing" },
+  { value: 36, label: "Kitesurf" },
+  { value: 37, label: "Kung fu" },
+  { value: 38, label: "Muay thai" },
+  { value: 39, label: "Musculación" },
+  { value: 40, label: "Natación" },
+  { value: 41, label: "Natación artística" },
+  { value: 42, label: "Pádel" },
+  { value: 43, label: "Patín artístico" },
+  { value: 44, label: "Patín carrera" },
+  { value: 45, label: "Patinaje sobre hielo" },
+  { value: 46, label: "Pelota paleta" },
+  { value: 47, label: "Pilates" },
+  { value: 48, label: "Polo" },
+  { value: 49, label: "Powerlifting" },
+  { value: 50, label: "Remo" },
+  { value: 51, label: "Rugby" },
+  { value: 52, label: "Running" },
+  { value: 53, label: "Skateboarding" },
+  { value: 54, label: "Softbol" },
+  { value: 55, label: "Spinning" },
+  { value: 56, label: "Squash" },
+  { value: 57, label: "Stretching" },
+  { value: 58, label: "Surf" },
+  { value: 59, label: "Taekwondo" },
+  { value: 60, label: "Tenis" },
+  { value: 61, label: "Tenis de mesa" },
+  { value: 62, label: "Tiro con arco" },
+  { value: 63, label: "Tiro deportivo" },
+  { value: 64, label: "Triatlón" },
+  { value: 65, label: "Ultimate frisbee" },
+  { value: 66, label: "Vela" },
+  { value: 67, label: "Voleibol" },
+  { value: 68, label: "Waterpolo" },
+  { value: 69, label: "Windsurf" },
+  { value: 70, label: "Yoga" },
+  { value: 71, label: "Zumba" },
+  { value: 72, label: "Otro" },
+];
+
+const contractTypeOptions = [
+  { value: 0, label: "Full Time" },
+  { value: 1, label: "Part Time" },
+  { value: 2, label: "Por hora" },
+  { value: 3, label: "Temporal" },
+  { value: 4, label: "Freelance" },
+];
+
+function getEnumLabel(options, value, fallback = "No especificado") {
+  if (value === null || value === undefined || value === "") {
+    return fallback;
+  }
+
+  return (
+    options.find((option) => Number(option.value) === Number(value))?.label ||
+    fallback
+  );
+}
 
 function getApplicationStatusLabel(status) {
   switch (Number(status)) {
@@ -57,6 +172,36 @@ function getApplicationStatusClass(status) {
       return "application-detail__badge application-detail__badge--withdrawn";
     default:
       return "application-detail__badge application-detail__badge--neutral";
+  }
+}
+
+function getJobPostingStatusLabel(status) {
+  switch (Number(status)) {
+    case 1:
+      return "Abierta";
+    case 2:
+      return "Inactiva";
+    case 3:
+      return "Cerrada";
+    case 4:
+      return "Eliminada";
+    default:
+      return "No especificado";
+  }
+}
+
+function getJobPostingStatusClass(status) {
+  switch (Number(status)) {
+    case 1:
+      return "application-detail__job-badge application-detail__job-badge--open";
+    case 2:
+      return "application-detail__job-badge application-detail__job-badge--inactive";
+    case 3:
+      return "application-detail__job-badge application-detail__job-badge--closed";
+    case 4:
+      return "application-detail__job-badge application-detail__job-badge--deleted";
+    default:
+      return "application-detail__job-badge application-detail__job-badge--neutral";
   }
 }
 
@@ -104,6 +249,18 @@ function getValue(source, camelCaseName, pascalCaseName) {
   return source?.[camelCaseName] ?? source?.[pascalCaseName];
 }
 
+function getDisplayValue(value, fallback = "No especificado") {
+  if (value === null || value === undefined || value === "") {
+    return fallback;
+  }
+
+  if (typeof value === "boolean") {
+    return value ? "Sí" : "No";
+  }
+
+  return value;
+}
+
 function ApplicationDetailPage() {
   const { id, applicationId } = useParams();
   const resolvedApplicationId = applicationId || id;
@@ -124,11 +281,11 @@ function ApplicationDetailPage() {
 
   const [updatingStatus, setUpdatingStatus] = useState(false);
 
-  const [openingJob, setOpeningJob] = useState(false);
   const [isDeletedJobPosting, setIsDeletedJobPosting] = useState(false);
-
   const [jobPostingDetail, setJobPostingDetail] = useState(null);
   const [professorDetail, setProfessorDetail] = useState(null);
+
+  const [showJobPostingDetail, setShowJobPostingDetail] = useState(false);
 
   const loadApplication = async () => {
     setLoading(true);
@@ -152,6 +309,10 @@ function ApplicationDetailPage() {
         try {
           const job = await getJobPostingById(data.jobPostingId);
           setJobPostingDetail(job);
+
+          if (Number(job?.status || job?.Status) === 4) {
+            setIsDeletedJobPosting(true);
+          }
         } catch {
           setJobPostingDetail(null);
         }
@@ -215,15 +376,15 @@ function ApplicationDetailPage() {
 
   const institutionName = useMemo(() => {
     return (
+      jobPostingDetail?.institutionTradeName ||
+      jobPostingDetail?.InstitutionTradeName ||
+      jobPostingDetail?.institutionName ||
+      jobPostingDetail?.InstitutionName ||
       user?.tradeName ||
       user?.TradeName ||
       user?.legalName ||
       user?.LegalName ||
-      jobPostingDetail?.institution?.tradeName ||
-      jobPostingDetail?.Institution?.TradeName ||
-      jobPostingDetail?.institutionTradeName ||
-      jobPostingDetail?.InstitutionTradeName ||
-      "tu institución"
+      "Institución"
     );
   }, [user, jobPostingDetail]);
 
@@ -248,6 +409,20 @@ function ApplicationDetailPage() {
       "días y horarios a coordinar"
     );
   }, [jobPostingDetail, application]);
+
+  const jobLocationText = useMemo(() => {
+    if (!jobPostingDetail) return "No especificada";
+
+    return (
+      [
+        getValue(jobPostingDetail, "city", "City"),
+        getValue(jobPostingDetail, "province", "Province"),
+        getValue(jobPostingDetail, "country", "Country"),
+      ]
+        .filter(Boolean)
+        .join(", ") || "No especificada"
+    );
+  }, [jobPostingDetail]);
 
   const whatsappMessage = useMemo(() => {
     return `Hola ${professorName}, ¿cómo estás? Te escribimos desde ${institutionName} para avisarte que tu postulación para la vacante "${jobTitle}" fue aceptada.
@@ -277,47 +452,6 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
     const status = Number(application.status);
     return status !== 2 && status !== 3 && status !== 4;
   }, [application, isInstitution]);
-
-  const handleOpenJobPosting = async () => {
-    if (!application?.jobPostingId || openingJob) return;
-
-    try {
-      setOpeningJob(true);
-
-      const job = await getJobPostingById(application.jobPostingId);
-
-      if (Number(job?.status) === 4) {
-        setIsDeletedJobPosting(true);
-        showToast(
-          "Esta vacante ya no está disponible porque fue eliminada.",
-          "error",
-        );
-        return;
-      }
-
-      navigate(`/jobs/${application.jobPostingId}`);
-    } catch (err) {
-      const backendMessage = getApiErrorMessage(
-        err,
-        "No se pudo abrir la vacante.",
-      );
-
-      if (
-        backendMessage.toLowerCase().includes("no se encontró") ||
-        backendMessage.toLowerCase().includes("not found")
-      ) {
-        setIsDeletedJobPosting(true);
-        showToast(
-          "Esta vacante ya no está disponible porque fue eliminada.",
-          "error",
-        );
-      } else {
-        showToast(backendMessage, "error");
-      }
-    } finally {
-      setOpeningJob(false);
-    }
-  };
 
   const handleDeleteApplication = async () => {
     if (!application || withdrawing) return;
@@ -423,6 +557,44 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
     );
   }
 
+  const jobStatus = getValue(jobPostingDetail, "status", "Status");
+  const jobDescription = getValue(
+    jobPostingDetail,
+    "description",
+    "Description",
+  );
+  const jobRequirements = getValue(
+    jobPostingDetail,
+    "requirementsText",
+    "RequirementsText",
+  );
+  const jobBenefits = getValue(
+    jobPostingDetail,
+    "benefitsText",
+    "BenefitsText",
+  );
+  const jobSalary = getValue(jobPostingDetail, "salaryText", "SalaryText");
+  const jobProfessionalType = getValue(
+    jobPostingDetail,
+    "professionalType",
+    "ProfessionalType",
+  );
+  const jobDiscipline = getValue(jobPostingDetail, "discipline", "Discipline");
+  const jobContractType = getValue(
+    jobPostingDetail,
+    "contractType",
+    "ContractType",
+  );
+  const jobWorkMode = getValue(jobPostingDetail, "workMode", "WorkMode");
+  const jobAvailability = getValue(
+    jobPostingDetail,
+    "availability",
+    "Availability",
+  );
+  const jobIsUrgent = Boolean(
+    getValue(jobPostingDetail, "isUrgent", "IsUrgent"),
+  );
+
   return (
     <div className="page-shell application-detail">
       <div className="application-detail__topbar">
@@ -463,23 +635,7 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
       <Card className="application-detail__hero">
         <div className="application-detail__hero-top">
           <div>
-            <button
-              type="button"
-              className={`application-detail__job-link ${
-                isDeletedJobPosting
-                  ? "application-detail__job-link--disabled"
-                  : ""
-              }`}
-              onClick={handleOpenJobPosting}
-              disabled={openingJob}
-              title={
-                isDeletedJobPosting
-                  ? "Esta vacante fue eliminada"
-                  : "Ver detalle de la vacante"
-              }
-            >
-              {openingJob ? "Abriendo vacante..." : jobTitle}
-            </button>
+            <h1 className="application-detail__job-title">{jobTitle}</h1>
 
             {isDeletedJobPosting ? (
               <span className="application-detail__job-removed-note">
@@ -492,7 +648,157 @@ Nos gustaría comunicarnos con vos para avanzar con los próximos pasos.`;
             {getApplicationStatusLabel(application.status)}
           </span>
         </div>
+
+        <button
+          type="button"
+          className="application-detail__job-toggle"
+          onClick={() => setShowJobPostingDetail((current) => !current)}
+          disabled={!jobPostingDetail}
+        >
+          <span>
+            {showJobPostingDetail ? "Ocultar detalle" : "Ver detalle"}
+          </span>
+
+          {showJobPostingDetail ? (
+            <ChevronUp size={18} />
+          ) : (
+            <ChevronDown size={18} />
+          )}
+        </button>
       </Card>
+
+      {showJobPostingDetail ? (
+        <Card className="application-detail__job-detail-card">
+          {!jobPostingDetail ? (
+            <ApiMessage type="error">
+              No se pudo cargar el detalle de la vacante.
+            </ApiMessage>
+          ) : (
+            <>
+              <div className="application-detail__job-detail-header">
+                <div>
+                  <h2>{jobTitle}</h2>
+                  <p>
+                    {jobDescription ||
+                      "La vacante no tiene descripción cargada."}
+                  </p>
+                </div>
+
+                <div className="application-detail__job-detail-badges">
+                  {jobIsUrgent ? (
+                    <span className="application-detail__job-badge application-detail__job-badge--urgent">
+                      <Flame size={14} />
+                      Urgente
+                    </span>
+                  ) : null}
+
+                  <span className={getJobPostingStatusClass(jobStatus)}>
+                    {getJobPostingStatusLabel(jobStatus)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="application-detail__job-meta-grid">
+                <div className="application-detail__job-meta-card">
+                  <Building2 size={16} />
+                  <div>
+                    <strong>Institución</strong>
+                    <span>{institutionName}</span>
+                  </div>
+                </div>
+
+                <div className="application-detail__job-meta-card">
+                  <UserRoundCheck size={16} />
+                  <div>
+                    <strong>Tipo de profesional</strong>
+                    <span>
+                      {getEnumLabel(
+                        professionalTypeOptions,
+                        jobProfessionalType,
+                      )}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="application-detail__job-meta-card">
+                  <Trophy size={16} />
+                  <div>
+                    <strong>Disciplina</strong>
+                    <span>
+                      {getEnumLabel(disciplineOptions, jobDiscipline)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="application-detail__job-meta-card">
+                  <CalendarDays size={16} />
+                  <div>
+                    <strong>Días y horarios</strong>
+                    <span>{getDisplayValue(jobDaysAndHours)}</span>
+                  </div>
+                </div>
+
+                <div className="application-detail__job-meta-card">
+                  <MapPin size={16} />
+                  <div>
+                    <strong>Ubicación</strong>
+                    <span>{jobLocationText}</span>
+                  </div>
+                </div>
+
+                <div className="application-detail__job-meta-card">
+                  <Briefcase size={16} />
+                  <div>
+                    <strong>Tipo de contrato</strong>
+                    <span>
+                      {getEnumLabel(contractTypeOptions, jobContractType)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="application-detail__job-meta-card">
+                  <Info size={16} />
+                  <div>
+                    <strong>Modalidad</strong>
+                    <span>{getDisplayValue(jobWorkMode)}</span>
+                  </div>
+                </div>
+
+                <div className="application-detail__job-meta-card">
+                  <Clock3 size={16} />
+                  <div>
+                    <strong>Disponibilidad</strong>
+                    <span>{getDisplayValue(jobAvailability)}</span>
+                  </div>
+                </div>
+
+                <div className="application-detail__job-meta-card">
+                  <Gift size={16} />
+                  <div>
+                    <strong>Salario</strong>
+                    <span>{getDisplayValue(jobSalary)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="application-detail__job-text-section">
+                <h3>Descripción del puesto</h3>
+                <p>{jobDescription || "Sin descripción."}</p>
+              </div>
+
+              <div className="application-detail__job-text-section">
+                <h3>Requisitos</h3>
+                <p>{jobRequirements || "No especificados."}</p>
+              </div>
+
+              <div className="application-detail__job-text-section">
+                <h3>Beneficios</h3>
+                <p>{jobBenefits || "No especificados."}</p>
+              </div>
+            </>
+          )}
+        </Card>
+      ) : null}
 
       <Card className="application-detail__section">
         <h2>Datos de la postulación</h2>
