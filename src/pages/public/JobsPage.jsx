@@ -27,11 +27,8 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import { isAdmin, isInstitution } from "../../utils/roleUtils";
 import { getApiErrorMessage } from "../../utils/errorUtils";
-import {
-  availabilityOptions,
-  workModeOptions,
-  contractTypeOptions,
-} from "../../utils/enumOptions";
+import { contractTypeOptions } from "../../utils/enumOptions";
+import { INSTITUTION_TYPE_OPTIONS } from "../../utils/constants";
 import {
   disciplineOptions,
   professionalTypeOptions,
@@ -161,13 +158,9 @@ function JobsPage() {
 
   const [filters, setFilters] = useState({
     status: "1",
-    institutionUserId: "",
-    workMode: "",
-    availability: "",
-    contractType: "",
+    institutionType: "",
     discipline: "",
     professionalType: "",
-    isUrgent: "",
   });
 
   const isProfessorUser = user && !isAdmin(user) && !isInstitution(user);
@@ -257,19 +250,11 @@ function JobsPage() {
     loadProfessorData();
   }, [isProfessorUser, user]);
 
-  const institutionOptions = useMemo(() => {
-    return institutions
-      .map((institution) => {
-        const institutionId = institution?.id || institution?.Id;
-
-        return {
-          value: String(institutionId),
-          label: getInstitutionName(institution),
-        };
-      })
-      .filter((option) => option.value && option.value !== "undefined")
-      .sort((a, b) => a.label.localeCompare(b.label, "es"));
-  }, [institutions]);
+  const institutionTypeOptions = useMemo(() => {
+    return [...INSTITUTION_TYPE_OPTIONS].sort((a, b) =>
+      a.label.localeCompare(b.label, "es"),
+    );
+  }, []);
 
   const appliedJobPostingIds = useMemo(() => {
     return new Set(
@@ -298,13 +283,9 @@ function JobsPage() {
   const clearFilters = () => {
     setFilters({
       status: "1",
-      institutionUserId: "",
-      workMode: "",
-      availability: "",
-      contractType: "",
+      institutionType: "",
       discipline: "",
       professionalType: "",
-      isUrgent: "",
     });
   };
 
@@ -391,6 +372,30 @@ function JobsPage() {
     }
   };
 
+  const institutionsById = useMemo(() => {
+    const map = new Map();
+
+    institutions.forEach((institution) => {
+      const institutionId = Number(institution?.id || institution?.Id);
+
+      if (institutionId) {
+        map.set(institutionId, institution);
+      }
+    });
+
+    return map;
+  }, [institutions]);
+
+  const getInstitutionTypeByJob = (job) => {
+    const institutionUserId = Number(
+      getJobValue(job, "institutionUserId", "InstitutionUserId"),
+    );
+
+    const institution = institutionsById.get(institutionUserId);
+
+    return institution?.institutionType ?? institution?.InstitutionType ?? null;
+  };
+
   const filteredJobs = useMemo(() => {
     const result = jobs
       .filter((job) => Number(getJobValue(job, "status", "Status")) !== 4)
@@ -401,30 +406,12 @@ function JobsPage() {
             Number(filters.status),
       )
       .filter((job) =>
-        filters.institutionUserId === ""
+        filters.institutionType === ""
           ? true
-          : Number(
-              getJobValue(job, "institutionUserId", "InstitutionUserId"),
-            ) === Number(filters.institutionUserId),
+          : Number(getInstitutionTypeByJob(job)) ===
+            Number(filters.institutionType),
       )
-      .filter((job) =>
-        filters.workMode === ""
-          ? true
-          : Number(getJobValue(job, "workMode", "WorkMode")) ===
-            Number(filters.workMode),
-      )
-      .filter((job) =>
-        filters.availability === ""
-          ? true
-          : Number(getJobValue(job, "availability", "Availability")) ===
-            Number(filters.availability),
-      )
-      .filter((job) =>
-        filters.contractType === ""
-          ? true
-          : Number(getJobValue(job, "contractType", "ContractType")) ===
-            Number(filters.contractType),
-      )
+
       .filter((job) =>
         filters.discipline === ""
           ? true
@@ -436,15 +423,10 @@ function JobsPage() {
           ? true
           : Number(getJobValue(job, "professionalType", "ProfessionalType")) ===
             Number(filters.professionalType),
-      )
-      .filter((job) =>
-        filters.isUrgent === ""
-          ? true
-          : isJobUrgent(job) === (filters.isUrgent === "true"),
       );
 
     return sortUrgentJobsFirst(result);
-  }, [jobs, filters]);
+  }, [jobs, filters, institutionsById]);
 
   if (loading) {
     return (
@@ -613,10 +595,10 @@ function JobsPage() {
 
           <SelectField
             label="Institución"
-            name="institutionUserId"
-            value={filters.institutionUserId}
+            name="institutionType"
+            value={filters.institutionType}
             onChange={handleFilterChange}
-            options={[...institutionOptions]}
+            options={[...institutionTypeOptions]}
           />
 
           <SelectField
@@ -625,22 +607,6 @@ function JobsPage() {
             value={filters.discipline}
             onChange={handleFilterChange}
             options={[...disciplineOptions]}
-          />
-
-          <SelectField
-            label="Tipo de contrato"
-            name="contractType"
-            value={filters.contractType}
-            onChange={handleFilterChange}
-            options={[...contractTypeOptions]}
-          />
-
-          <SelectField
-            label="Urgencia"
-            name="isUrgent"
-            value={filters.isUrgent}
-            onChange={handleFilterChange}
-            options={urgentFilterOptions}
           />
 
           <SelectField
