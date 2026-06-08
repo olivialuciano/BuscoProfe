@@ -18,11 +18,7 @@ import EmptyState from "../../components/common/EmptyState";
 import SelectField from "../../components/common/SelectField";
 import { getInstitutionJobPostings } from "../../api/jobPostingsService";
 import { getApiErrorMessage } from "../../utils/errorUtils";
-import {
-  availabilityOptions,
-  workModeOptions,
-  contractTypeOptions,
-} from "../../utils/enumOptions";
+import { contractTypeOptions } from "../../utils/enumOptions";
 import {
   disciplineOptions,
   professionalTypeOptions,
@@ -77,8 +73,7 @@ function InstitutionJobsPage() {
 
   const [filters, setFilters] = useState({
     status: "1",
-    workMode: "",
-    availability: "",
+
     contractType: "",
     discipline: "",
     professionalType: "",
@@ -117,8 +112,6 @@ function InstitutionJobsPage() {
   const clearFilters = () => {
     setFilters({
       status: "1",
-      workMode: "",
-      availability: "",
       contractType: "",
       discipline: "",
       professionalType: "",
@@ -135,18 +128,7 @@ function InstitutionJobsPage() {
           : Number(getJobValue(job, "status", "Status")) ===
             Number(filters.status),
       )
-      .filter((job) =>
-        filters.workMode === ""
-          ? true
-          : Number(getJobValue(job, "workMode", "WorkMode")) ===
-            Number(filters.workMode),
-      )
-      .filter((job) =>
-        filters.availability === ""
-          ? true
-          : Number(getJobValue(job, "availability", "Availability")) ===
-            Number(filters.availability),
-      )
+
       .filter((job) =>
         filters.contractType === ""
           ? true
@@ -320,10 +302,7 @@ function InstitutionJobsPage() {
             name="professionalType"
             value={filters.professionalType}
             onChange={handleFilterChange}
-            options={[
-              { value: "", label: "Todos" },
-              ...professionalTypeOptions,
-            ]}
+            options={[...professionalTypeOptions]}
           />
 
           <SelectField
@@ -331,23 +310,7 @@ function InstitutionJobsPage() {
             name="discipline"
             value={filters.discipline}
             onChange={handleFilterChange}
-            options={[{ value: "", label: "Todas" }, ...disciplineOptions]}
-          />
-
-          <SelectField
-            label="Modalidad"
-            name="workMode"
-            value={filters.workMode}
-            onChange={handleFilterChange}
-            options={[{ value: "", label: "Todas" }, ...workModeOptions]}
-          />
-
-          <SelectField
-            label="Disponibilidad"
-            name="availability"
-            value={filters.availability}
-            onChange={handleFilterChange}
-            options={[{ value: "", label: "Todas" }, ...availabilityOptions]}
+            options={[...disciplineOptions]}
           />
 
           <SelectField
@@ -355,7 +318,7 @@ function InstitutionJobsPage() {
             name="contractType"
             value={filters.contractType}
             onChange={handleFilterChange}
-            options={[{ value: "", label: "Todos" }, ...contractTypeOptions]}
+            options={[...contractTypeOptions]}
           />
         </div>
 
