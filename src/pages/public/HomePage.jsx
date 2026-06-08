@@ -170,45 +170,27 @@ function HomePage() {
     const primaryActions = isAdminUser
       ? [
           {
-            to: dashboardPath,
-            label: "Ir a mi panel",
-            icon: <LayoutDashboard size={16} />,
-            variant: "primary",
-          },
-          {
             to: "/admin/users",
             label: "Usuarios",
             icon: <UsersRound size={16} />,
-            variant: "secondary",
+            variant: "primary",
           },
         ]
       : isInstitutionUser
         ? [
             {
-              to: dashboardPath,
-              label: "Ir a mi panel",
-              icon: <LayoutDashboard size={16} />,
-              variant: "primary",
-            },
-            {
               to: "/institution/jobs/new",
               label: "Publicar vacante",
               icon: <Plus size={16} />,
-              variant: "secondary",
+              variant: "primary",
             },
           ]
         : [
             {
-              to: dashboardPath,
-              label: "Ir a mi panel",
-              icon: <LayoutDashboard size={16} />,
-              variant: "primary",
-            },
-            {
               to: "/jobs",
               label: "Ver vacantes",
               icon: <Briefcase size={16} />,
-              variant: "secondary",
+              variant: "primary",
             },
           ];
 

@@ -155,6 +155,11 @@ function Navbar() {
               icon: <UserCircle size={20} />,
             },
             {
+              to: "/professor",
+              label: "Dashboard",
+              icon: <LayoutDashboard size={20} />,
+            },
+            {
               to: "/professor/institutions",
               label: "Instituciones",
               icon: <Building2 size={20} />,
